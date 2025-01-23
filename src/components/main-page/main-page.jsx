@@ -1,9 +1,9 @@
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../config/firebase-config";
+import { auth } from "../../config/firebase-config";
 import "./main-page-styles.css";
 
-export const MainPage = () => {
+const MainPage = () => {
   const navigate = useNavigate();
 
   const signUserOut = async () => {
@@ -26,3 +26,5 @@ export const MainPage = () => {
     </>
   );
 };
+
+export default MainPage;

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import catImage from "/src/svg/mainlogo.svg";
 import "./authstyles.css";
 
-export const Auth = () => {
+const Auth = () => {
   return (
     <>
       <main className="main-content">
@@ -29,3 +29,5 @@ export const Auth = () => {
     </>
   );
 };
+
+export default Auth;
