@@ -1,0 +1,167 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Base styles */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff; /* White background */
+  color: #333; /* Dark text */
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0 10%;
+}
+
+.rh1 {
+  max-width: 50%;
+}
+
+/*mobile responsive styles*/
+.wildcats-mobile {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #8b0000; /* Dark red color */
+  margin: 0;
+}
+
+/*desktop styles*/
+.wildcats-desktop {
+    font-size: 5rem;
+    font-weight: 600;
+    color: #8b0000; /* Dark red color */
+    margin: 0;
+  }
+
+.express-mobile {
+  color: #ffa500; /* Orange color */
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: #555; /* Subtle dark gray */
+  margin-top: 10px;
+}
+
+.primary-cta {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #8b0000; /* Dark red */
+  color: #ffffff; /* White text */
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.primary-cta:hover {
+  background-color: #a20000; /* Slightly lighter red */
+}
+
+/* Image container */
+.cat {
+  max-width: 50%;
+}
+
+.cat img {
+    margin-top: 1em;
+    width: 50%; /* Adjusted width to make the image smaller */
+    height: auto; /* Maintain aspect ratio */
+}
+
+
+
+/* Hide elements based on screen size */
+.hide-mobile {
+  display: none;
+}
+
+.hide-title {
+  display: block;
+}
+
+/* Mobile responsive styles */
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: block;
+  }
+
+  .hide-title {
+    display: none;
+  }
+}
+
+/* Login page styles */
+.login-page {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.login-page p {
+  font-size: 1rem;
+  color: #555;
+}
+
+
+
+/* For tablets */
+@media (min-width: 601px) and (max-width: 1280px) {
+    .cat img {
+        width: 60%;
+        margin-top: 2em;
+    }
+
+    .primary-cta {
+        width: 70%;
+    }
+}
+
+/* For mobile devices */
+@media (max-width: 600px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cat img {
+        width: 80%;
+        margin-top: 1em;
+    }
+
+    .primary-cta {
+        width: 80%;
+        margin: 1em 0;
+    }
+}
+
+/* For desktops */
+@media (min-width: 1280px) {
+    .main-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+
+    .primary-cta {
+        width: auto;
+        margin-right: 2em;
+    }
+
+    .cat {
+        width: 40%; /* Container for the image */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cat img {
+        width: 100%;
+        height: auto;
+    }
+}
