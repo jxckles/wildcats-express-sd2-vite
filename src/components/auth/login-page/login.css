@@ -13,25 +13,13 @@
     background-color: #fff;
 }
 
-.login-with-google-btn {
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid #dadce0;
-    background: transparent;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding: 8px;
-  }
-  
-  .google-icon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .login-with-google-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid red;
+  background-color: #f8d7da;
+  border-radius: 3px;
+}

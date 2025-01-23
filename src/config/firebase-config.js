@@ -1,16 +1,10 @@
-//Import authentification functions from firebase
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore} from "firebase/firestore";
-
-
-// Import the functions you need from the SDKs you need
+// Import authentication functions from Firebase
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBc8RjtuaZOMWn4AA9ovmw1OOLDbwlSwWM",
   authDomain: "wildcats-express-pos.firebaseapp.com",
@@ -25,7 +19,62 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// google auth variables
+// Firebase Auth and Firestore
 export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+
+// Create an AdminAuth class to encapsulate login logic
+class AdminAuth {
+  // Private variables to hold admin credentials
+  #adminEmail = "wildcats_express.admin@cit.edu"; // Admin email
+  #adminPassword = "wildcats.admin"; // Admin password
+
+  // Function to check if credentials are correct
+  async login(username, password) {
+    if (this.#checkCredentials(username, password)) {
+      return await this.signInAdmin();
+    } else {
+      throw new Error("Invalid admin credentials!");
+    }
+  }
+
+  // Protected method to simulate credentials checking
+  #checkCredentials(username, password) {
+    return username === this.#adminEmail && password === this.#adminPassword;
+  }
+
+  // Function to handle the actual Firebase admin login
+  async signInAdmin() {
+    try {
+      // Use Firebase authentication to sign in as admin
+      const userCredential = await signInWithEmailAndPassword(auth, this.#adminEmail, this.#adminPassword);
+      console.log("Admin logged in:", userCredential.user);
+      return userCredential.user;
+    } catch (error) {
+      throw new Error("Error during login: " + error.message);
+    }
+  }
+
+  // Public method to access the admin email (for checking purposes)
+  isAdminEmail(email) {
+    return email === this.#adminEmail;
+  }
+}
+
+// Export an instance of AdminAuth
+export const adminAuth = new AdminAuth();
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    if (adminAuth.isAdminEmail(user.email)) {
+      // Only redirect if not already on admin page
+      if (window.location.pathname !== "/admin-page") {
+        window.location.href = "/admin-page";
+      }
+    } else {
+      // If not admin, show an error message
+      alert("Access denied: You are not an admin.");
+    }
+  }
+});
+
