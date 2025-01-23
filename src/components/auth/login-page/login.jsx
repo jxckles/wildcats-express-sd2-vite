@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { adminAuth } from "../../../config/firebase-config";  // Import the adminAuth instance
+import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
 import "./login.css";
 
@@ -14,8 +14,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await adminAuth.login(username, password); // Use the login method from AdminAuth class
-      navigate("/admin-page"); // Redirect to the admin page
+      await adminAuth.login(username, password); 
+      navigate("/admin-page"); 
     } catch (error) {
       console.error("Login failed: ", error.message);
       alert(error.message);
@@ -27,26 +27,35 @@ const Login = () => {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <h2>Admin Login</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit">Login</button>
-        </form>
+    <>  
+      <div className="login-page">
+        <div className="login-container">
+          <div className="form-container">
+            <h2>Admin Login</h2>
+            <form onSubmit={handleLogin}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="input-field"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-field"
+              />
+              <button type="submit" className="login-button">Login</button>
+            </form>
+          </div>
+          <div className="mascot-container">
+            <img src="src/svg/cat_model.svg" alt="Mascot" className="mascot-image" />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
