@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
+import catImage from "/src/svg/catModel1.svg";
 import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
 import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
 import "./login.css";
@@ -57,7 +58,7 @@ const Login = () => {
             </form>
           </div>
           <div className="mascot-container">
-            <img src="src/svg/cat_model.svg" alt="Mascot" className="mascot-image" />
+            <img src={catImage} alt="Mascot" className="mascot-image" />
           </div>
         </div>
       </div>
