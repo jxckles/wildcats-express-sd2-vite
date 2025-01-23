@@ -152,3 +152,33 @@ h2 {
   background-color: #f8d7da;
   border-radius: 3px;
 }
+
+
+/* Add some custom styles for Toast notification if desired */
+
+.Toastify__toast {
+  font-family: 'Arial', sans-serif;
+}
+
+.Toastify__toast--success {
+  background-color: #28a745; /* Green for success */
+  color: white;
+}
+
+.Toastify__toast--error {
+  background-color: #dc3545; /* Red for error */
+  color: white;
+}
+
+.Toastify__toast--default {
+  background-color: #6c757d; /* Default grey background */
+  color: white;
+}
+
+/* Optional: Customize position of the toast */
+.Toastify__toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}

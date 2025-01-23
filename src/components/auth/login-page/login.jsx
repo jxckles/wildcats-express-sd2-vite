@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
+import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
+import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
 import "./login.css";
 
 const Login = () => {
@@ -13,12 +15,16 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+     // Dismiss any existing toasts to prevent repeats
+     toast.dismiss();
+     
     try {
       await adminAuth.login(username, password); 
+      toast.success("Login successful!");  // Show success toast
       navigate("/admin-page"); 
     } catch (error) {
       console.error("Login failed: ", error.message);
-      alert(error.message);
+      toast.error(`${error.message}`);  // Show error toast
     }
   };
 
@@ -55,6 +61,21 @@ const Login = () => {
           </div>
         </div>
       </div>
+      
+
+      {/* Toast container for displaying toasts */}
+      <ToastContainer 
+        position="top-left"
+        autoClose={5500}
+        hideProgressBar
+        newestOnTop
+        closeButton={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ zIndex: 9999 }}  
+      />
     </>
   );
 };
