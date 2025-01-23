@@ -6,11 +6,11 @@
 }
 
 html, body {
-  height: 100%;
-  font-family: 'Arial', sans-serif;
-  background-color: #f0f0f0; /* Light background for the whole page */
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  background-color: white; 
 }
 
 /* Main background */
@@ -18,11 +18,9 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 0;
   height: 100vh;
   background-color: #800000; /* Maroon background */
-  background: linear-gradient(135deg, rgba(119, 1, 1, 0.904), rgb(182, 2, 32),rgba(192, 1, 17, 0.932));
-  background-size: 400% 400%;
-  animation: gradientMove 8s ease infinite;
 }
 
 @keyframes gradientMove {
@@ -52,6 +50,10 @@ html, body {
   padding: 20px;
   backdrop-filter: blur(10px); /* Frosted glass effect */
   opacity: 0.9;
+
+  background: linear-gradient(135deg, rgb(182, 2, 2), rgba(184, 2, 11, 0.705),rgba(255, 0, 0, 0.301));
+  background-size: 400% 400%;
+  animation: gradientMove 30s ease infinite;
 }
 
 /* Form container with modern styling */
