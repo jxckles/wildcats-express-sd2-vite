@@ -22,7 +22,7 @@ const Login = () => {
         isAuth: true,
       }
       localStorage.setItem('auth', JSON.stringify(authInfo))
-      navigate('/main-page')
+      navigate('/admin-page')
     } catch (error) {
       console.error('Google sign-in error:', error)
     }
@@ -34,7 +34,7 @@ const Login = () => {
   }
 
   if (isAuth) {
-    return <Navigate to="/main-page" />
+    return <Navigate to="/admin-page" />
   }
 
   return (
