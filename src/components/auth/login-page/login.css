@@ -20,32 +20,19 @@ html, body {
   align-items: center;
   margin-top: 0%;
   height: 100vh;
-  background-color: #800000; /* Maroon background */
-}
-
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  background-color: white; /* Maroon background */
 }
 
 /* The login container */
 .login-container {
   display: flex;
+  flex-direction: column;  /* Stack the form and mascot vertically */
   align-items: center;
   justify-content: center;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  width: 80%;
-  max-width: 1100px;
-  height: 60%;
+  width: 600px;
+  height: 600px;
   background-color: rgba(255, 255, 255, 0.2); /* Transparent effect */
   padding: 20px;
   backdrop-filter: blur(10px); /* Frosted glass effect */
@@ -58,7 +45,7 @@ html, body {
 
 /* Form container with modern styling */
 .form-container {
-  flex: 1;
+  width: 100%;
   padding: 40px;
   background-color: transparent;
   color: white;
@@ -66,14 +53,39 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: -50px;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #fff;  /* White text color */
+  }
+
+  h3
+  {
+    margin-top: -5px;
+  }
+
+  .wildcats-title
+  {
+    display: flex;
+    gap: 10px;
+
+      .wildcats
+      {
+        color: white;
+      }
+
+      .express
+      {
+        color: rgba(235, 211, 2, 0.952);
+      }
+  }
 }
 
-h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  font-weight: bold;
-  letter-spacing: 2px;
-}
+
 
 /* Input fields with modern styling */
 .input-field {
@@ -113,7 +125,6 @@ h2 {
   transform: scale(1.05); /* Slight scale effect on hover */
   color: black;
   font-style: bold;
- 
 }
 
 .login-button:active {
@@ -128,11 +139,12 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;  /* Add margin for spacing */
 }
 
 .mascot-image {
-  max-width: 90%;
-  max-height: 80%;
+  max-width: 250px;  /* Reduced width */
+  max-height: 250px;  /* Reduced height */
   object-fit: contain;
   transition: all 0.4s ease;
 }
@@ -142,20 +154,7 @@ h2 {
   filter: brightness(1.1);
 }
 
-/* Error message styling */
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-bottom: 10px;
-  padding: 5px;
-  border: 1px solid red;
-  background-color: #f8d7da;
-  border-radius: 3px;
-}
-
-
-/* Add some custom styles for Toast notification if desired */
-
+/* Toast Notifications */
 .Toastify__toast {
   font-family: 'Arial', sans-serif;
 }
@@ -175,7 +174,6 @@ h2 {
   color: white;
 }
 
-/* Optional: Customize position of the toast */
 .Toastify__toast-container {
   position: fixed;
   top: 20px;

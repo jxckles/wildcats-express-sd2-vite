@@ -37,13 +37,21 @@ const Login = () => {
     <>  
       <div className="login-page">
         <div className="login-container">
+        <div className="mascot-container">
+            <img src={catImage} alt="Mascot" className="mascot-image" />
+          </div>
           <div className="form-container">
-            <h2>Admin Login</h2>
+            <div className="wildcats-title">
+            <h2 className="wildcats">Wildcats </h2>
+            <h2 className="express">Express</h2>
+            </div>
+            <h3>Admin</h3>
             <form onSubmit={handleLogin}>
               <input
                 type="text"
                 placeholder="Username"
                 value={username}
+                required
                 onChange={(e) => setUsername(e.target.value)}
                 className="input-field"
               />
@@ -51,15 +59,14 @@ const Login = () => {
                 type="password"
                 placeholder="Password"
                 value={password}
+                required
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
               />
               <button type="submit" className="login-button">Login</button>
             </form>
           </div>
-          <div className="mascot-container">
-            <img src={catImage} alt="Mascot" className="mascot-image" />
-          </div>
+
         </div>
       </div>
       
