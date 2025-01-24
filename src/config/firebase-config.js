@@ -20,8 +20,8 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 // Firebase Auth and Firestore
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 // Create an AdminAuth class to encapsulate login logic
 class AdminAuth {
@@ -61,8 +61,8 @@ class AdminAuth {
   }
 }
 
-// Export an instance of AdminAuth
-export const adminAuth = new AdminAuth();
+// Instantiate AdminAuth
+const adminAuth = new AdminAuth();
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -78,3 +78,6 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+
+// Export
+export { auth, db, adminAuth };
