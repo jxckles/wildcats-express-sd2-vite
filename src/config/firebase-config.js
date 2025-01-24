@@ -80,4 +80,6 @@ onAuthStateChanged(auth, (user) => {
 
 
 // Export
-export { auth, db, adminAuth };
+export { 
+  auth, db, adminAuth 
+};
