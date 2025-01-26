@@ -1,3 +1,5 @@
+
+
 /* Apply some global reset */
 * {
   margin: 0;
@@ -20,7 +22,7 @@ html, body {
   align-items: center;
   margin-top: 0%;
   height: 100vh;
-  background: linear-gradient(rgba(126, 18, 22, 0.719), rgba(126, 18, 22, 0.747)), url('./src/svg/food-background.svg');
+  background: linear-gradient(rgba(126, 18, 22, 0.719), rgba(126, 18, 22, 0.747)), url('/food-background.svg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -151,7 +153,7 @@ html, body {
   background: transparent;
   border: none;
   cursor: pointer;
-  background-image: url('./src/svg/back-arrow.svg'); /* Optional: add a back icon */
+  background-image: url('/back-arrow.svg'); /* Optional: add a back icon */
   background-repeat: no-repeat;
   background-size:65%;
   transition: 0.1s ease;
