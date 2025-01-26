@@ -20,7 +20,10 @@ html, body {
   align-items: center;
   margin-top: 0%;
   height: 100vh;
-  background-color: white; /* Maroon background */
+  background: linear-gradient(rgba(126, 18, 22, 0.719), rgba(126, 18, 22, 0.747)), url('./src/svg/food-background.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* The login container */
@@ -38,9 +41,9 @@ html, body {
   backdrop-filter: blur(10px); /* Frosted glass effect */
   opacity: 0.9;
 
-  background: linear-gradient(135deg, rgb(182, 2, 2), rgba(184, 2, 11, 0.705),rgba(255, 0, 0, 0.301));
-  background-size: 400% 400%;
-  animation: gradientMove 30s ease infinite;
+  background: linear-gradient(135deg,#a51b22, #d41500,#d41500, #7e1215);
+  background-size: 100% 100%;
+  animation: gradientMove 10s ease infinite;
 }
 
 /* Form container with modern styling */
@@ -80,7 +83,7 @@ html, body {
 
       .express
       {
-        color: rgba(235, 211, 2, 0.952);
+        color: white;
       }
   }
 }
@@ -132,6 +135,40 @@ html, body {
   background-color: #e6b800;
   color: rgb(85, 85, 85);
 }
+
+
+/* Back Button */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.back-button .button {
+  width: 40px;
+  height: 60px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  background-image: url('./src/svg/back-arrow.svg'); /* Optional: add a back icon */
+  background-repeat: no-repeat;
+  background-size:65%;
+  transition: 0.1s ease;
+
+    &:hover {
+      width: 45px;
+      opacity: 80%;
+      transition: 0.1s ease;
+    }
+
+    &:active {
+      width: 43px;
+      opacity: 100%;
+      transition: 0.1s ease;
+    }
+}
+
 
 /* Mascot Image */
 .mascot-container {

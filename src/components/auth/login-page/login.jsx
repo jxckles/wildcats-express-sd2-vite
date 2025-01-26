@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
-import catImage from "/src/svg/new-cat.svg";
+import catImage from "/src/svg/thinking-cat.svg";
 import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
 import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
 import "./login.css";
@@ -33,10 +33,17 @@ const Login = () => {
     return <Navigate to="/admin-page" />;
   }
 
+  const handleBack = () => {
+    navigate('/');
+  };
+
   return (
     <>  
       <div className="login-page">
         <div className="login-container">
+          <div className="back-button">
+            <button type="button" className="button" onClick={handleBack}></button>
+          </div>
         <div className="mascot-container">
             <img src={catImage} alt="Mascot" className="mascot-image" />
           </div>
