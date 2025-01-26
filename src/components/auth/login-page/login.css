@@ -29,9 +29,9 @@ html, body {
   flex-direction: column;  /* Stack the form and mascot vertically */
   align-items: center;
   justify-content: center;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  width: 600px;
+  width: 520px;
   height: 600px;
   background-color: rgba(255, 255, 255, 0.2); /* Transparent effect */
   padding: 20px;
@@ -89,9 +89,9 @@ html, body {
 
 /* Input fields with modern styling */
 .input-field {
-  width: 100%;
+  width: 350px;
   padding: 12px;
-  margin: 10px 0;
+  margin: 10px 100px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 1rem;
@@ -108,8 +108,9 @@ html, body {
 
 /* Login button with modern hover effect */
 .login-button {
-  width: 100%;
+  width: 150px;
   padding: 12px;
+  margin: 0 200px;
   margin-top: 20px;
   border: none;
   background-color: #920b01d3; /* Gold */
