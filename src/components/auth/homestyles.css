@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   min-height: 100vh;
-  background-image: linear-gradient(to right, #91000083 0%, #a1170b 0%, #d41500 21%, #c70606 52%, #9e0924 78%, #882323 100%);
+  background-image: linear-gradient(to right, #91000083 0%, #a1170b 0%, #d41500 25%, #992626 70%, #882323 78%, #882323 100%);
 }
 
 .text-container {
