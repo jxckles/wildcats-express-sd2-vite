@@ -49,15 +49,23 @@ h3 {
   border-radius: 5px;
   transition: background-color 0.3s ease;
   transition: font-size 0.3s ease;
+
+  &:hover {
+    background-color: #e29b00; /* Slightly darker orange */
+    color: rgb(255, 226, 226); 
+    font-size: 1.6rem;
+    transition: font-size 0.3s ease;
+    transition: 0.3s ease;
+  }
+
+  &:active {
+    font-size: 1.5rem;
+    opacity: 80%;
+    transition: 0.3s ease;
+  }
 }
 
-.primary-cta:hover {
-  background-color: #e29b00; /* Slightly darker orange */
-  color: rgb(255, 226, 226); 
-  font-size: 1.6rem;
-  transition: font-size 0.3s ease;
-  transition: 0.3s ease;
-}
+
 
 /* Image container */
 .cat {
