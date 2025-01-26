@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import catImage from "/src/svg/mainlogo.svg";
+import catImage from "/src/svg/new-mainlogo.svg";
 import "./homestyles.css";
 
 const Home = () => {
