@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
-import catImage from "/src/svg/catModel1.svg";
+import catImage from "/src/svg/new-cat.svg";
 import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
 import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
 import "./login.css";
