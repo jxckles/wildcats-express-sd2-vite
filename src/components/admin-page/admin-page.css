@@ -1,0 +1,172 @@
+/* src/styles/admin-page.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #d2b3a3;
+    color: white;
+    overflow: hidden; /* Prevent scrolling on the whole page */
+  }
+  
+  .admin-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  /* Header styles */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #8b0000;
+    padding: 1rem 2rem;
+    width: 100vw; /* Full width of the device */
+  }
+  
+  .logo-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .logo {
+    position: absolute;;
+    width: 80px;
+    height: auto;
+    margin-left: 0.5rem;
+  }
+  
+  .logo-container h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-left: 7.7rem;
+  }
+  
+  /* Profile section */
+  .profile-section {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative; /* To position dropdown menu */
+  }
+  
+  .profile-photo {
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+    margin-left: 10px; /* Photo on the left */
+  }
+  
+  .profile-name {
+    color: white;
+    font-size: 1rem;
+    margin-left: 10px; /* Name on the right */
+  }
+  
+  /* Dropdown menu styles */
+  .dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #8b0000;
+    border-radius: 5px;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    z-index: 1000;
+  }
+  
+  .dropdown-item {
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #6a0000;
+  }
+  
+  .dropdown-item svg {
+    font-size: 1.2rem;
+  }
+  
+  /* Sidebar styles */
+  .sidebar {
+    background-color: whitesmoke;
+    width: 160px;
+    height: 100vh; /* Make sidebar take full viewport height */
+    padding: 1rem;
+    position: fixed; /* Fix the sidebar on the left */
+    top: 0; /* Sidebar starts at the top */
+    left: 0;
+    margin-top: 92px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden; /* Prevent scrolling inside the sidebar */
+  }
+  
+  nav {
+    display: flex;
+    margin-top: 15px;
+    gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  nav button {
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 70px;
+    height: auto;
+  }
+  
+  nav button.active {
+    background-color: #6a0000;
+  }
+
+  .dashboard-icon{
+    width: 30px;
+    height: auto;
+  }
+  .addmenu-icon{
+    width: 30px;
+    height: auto;
+  }
+  
+/* Main content styles */
+.main-content-admin {
+    margin-left: 160px; /* Space for the sidebar */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Fill the remaining height */
+    overflow: hidden; /* Prevent scrolling */
+    padding: 2rem;
+    background: linear-gradient(135deg, #a51b22, #d41500, #d41500, #7e1215);
+    border-top: 2px solid white; /* White border on top */
+    border-bottom: none; /* No border at the bottom */
+}
+
+  /* Tab Content Styles */
+  .dashboard, .add-menu, .admin-reports, .analytics, .settings {
+    background-color: #8b0000;
+    color: white;
+    height: 100%;
+  }
+  
