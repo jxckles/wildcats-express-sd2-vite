@@ -220,3 +220,128 @@ html, body {
   right: 20px;
   z-index: 9999;
 }
+
+/* Media Queries for Mobile Devices */
+
+/* iPhone SE, iPhone 8 and similar (Small devices) */
+@media screen and (max-width: 375px) {
+  .login-container {
+    width: 90%;
+    height: auto;
+    padding: 15px;
+  }
+
+  .form-container {
+    padding: 20px;
+    
+    h2 {
+      font-size: 1.8rem;
+    }
+  }
+
+  .input-field {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .login-button {
+    width: 120px;
+    margin: 20px 100px;
+    
+  }
+
+  .mascot-image {
+    max-width: 150px;
+    max-height: 150px;
+    margin-bottom: 10px;
+  }
+}
+
+/* iPhone X, 11, 12, 13 and similar (Medium devices) */
+@media screen and (min-width: 376px) and (max-width: 428px) {
+  .login-container {
+    width: 90%;
+    height: auto;
+    padding: 20px;
+  }
+
+  .form-container {
+    padding: 25px;
+    
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .input-field {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .login-button {
+    width: 130px;
+    margin: 20px 100px;
+  }
+
+  .mascot-image {
+    max-width: 180px;
+    max-height: 180px;
+    margin-bottom: 10px;
+  }
+}
+
+/* Samsung Galaxy S20, S21 and similar (Large devices) */
+@media screen and (min-width: 429px) and (max-width: 767px) {
+  .login-container {
+    width: 90%;
+    height: auto;
+    padding: 25px;
+  }
+
+  .form-container {
+    padding: 30px;
+    
+    h2 {
+      font-size: 2.2rem;
+    }
+  }
+
+  .input-field {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .login-button {
+    width: 140px;
+    margin: 20px auto;
+  }
+
+  .mascot-image {
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+
+/* Handle device orientation */
+@media screen and (max-height: 600px) {
+  .login-page {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .login-container {
+    margin: 20px 0;
+  }
+
+  .mascot-container {
+    margin-top: 10px;
+  }
+}
+
+/* Fix for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .login-page {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
