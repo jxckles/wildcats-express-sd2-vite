@@ -15,6 +15,7 @@
   .admin-page {
     display: flex;
     flex-direction: column;
+    background-color: rgb(248, 229, 229);
     height: 100vh;
   }
   
@@ -26,6 +27,10 @@
     background-color: #8b0000;
     padding: 1rem 2rem;
     width: 100vw; /* Full width of the device */
+  }
+
+  .header h1:hover {
+    color: goldenrod; 
   }
   
   .logo-container {
@@ -53,13 +58,30 @@
     align-items: center;
     cursor: pointer;
     position: relative; /* To position dropdown menu */
+
+    &:hover span{
+      color: goldenrod;
+    }
+
+    &:active span{
+      color: whitesmoke;
+    }
+  
   }
   
+
+
   .profile-photo {
     width: 60px;
     height: auto;
     border-radius: 50%;
+    border: solid goldenrod;
+    border-width: 3px;
     margin-left: 10px; /* Photo on the left */
+
+    &:active{
+      border: solid gold;
+      }
   }
   
   .profile-name {
@@ -72,11 +94,12 @@
   .dropdown-menu {
     position: absolute;
     top: 50px;
-    right: 0;
+    right: 40px;
     background-color: #8b0000;
-    border-radius: 5px;
-    width: 200px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    border-top-right-radius: 0px;
+    width:145px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
     padding: 10px 0;
     z-index: 1000;
   }
@@ -101,7 +124,7 @@
   
   /* Sidebar styles */
   .sidebar {
-    background-color: whitesmoke;
+    background-color: rgb(248, 229, 229);
     width: 160px;
     height: 100vh; /* Make sidebar take full viewport height */
     padding: 1rem;
@@ -113,6 +136,7 @@
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden; /* Prevent scrolling inside the sidebar */
+    z-index: 100;
   }
   
   nav {
@@ -124,28 +148,35 @@
     width: 100%;
   }
   
+  /* Nav button styles */
   nav button {
-    background-color: #8b0000;
+    background-color: #7e0101;
     color: white;
     border: none;
-    padding: 1rem;
+    padding: 15px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-align: center;
-    width: 70px;
+    width: 80px;
     height: auto;
   }
   
+  /* Active button styles */
   nav button.active {
-    background-color: #6a0000;
+    background-color: #a00101;
   }
 
+  /* Icon styles */
   .dashboard-icon{
-    width: 30px;
+    width: 40px;
     height: auto;
   }
   .addmenu-icon{
-    width: 30px;
+    width: 40px;
+    height: auto;
+  }
+  .orders-icon{
+    width: 40px;
     height: auto;
   }
   
@@ -158,15 +189,15 @@
     height: 100vh; /* Fill the remaining height */
     overflow: hidden; /* Prevent scrolling */
     padding: 2rem;
-    background: linear-gradient(135deg, #a51b22, #d41500, #d41500, #7e1215);
-    border-top: 2px solid white; /* White border on top */
+    background: linear-gradient(135deg,#7e1215, #a51b22, #e01701, #e01701, #7e1215);
+    border-top: 2px solid rgb(248, 229, 229); /* White border on top */
+    border-top-left-radius: 20px;
     border-bottom: none; /* No border at the bottom */
 }
 
   /* Tab Content Styles */
-  .dashboard, .add-menu, .admin-reports, .analytics, .settings {
-    background-color: #8b0000;
+  .dashboard, .add-menu,.orders, .admin-reports, .analytics, .settings {
     color: white;
-    height: 100%;
+
   }
   
