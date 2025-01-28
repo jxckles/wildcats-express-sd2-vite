@@ -18,8 +18,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
-// Firebase Auth and Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -63,7 +61,6 @@ class AdminAuth {
 
 // Instantiate AdminAuth
 const adminAuth = new AdminAuth();
-
 onAuthStateChanged(auth, (user) => {
   if (user) {
     if (adminAuth.isAdminEmail(user.email)) {
