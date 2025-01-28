@@ -5,8 +5,8 @@ import { auth } from "../../config/firebase-config";
 import { motion } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa"; // Added new icons
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu"; // Added new icons
-import catLogo from "/public/new-mainlogo.svg"; 
-import catProfile from "/public/cat_profile.svg"; 
+import catLogo from "/new-mainlogo.svg"; 
+import catProfile from "/cat_profile.svg"; 
 import "./admin-page.css";
 
 const AdminPage = () => {
