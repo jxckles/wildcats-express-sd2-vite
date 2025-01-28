@@ -35,7 +35,7 @@ const AdminPage = () => {
       {/* Header */}
       <div className="header">
         <div className="logo-container">
-          <img src="/src/svg/new-mainlogo.svg" alt="Wildcats Express Logo" className="logo" />
+          <img src="./public/new-mainlogo.svg" alt="Wildcats Express Logo" className="logo" />
           <h1>Wildcats Express</h1>
         </div>
 
