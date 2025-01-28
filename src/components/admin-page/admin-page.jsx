@@ -5,6 +5,8 @@ import { auth } from "../../config/firebase-config";
 import { motion } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa"; // Added new icons
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu"; // Added new icons
+import catLogo from "/public/new-mainlogo.svg"; 
+import catProfile from "/public/cat_profile.svg"; 
 import "./admin-page.css";
 
 const AdminPage = () => {
@@ -35,14 +37,14 @@ const AdminPage = () => {
       {/* Header */}
       <div className="header">
         <div className="logo-container">
-          <img src="./public/new-mainlogo.svg" alt="Wildcats Express Logo" className="logo" />
+          <img src={catLogo} alt="Wildcats Express Logo" className="logo" />
           <h1>Wildcats Express</h1>
         </div>
 
         {/* Profile Section with Dropdown */}
         <div className="profile-section" onClick={toggleDropdown}>
           <img
-            src="./public/cat_profile.svg" // Replace with admin's profile photo
+            src={catProfile} // Replace with admin's profile photo
             alt="Admin"
             className="profile-photo"
           />
