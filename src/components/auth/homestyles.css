@@ -2,16 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
 .main-content {
+  position: fixed;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 100vh;
+  width: 100%;
   background-image: linear-gradient(to right, #91000083 0%, #a1170b 0%, #d41500 25%, #992626 70%, #882323 78%, #882323 100%);
 }
 
 .text-container {
-  display: absolute;
-  max-width: 50%;
+  width: 50%;
   margin-left: 200px;
   padding: 30px;
   text-align: left;
@@ -34,93 +35,233 @@ h3 {
   margin-top: 10px;
 }
 
-
-
 .primary-cta {
   display: inline-block;
   margin-top: 30px;
   padding: 12px 30px;
-  background-color: #ffae00; /* Bright orange for the button */
+  background-color: #ffae00;
   color: rgb(121, 39, 39); 
   text-decoration: none;
   font-size: 1.5rem;
-  font-style: bold;
   font-weight: 600;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
-  transition: font-size 0.3s ease;
-
-  &:hover {
-    background-color: #e29b00; /* Slightly darker orange */
-    color: rgb(255, 226, 226); 
-    font-size: 1.6rem;
-    transition: font-size 0.3s ease;
-    transition: 0.3s ease;
-  }
-
-  &:active {
-    font-size: 1.5rem;
-    opacity: 80%;
-    transition: 0.3s ease;
-  }
+  transition: all 0.3s ease;
+  width: auto;
+  margin-right: 2em;
 }
 
+.primary-cta:hover {
+  background-color: #e29b00;
+  color: rgb(255, 226, 226); 
+  font-size: 1.6rem;
+}
 
+.primary-cta:active {
+  font-size: 1.5rem;
+  opacity: 80%;
+}
 
-/* Image container */
 .cat {
-  max-width: 50%;
+  width: 40%;
   margin-right: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cat img {
-  margin-top: 1em;
-  width: 60%; /* Adjusted width for balance */
-  height: auto; /* Maintain aspect ratio */
+  width: 100%;
+  height: auto;
 }
 
-/* Hide elements based on screen size */
-/* Removed the hide-mobile class */
-
-/* Tablet and Landscape Styles */
-@media (min-width: 601px) and (max-width: 1280px) {
+/* Tablet Devices */
+@media screen and (max-width: 1024px) {
   .main-content {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
+    padding: 20px;
   }
 
-  .cat img {
-    width: 65%;
+  .text-container {
+    margin-left: 50px;
+  }
+
+  .wildcats-desktop {
+    font-size: 4rem;
+  }
+
+  .cat {
+    margin-right: 50px;
+  }
+}
+
+/* Mobile Devices - Portrait */
+@media screen and (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .text-container {
+    width: 90%;
+    margin: 0 auto 0px;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .wildcats-desktop {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
   }
 
   .primary-cta {
-    width: 70%;
+    font-size: 1.2rem;
+    margin: 15px 5px;
+  }
+
+  .primary-cta:hover {
+    font-size: 1.3rem;
+  }
+
+  .cat {
+    width: 80%;
+    margin: 10px auto;
   }
 }
 
-/* Desktop Styles */
-@media (min-width: 1280px) {
+/* Mobile Devices - Landscape */
+@media screen and (max-height: 600px) and (orientation: landscape) {
   .main-content {
     flex-direction: row;
-    justify-content: space-between;
+    padding: 10px;
+  }
+
+  .text-container {
+    width: 50%;
+    margin-left: 20px;
     text-align: left;
   }
 
+  .wildcats-desktop {
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
   .primary-cta {
-    width: auto;
-    margin-right: 2em;
+    font-size: 1rem;
+    padding: 8px 20px;
+  }
+
+  .primary-cta:hover {
+    font-size: 1.1rem;
   }
 
   .cat {
     width: 40%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .cat img {
-    width: 100%;
-    height: auto;
+    margin-right: 20px;
   }
 }
+
+/* iPhone SE, iPhone 8, iPhone 7, iPhone 6 (375x667) */
+@media screen and (device-width: 375px) and (device-height: 667px),
+       screen and (width: 375px) and (height: 667px) {
+  .main-content {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .text-container {
+    width: 95%;
+    margin: 0 auto;
+    padding: 15px 0;
+  }
+
+  .wildcats-desktop {
+    font-size: 1.8rem;
+  }
+
+  .primary-cta {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+  }
+
+  .cat {
+    width: 85%;
+    margin: 10px auto;
+  }
+}
+
+/* iPhone 12, 12 Pro (390x844) */
+@media screen and (device-width: 390px) and (device-height: 844px),
+       screen and (width: 390px) and (height: 844px) {
+  .main-content {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .wildcats-desktop {
+    font-size: 2.2rem;
+  }
+}
+
+/* iPhone 12 Pro Max (428x926) */
+@media screen and (device-width: 428px) and (device-height: 926px),
+       screen and (width: 428px) and (height: 926px) {
+  .wildcats-desktop {
+    font-size: 2.4rem;
+  }
+}
+
+/* Samsung Galaxy S20 (360x800) */
+@media screen and (device-width: 360px) and (device-height: 800px),
+       screen and (width: 360px) and (height: 800px) {
+  .main-content {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .text-container {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .wildcats-desktop {
+    font-size: 2rem;
+  }
+}
+
+/* Samsung Galaxy S21 Ultra (384x854) */
+@media screen and (device-width: 384px) and (device-height: 854px),
+       screen and (width: 384px) and (height: 854px) {
+  .wildcats-desktop {
+    font-size: 2.1rem;
+  }
+}
+
+/* Samsung Galaxy Fold (280x653) - Folded */
+@media screen and (device-width: 280px) and (device-height: 653px),
+       screen and (width: 280px) and (height: 653px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .wildcats-desktop {
+    font-size: 1.6rem;
+  }
+
+  .primary-cta {
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 10px 3px;
+  }
+}
+
+/* Keep your existing media queries for tablet and landscape modes */
+
