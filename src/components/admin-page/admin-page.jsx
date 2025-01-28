@@ -3,7 +3,8 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase-config";
 import { motion } from "framer-motion";
-import { FaUserCircle, FaSignOutAlt, FaChartBar, FaClipboardList, FaCog, FaTachometerAlt, FaPlusCircle } from "react-icons/fa"; // Added new icons
+import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa"; // Added new icons
+import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu"; // Added new icons
 import "./admin-page.css";
 
 const AdminPage = () => {
@@ -80,13 +81,19 @@ const AdminPage = () => {
             onClick={() => handleTabChange("dashboard")}
             className={activeTab === "dashboard" ? "active" : ""}
           >
-            <FaTachometerAlt className="dashboard-icon"/>
+            <LuTrello className="dashboard-icon"/>
           </button>
           <button
             onClick={() => handleTabChange("addMenu")}
             className={activeTab === "addMenu" ? "active" : ""}
           >
-            <FaPlusCircle className="addmenu-icon" />
+            <LuPlus className="addmenu-icon" />
+          </button>
+          <button
+            onClick={() => handleTabChange("orders")}
+            className={activeTab === "orders" ? "active" : ""}
+          >
+            <LuHandPlatter className="orders-icon" />
           </button>
         </nav>
       </div>
@@ -111,6 +118,11 @@ const AdminPage = () => {
             <div className="add-menu">
               <h2>Add Menu</h2>
               {/* Add Menu content */}
+            </div>
+          ) : activeTab === "orders" ? (
+            <div className="orders">
+              <h2>Orders</h2>
+              {/* Orders content */}
             </div>
           ) : activeTab === "adminReports" ? (
             <div className="admin-reports">
