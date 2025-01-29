@@ -29,11 +29,33 @@
   color: #ffdb0c; 
 }
 
-h3 {
-  font-size: 1.5rem;
-  color: whitesmoke; 
-  margin-top: 10px;
+/* Typing Animation */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 260px }  /* Set fixed width based on text content */
 }
+
+@keyframes blink {
+  from, to { border-color: transparent }
+  50% { border-color: #ffdb0c }
+}
+
+.typing-text {
+  position: relative;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: whitesmoke;
+  width: 260px;  /* Set same width as animation */
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  border-right: 3px solid #ffdb0c;
+  letter-spacing: 2px;
+  animation: 
+    typing 2.5s steps(40, end),
+    blink 0.75s step-end infinite;
+}
+
 
 .primary-cta {
   display: inline-block;
