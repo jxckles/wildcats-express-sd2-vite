@@ -83,7 +83,21 @@ html, body {
     margin-bottom: 20px;
     font-weight: bold;
     letter-spacing: 2px;
-    color: #fff;  /* White text color */
+    background: linear-gradient(35deg, #fff4b7, #d3a227 50%,#fff4b7);
+    background-size: 700% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 8s linear infinite;
+  }
+
+  @keyframes gradientMove {
+    0% {
+      background-position: -100% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
   }
 
   h3
