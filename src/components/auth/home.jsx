@@ -14,7 +14,9 @@ const Home = () => {
           </div>
           <div className="hide-title">
           </div>
-          <h3 className="typing-text">Fast. Fresh. Fierce.</h3>          <div className="order-button">
+          <h3 className="typing-text">Fast. Fresh. Fierce.</h3>
+          <h3 className="typing-text-mobile">Fast. Fresh. Fierce.</h3>
+          <div className="order-button">
             <Link to="/login-page" className="primary-cta">
               Order Here
             </Link>
