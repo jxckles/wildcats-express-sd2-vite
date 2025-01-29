@@ -43,9 +43,27 @@ html, body {
   backdrop-filter: blur(10px); /* Frosted glass effect */
   opacity: 0.9;
 
-  background: linear-gradient(135deg,#a51b22, #d41500,#d41500, #7e1215);
-  background-size: 100% 100%;
+  background: linear-gradient(135deg,#861319, #aa2c1e,#b84b3f, #aa2c1e, #861319);
+  background-size: 300% 100%;
   animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 100% 0%;
+  }
+  25%{
+    background-position: 75% 25%;
+  }
+  50% {
+    background-position: 50% 50%;
+  }
+  75%{
+    background-position: 25% 75%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
 }
 
 /* Form container with modern styling */

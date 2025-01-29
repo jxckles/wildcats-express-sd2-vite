@@ -12,13 +12,7 @@ import "./admin-page.css";
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLogoClicked, setIsLogoClicked] = useState(false);
   const navigate = useNavigate();
-
-  const handleLogoClick = () => {
-    setIsLogoClicked(true);
-    setTimeout(() => setIsLogoClicked(false), 5000);
-  };
 
   const signUserOut = async () => {
     try {
@@ -48,29 +42,12 @@ const AdminPage = () => {
     >
       <div className="header">
         <div className="logo-container">
-          <motion.img 
+          <img 
             src={catLogo} 
             alt="Wildcats Express Logo" 
-            className="logo"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleLogoClick}
+            className="logo"       
           />
-          <motion.h1
-            animate={{
-              background: isLogoClicked 
-                ? "linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)"
-                : "none",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: isLogoClicked ? "transparent" : "white",
-              backgroundSize: isLogoClicked ? "100% 100%" : "200% 100%",
-              backgroundPosition: isLogoClicked ? "right center" : "left center"
-            }}
-            transition={{ duration: 4 }}
-          >
-            Wildcats Express
-          </motion.h1>
+          <h1>Wildcats Express</h1>
         </div>
 
         <div className="profile-section" onClick={toggleDropdown}>
