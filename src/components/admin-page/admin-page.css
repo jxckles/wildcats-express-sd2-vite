@@ -29,9 +29,6 @@
     width: 100vw; /* Full width of the device */
   }
 
-  .header h1:hover {
-    color: goldenrod; 
-  }
   
   .logo-container {
     display: flex;
@@ -47,13 +44,29 @@
   }
   
   .logo-container h1 {
-    color: white;
+    color: transparent;
     font-size: 2.5rem;
     margin-left: 7.7rem;
-    background-clip: text;
+    background: linear-gradient(35deg, #fff4b7, #daa521 50%,#fff4b7);
+    background-size: 700% 100%;
     -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 7s linear infinite;
   }
   
+  @keyframes gradientMove {
+    0% {
+      background-position: -100% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  
+  
+
   /* Profile section */
   .profile-section {
     display: flex;
