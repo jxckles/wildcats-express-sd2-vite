@@ -50,6 +50,8 @@
     color: white;
     font-size: 2.5rem;
     margin-left: 7.7rem;
+    background-clip: text;
+    -webkit-background-clip: text;
   }
   
   /* Profile section */
@@ -203,3 +205,9 @@
 
   }
   
+  .dashboard h2, .add-menu h2, .orders h2, .admin-reports h2, .analytics h2, .settings h2 {
+    font-size: 2rem;
+  }
+  .dashboard p{
+    font-size: 1.3em;
+  }
