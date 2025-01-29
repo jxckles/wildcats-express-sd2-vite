@@ -1,10 +1,11 @@
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { adminAuth } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
 import catImage from "/src/svg/thinking-cat.svg";
-import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
-import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { TfiAngleDoubleLeft } from "react-icons/tfi";
 import "./login.css";
 
@@ -13,20 +14,36 @@ const Login = () => {
   const { isAuth } = useGetUserInfo();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const containerAnimation = {
+    exit: {
+      scale: 0.95,
+      opacity: 0,
+      rotate: [0, -5],
+      y: -50,
+      transition: {
+        duration: 0.4,
+        ease: "easeInOut"
+      }
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-     // Dismiss any existing toasts to prevent repeats
-     toast.dismiss();
+    toast.dismiss();
      
     try {
-      await adminAuth.login(username, password); 
-      toast.success("Login successful!");  // Show success toast
-      navigate("/admin-page"); 
+      await adminAuth.login(username, password);
+      setIsSuccess(true);
+      toast.success("Login successful!");
+      // Add delay for animation
+      setTimeout(() => {
+        navigate("/admin-page");
+      }, 400);
     } catch (error) {
       console.error("Login failed: ", error.message);
-      toast.error(`${error.message}`);  // Show error toast
+      toast.error(`${error.message}`);
     }
   };
 
@@ -39,48 +56,84 @@ const Login = () => {
   };
 
   return (
-    <>  
-      <div className="login-page">
+    <AnimatePresence>
+      <motion.div
+        className="login-page"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={isSuccess ? "exit" : {}}
+        variants={containerAnimation}
+      >
         <div className="login-container">
-          <div className="back-button">
-            <button type="button" className="button" onClick={handleBack}><TfiAngleDoubleLeft className="button-icon"/>
+          <motion.div 
+            className="back-button"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <button type="button" className="button" onClick={handleBack}>
+              <TfiAngleDoubleLeft className="button-icon"/>
             </button>
-          </div>
-        <div className="mascot-container">
+          </motion.div>
+
+          <motion.div 
+            className="mascot-container"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
             <img src={catImage} alt="Mascot" className="mascot-image" />
-          </div>
-          <div className="form-container">
+          </motion.div>
+
+          <motion.div 
+            className="form-container"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
             <div className="wildcats-title">
-            <h2 className="wildcats">Wildcats </h2>
-            <h2 className="express">Express</h2>
+              <h2 className="wildcats">Wildcats </h2>
+              <h2 className="express">Express</h2>
             </div>
             <h3>Admin</h3>
             <form onSubmit={handleLogin}>
-              <input
+              <motion.input
                 type="text"
                 placeholder="Username"
                 value={username}
                 required
                 onChange={(e) => setUsername(e.target.value)}
                 className="input-field"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
               />
-              <input
+              <motion.input
                 type="password"
                 placeholder="Password"
                 value={password}
                 required
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
               />
-              <button type="submit" className="login-button">Login</button>
+              <motion.button 
+                type="submit" 
+                className="login-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
+                Login
+              </motion.button>
             </form>
-          </div>
-
+          </motion.div>
         </div>
-      </div>
-      
+      </motion.div>
 
-      {/* Toast container for displaying toasts */}
       <ToastContainer 
         position="top-left"
         autoClose={5500}
@@ -93,7 +146,7 @@ const Login = () => {
         pauseOnHover
         style={{ zIndex: 9999 }}  
       />
-    </>
+    </AnimatePresence>
   );
 };
 
