@@ -51,14 +51,19 @@ h3 {
 }
 
 .primary-cta:hover {
-  background-color: #e29b00;
-  color: rgb(255, 226, 226); 
+  background-color: #fcc03e;
+  color: rgb(121, 31, 31); 
   font-size: 1.6rem;
+  box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.3),
+  -10px -10px 10px rgb(247, 214, 214, .5); /*floating effect*/
+  transition: 0.5s ease;
 }
 
 .primary-cta:active {
   font-size: 1.5rem;
   opacity: 80%;
+  box-shadow: none;
+  transition: 0.5s ease;
 }
 
 .cat {
