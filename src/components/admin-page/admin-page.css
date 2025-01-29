@@ -15,7 +15,7 @@
   .admin-page {
     display: flex;
     flex-direction: column;
-    background-color: rgb(248, 229, 229);
+    background-color: #8b0000;
     height: 100vh;
   }
   
@@ -124,8 +124,8 @@
   
   /* Sidebar styles */
   .sidebar {
-    background-color: rgb(248, 229, 229);
-    width: 160px;
+    background-color: rgb(252, 185, 185);
+    width: 180px;
     height: 100vh; /* Make sidebar take full viewport height */
     padding: 1rem;
     position: fixed; /* Fix the sidebar on the left */
@@ -136,7 +136,7 @@
     flex-direction: column;
     align-items: flex-start;
     overflow: hidden; /* Prevent scrolling inside the sidebar */
-    z-index: 100;
+    border-top-left-radius: 25px;
   }
   
   nav {
@@ -159,6 +159,7 @@
     text-align: center;
     width: 80px;
     height: auto;
+    margin-right: 20px;
   }
   
   /* Active button styles */
@@ -190,9 +191,10 @@
     overflow: hidden; /* Prevent scrolling */
     padding: 2rem;
     background: linear-gradient(135deg,#7e1215, #a51b22, #e01701, #e01701, #7e1215);
-    border-top: 2px solid rgb(248, 229, 229); /* White border on top */
+    border-top: 2px solid rgb(252, 185, 185); /* White border on top */
     border-top-left-radius: 20px;
     border-bottom: none; /* No border at the bottom */
+    z-index: 100;
 }
 
   /* Tab Content Styles */
