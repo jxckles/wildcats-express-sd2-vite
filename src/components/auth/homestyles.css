@@ -40,6 +40,10 @@
   50% { border-color: #ffdb0c }
 }
 
+.typing-text-mobile{
+  display: none;
+  margin-top: 10px;
+}
 .typing-text {
   position: relative;
   font-size: 1.5em;
@@ -49,6 +53,7 @@
   overflow: hidden;
   white-space: nowrap;
   margin: 0;
+  margin-top: 10px;
   border-right: 3px solid #ffdb0c;
   letter-spacing: 2px;
   animation: 
@@ -107,8 +112,12 @@
     padding: 20px;
   }
 
-  .text-container {
-    margin-left: 50px;
+
+  .typing-text-mobile {
+    display: none;
+  }
+  .typing-text{
+    display: block;
   }
 
   .wildcats-desktop {
@@ -141,10 +150,13 @@
     font-size: 2rem;
   }
 
-  h3 {
-    font-size: 1.2rem;
+  .typing-text-mobile {
+    display: block;
   }
 
+  .typing-text{
+    display: none;
+  }
   .primary-cta {
     font-size: 1.2rem;
     margin: 15px 5px;
@@ -177,8 +189,12 @@
     font-size: 2.5rem;
   }
 
-  h3 {
-    font-size: 1rem;
+
+  .typing-text-mobile {
+    display: block;
+  }
+  .typing-text{
+    display: none;
   }
 
   .primary-cta {
@@ -208,6 +224,14 @@
     width: 95%;
     margin: 0 auto;
     padding: 15px 0;
+  }
+
+  
+  .typing-text-mobile {
+    display: block;
+  }
+  .typing-text{
+    display: none;
   }
 
   .wildcats-desktop {
