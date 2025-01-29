@@ -5,6 +5,7 @@ import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
 import catImage from "/src/svg/thinking-cat.svg";
 import { toast, ToastContainer } from "react-toastify";  // Importing toast and ToastContainer
 import "react-toastify/dist/ReactToastify.css";  // Importing the toast styles
+import { TfiAngleDoubleLeft } from "react-icons/tfi";
 import "./login.css";
 
 const Login = () => {
@@ -42,7 +43,8 @@ const Login = () => {
       <div className="login-page">
         <div className="login-container">
           <div className="back-button">
-            <button type="button" className="button" onClick={handleBack}></button>
+            <button type="button" className="button" onClick={handleBack}><TfiAngleDoubleLeft className="button-icon"/>
+            </button>
           </div>
         <div className="mascot-container">
             <img src={catImage} alt="Mascot" className="mascot-image" />
