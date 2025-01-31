@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebas
 import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -75,8 +77,24 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// To check if user is logged out and trying to access pages other than login/signup:
+const redirectToLoginIfLoggedOut = (navigate) => {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        toast.warn("Unauthorized access! Please log in.");
+        setTimeout(() => {
+          navigate("/login-page");
+        }, 1000);
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the subscription on unmount
+  }, [navigate]);
+};
 
 // Export
 export { 
-  auth, db, adminAuth 
+  auth, db, adminAuth,
+  redirectToLoginIfLoggedOut 
 };

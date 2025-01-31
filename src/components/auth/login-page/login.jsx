@@ -16,6 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
+
   const containerAnimation = {
     exit: {
       scale: 0.95,
@@ -47,6 +48,7 @@ const Login = () => {
     }
   };
 
+  // Gotta double check this, kinda not secure methinks
   if (isAuth) {
     return <Navigate to="/admin-page" />;
   }
