@@ -1,10 +1,10 @@
 // Import authentication functions from Firebase
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,7 +19,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+//const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -79,22 +79,59 @@ onAuthStateChanged(auth, (user) => {
 
 // To check if user is logged out and trying to access pages other than login/signup:
 const redirectToLoginIfLoggedOut = (navigate) => {
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         toast.warn("Unauthorized access! Please log in.");
         setTimeout(() => {
-          navigate("/login-page");
+          navigate("/");
         }, 1000);
+      }  else {
+        setLoading(false); // Allow access sa login page
       }
     });
 
     return () => unsubscribe();
   }, [navigate]);
+
+  return loading;
+};
+
+// For Logout/Signing out locally (token) and from Firebase
+const handleLogout = async (navigate) => {
+  try {
+    await signOut(auth);
+    localStorage.removeItem("token");
+    navigate("/");
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};
+
+// Ensures Login page is accessible only when logged out
+const redirectToLandingIfLoggedIn = (navigate) => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Trying to access login/signup page while logged in.");
+        navigate("/admin-page");
+      }  else {
+        setLoading(false); // Allow access sa login page
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  return loading;
 };
 
 // Export
 export { 
   auth, db, adminAuth,
-  redirectToLoginIfLoggedOut 
+  redirectToLoginIfLoggedOut,
+  handleLogout,
+  redirectToLandingIfLoggedIn
 };
