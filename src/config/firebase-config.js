@@ -89,7 +89,7 @@ const redirectToLoginIfLoggedOut = (navigate) => {
       }
     });
 
-    return () => unsubscribe(); // Cleanup the subscription on unmount
+    return () => unsubscribe();
   }, [navigate]);
 };
 
