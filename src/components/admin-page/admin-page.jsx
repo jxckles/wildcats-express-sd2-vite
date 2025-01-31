@@ -9,7 +9,7 @@ import { CiImageOff } from "react-icons/ci";
 import catLogo from "/new-mainlogo.svg"; 
 import catProfile from "/cat_profile.svg"; 
 import { ToastContainer } from "react-toastify";
-//import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
 
 const AdminPage = () => {
