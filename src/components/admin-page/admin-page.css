@@ -1,226 +1,423 @@
-/* src/styles/admin-page.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #d2b3a3;
-    color: white;
-    overflow: hidden; /* Prevent scrolling on the whole page */
-  }
-  
-  .admin-page {
-    display: flex;
-    flex-direction: column;
-    background-color: #8b0000;
-    height: 100vh;
-  }
-  
-  /* Header styles */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #8b0000;
-    padding: 1rem 2rem;
-    width: 100vw; /* Full width of the device */
-  }
-
-  
-  .logo-container {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-  }
-  
-  .logo {
-    position: absolute;;
-    width: 80px;
-    height: auto;
-    margin-left: 0.5rem;
-  }
-  
-  .logo-container h1 {
-    color: transparent;
-    font-size: 2.5rem;
-    margin-left: 7.7rem;
-    background: linear-gradient(35deg, #fff4b7, #daa521 50%,#fff4b7);
-    background-size: 700% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientMove 7s linear infinite;
-  }
-  
-  @keyframes gradientMove {
-    0% {
-      background-position: -100% 50%;
+  /* src/styles/admin-page.css */
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    100% {
-      background-position: 100% 50%;
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #d2b3a3;
+      color: white;
+      overflow: hidden; /* Prevent scrolling on the whole page */
     }
-  }
-  
-  
-  
-
-  /* Profile section */
-  .profile-section {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative; /* To position dropdown menu */
-
-    &:hover span{
-      color: goldenrod;
+    
+    .admin-page {
+      display: flex;
+      flex-direction: column;
+      background-color: #8b0000;
+      height: 100vh;
+    }
+    
+    /* Header styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #8b0000;
+      padding: 1rem 2rem;
+      width: 100vw; /* Full width of the device */
     }
 
-    &:active span{
-      color: whitesmoke;
+    
+    .logo-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
     }
-  
-  }
-  
-
-
-  .profile-photo {
-    width: 60px;
-    height: auto;
-    border-radius: 50%;
-    border: solid goldenrod;
-    border-width: 3px;
-    margin-left: 10px; /* Photo on the left */
-
-    &:active{
-      border: solid gold;
+    
+    .logo {
+      position: absolute;;
+      width: 80px;
+      height: auto;
+      margin-left: 0.5rem;
+    }
+    
+    .logo-container h1 {
+      color: transparent;
+      font-size: 2.5rem;
+      margin-left: 7.7rem;
+      background: linear-gradient(35deg, #fff4b7, #daa521 50%,#fff4b7);
+      background-size: 700% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientMove 7s linear infinite;
+    }
+    
+    @keyframes gradientMove {
+      0% {
+        background-position: -100% 50%;
       }
-  }
-  
-  .profile-name {
-    color: white;
-    font-size: 1rem;
-    margin-left: 10px; /* Name on the right */
-  }
-  
-  /* Dropdown menu styles */
-  .dropdown-menu {
-    position: absolute;
-    top: 50px;
-    right: 40px;
-    background-color: #8b0000;
-    border-radius: 30px;
-    border-top-right-radius: 0px;
-    width:145px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    padding: 10px 0;
-    z-index: 1000;
-  }
-  
-  .dropdown-item {
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background-color 0.3s;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #6a0000;
-  }
-  
-  .dropdown-item svg {
-    font-size: 1.2rem;
-  }
-  
-  /* Sidebar styles */
-  .sidebar {
-    background-color: rgb(252, 185, 185);
-    width: 180px;
-    height: 100vh; /* Make sidebar take full viewport height */
-    padding: 1rem;
-    position: fixed; /* Fix the sidebar on the left */
-    top: 0; /* Sidebar starts at the top */
-    left: 0;
-    margin-top: 92px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow: hidden; /* Prevent scrolling inside the sidebar */
-    border-top-left-radius: 25px;
-  }
-  
-  nav {
-    display: flex;
-    margin-top: 15px;
-    gap: 1rem;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  /* Nav button styles */
-  nav button {
-    background-color: #7e0101;
-    color: white;
-    border: none;
-    padding: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-align: center;
-    width: 80px;
-    height: auto;
-    margin-right: 20px;
-  }
-  
-  /* Active button styles */
-  nav button.active {
-    background-color: #a00101;
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+    
+    
+    
+
+    /* Profile section */
+    .profile-section {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative; /* To position dropdown menu */
+
+      &:hover span{
+        color: goldenrod;
+      }
+
+      &:active span{
+        color: whitesmoke;
+      }
+    
+    }
+    
+
+
+    .profile-photo {
+      width: 60px;
+      height: auto;
+      border-radius: 50%;
+      border: solid goldenrod;
+      border-width: 3px;
+      margin-left: 10px; /* Photo on the left */
+
+      &:active{
+        border: solid gold;
+        }
+    }
+    
+    .profile-name {
+      color: white;
+      font-size: 1rem;
+      margin-left: 10px; /* Name on the right */
+    }
+    
+    /* Dropdown menu styles */
+    .dropdown-menu {
+      position: absolute;
+      top: 50px;
+      right: 40px;
+      background-color: #8b0000;
+      border-radius: 30px;
+      border-top-right-radius: 0px;
+      width:145px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      padding: 10px 0;
+      z-index: 1000;
+    }
+    
+    .dropdown-item {
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.3s;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #6a0000;
+    }
+    
+    .dropdown-item svg {
+      font-size: 1.2rem;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+      background-color: rgb(252, 185, 185);
+      width: 180px;
+      height: 100vh; /* Make sidebar take full viewport height */
+      padding: 1rem;
+      position: fixed; /* Fix the sidebar on the left */
+      top: 0; /* Sidebar starts at the top */
+      left: 0;
+      margin-top: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow: hidden; /* Prevent scrolling inside the sidebar */
+      border-top-left-radius: 25px;
+    }
+    
+    nav {
+      display: flex;
+      margin-top: 15px;
+      gap: 1rem;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    
+    /* Nav button styles */
+    nav button {
+      background-color: #7e0101;
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      width: 80px;
+      height: auto;
+      margin-right: 20px;
+    }
+    
+    /* Active button styles */
+    nav button.active {
+      background-color: #a00101;
+    }
+
+    /* Icon styles */
+    .dashboard-icon{
+      width: 40px;
+      height: auto;
+    }
+    .addmenu-icon{
+      width: 40px;
+      height: auto;
+    }
+    .orders-icon{
+      width: 40px;
+      height: auto;
+    }
+    
+  /* Main content styles */
+  .main-content-admin {
+      margin-left: 160px; /* Space for the sidebar */
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Fill the remaining height */
+      overflow: hidden; /* Prevent scrolling */
+      padding: 2rem;
+      background: linear-gradient(135deg,#7e1215, #a51b22, #e01701, #e01701, #7e1215);
+      border-top: 2px solid rgb(252, 185, 185); /* White border on top */
+      border-top-left-radius: 20px;
+      border-bottom: none; /* No border at the bottom */
+      z-index: 100;
   }
 
-  /* Icon styles */
-  .dashboard-icon{
-    width: 40px;
-    height: auto;
-  }
-  .addmenu-icon{
-    width: 40px;
-    height: auto;
-  }
-  .orders-icon{
-    width: 40px;
-    height: auto;
-  }
-  
-/* Main content styles */
-.main-content-admin {
-    margin-left: 160px; /* Space for the sidebar */
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Fill the remaining height */
-    overflow: hidden; /* Prevent scrolling */
-    padding: 2rem;
-    background: linear-gradient(135deg,#7e1215, #a51b22, #e01701, #e01701, #7e1215);
-    border-top: 2px solid rgb(252, 185, 185); /* White border on top */
-    border-top-left-radius: 20px;
-    border-bottom: none; /* No border at the bottom */
-    z-index: 100;
-}
+    /* Tab Content Styles */
+    .dashboard, .add-menu,.orders, .admin-reports, .analytics, .settings {
+      color: white;
 
-  /* Tab Content Styles */
-  .dashboard, .add-menu,.orders, .admin-reports, .analytics, .settings {
-    color: white;
+    }
+    
+    .dashboard h2, .add-menu h2, .orders h2, .admin-reports h2, .analytics h2, .settings h2 {
+      font-size: 2rem;
+    }
+    .dashboard p{
+      font-size: 1.3em;
+    }
 
+
+    /* Add Menu Contents */
+    .add-menu-button{
+      background-color: goldenrod;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+      max-width: 160px;
+      display: inline-block;
+      font-size: 1rem;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:hover{
+        background-color: #fcc03e;
+        color: rgb(121, 31, 31); 
+        box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.4),
+        -10px -10px 10px rgba(255, 222, 75, 0.5); /*floating effect*/
+        transition: 0.5s ease;
+      }
+
+      &:active{
+        background-color: #fcc03e;
+        color: rgb(121, 31, 31); 
+        box-shadow: -12px -12px 12px rgba(255, 222, 75, 0.5) inset,
+        10px 10px 10px rgba(0, 0, 0, 0.4) inset; /*floating effect*/
+        transition: 1s ease-in-out;
+      }
+    }
+
+
+    /* Modal CSS */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal {
+      background-color: goldenrod;
+      padding: 20px;
+      border-radius: 5px;
+      width: 300px;
+      text-align: center;
+    }
+    .modal form {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .modal input {
+      margin-bottom: 10px;
+      padding: 5px;
+    }
+    
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      margin-top: 10px;
+    }
+
+    .modal ::placeholder{
+      color: maroon;
+      font-size: 1rem;
+      font-weight:bold;
+    }
+
+  .file-input-container {
+    margin-top: 10px;
   }
-  
-  .dashboard h2, .add-menu h2, .orders h2, .admin-reports h2, .analytics h2, .settings h2 {
-    font-size: 2rem;
+
+
+  .input-image  {
+    border: #252525 solid;
+    border-width: 2px;
+    border-radius: 5px;
   }
-  .dashboard p{
-    font-size: 1.3em;
+
+  .file-name {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #555;
   }
+    
+    .modal-actions button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+
+
+    /* Menu Items Card */
+    .menu-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    
+    .menu-item {
+      background: linear-gradient(45deg, rgb(223, 172, 4), rgb(223, 172, 4), gold, rgb(223, 172, 4));
+
+      border-radius: 15px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .menu-image-container {
+      width: 100%;
+      height: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .menu-image {
+      width: 100%; /* Ensure the image takes up the full width of the container */
+      height: auto; /* Maintain aspect ratio */
+      object-fit: contain; /* Ensure the image fits within its container without distortion */
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .image-preview img{
+      width: 100%; /* Ensure the image takes up the full width of the container */
+      height: auto; /* Maintain aspect ratio */
+      object-fit: contain; /* Ensure the image fits within its container without distortion */
+    }
+    
+    
+    .menu-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ddd;
+      color: #666;
+      border-radius: 10px;
+      border: #252525 solid;
+      border-width: 2px;
+    }
+
+    .no-image-icon{
+      width: 100%;
+      height: 75px;
+    }
+    
+    .menu-details {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .menu-name {
+      font-weight: bold;
+      color: #fff;
+      margin: 5px 0;
+    }
+    
+    .menu-price {
+      color: #fff;
+      margin: 5px 0;
+    }
+    
+    .menu-actions {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    
+    .action-link {
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 0.9em;
+      text-decoration: underline;
+    }
+    
