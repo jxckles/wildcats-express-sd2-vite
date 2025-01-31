@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../config/firebase-config";
+import { auth, redirectToLoginIfLoggedOut } from "../../config/firebase-config";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu";
 import catLogo from "/new-mainlogo.svg"; 
 import catProfile from "/cat_profile.svg"; 
+import { ToastContainer } from "react-toastify";
+//import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+
+  redirectToLoginIfLoggedOut(navigate);
 
   const signUserOut = async () => {
     try {
@@ -186,6 +190,19 @@ const AdminPage = () => {
               </motion.div>
             )}
           </motion.div>
+
+          <ToastContainer 
+            position="top-center"
+            autoClose={5500}
+            hideProgressBar
+            newestOnTop
+            closeButton={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            style={{ zIndex: 9999 }}  
+          />
         </AnimatePresence>
       </div>
     </motion.div>
