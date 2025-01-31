@@ -8,13 +8,14 @@ import { useEffect, useState } from "react";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBc8RjtuaZOMWn4AA9ovmw1OOLDbwlSwWM",
-  authDomain: "wildcats-express-pos.firebaseapp.com",
-  projectId: "wildcats-express-pos",
-  storageBucket: "wildcats-express-pos.firebasestorage.app",
-  messagingSenderId: "908404798026",
-  appId: "1:908404798026:web:c14da08358320310f5ecb3",
-  measurementId: "G-30FN1V543L"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
