@@ -87,7 +87,7 @@ const redirectToLoginIfLoggedOut = (navigate) => {
         toast.warn("Unauthorized access! Please log in.");
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 100);
       }  else {
         setLoading(false); // Allow access sa login page
       }
