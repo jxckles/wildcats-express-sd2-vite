@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { redirectToLoginIfLoggedOut, handleLogout } from "../../config/firebase-config";
+import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
+import { collection, onSnapshot, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu";
 import { CiImageOff } from "react-icons/ci";
 import catLogo from "/new-mainlogo.svg"; 
 import catProfile from "/cat_profile.svg"; 
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
 
@@ -18,31 +19,52 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMenuItem, setNewMenuItem] = useState({
-    name: "",
-    image: "",
+    name: '',
     price: 0,
     quantity: 0,
+    image: null,
+    _id: null,
+    imageURL: '',
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const menuRef = collection(db, "menu");
+  
+    // Use onSnapshot to listen to real-time updates
+    const unsubscribe = onSnapshot(menuRef, (querySnapshot) => {
+      const menuList = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        _id: doc.id,
+      }));
+      setMenuItems(menuList);
+    });
+  
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+   
 
   if (loading) {
     return <div>Loading...</div>; // Prevent UI from showing unless logged in
   }
 
+  // Open Modal
   const openModal = () => {
     setNewMenuItem({
       name: "",
-      image: "",
-      price: 0,
-      quantity: 0,
+      price: "",
+      quantity: "",
+      image: null,
+      _id: null,
+      imageURL: "",
     });
     setIsModalOpen(true);
   };
   
   const closeModal = () => {
     setIsModalOpen(false);
-    // Optionally, reset the form fields when closing the modal
     setNewMenuItem({
       name: "",
       image: "",
@@ -59,7 +81,6 @@ const AdminPage = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewMenuItem((prevState) => ({
@@ -68,16 +89,96 @@ const AdminPage = () => {
     }));
   };
   
-  const handleSubmit = (e) => {
+  // Dont touch this function (yet)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addMenuItem(newMenuItem);
-    closeModal(); // Close modal after submitting
-  };
+  
+    try {
+      let imageURL = null;
+      let publicID = null;
+      
+      console.log("Checking if image is selected:", newMenuItem.image);
+  
+      if (newMenuItem.image) {
+        console.log("Preparing to upload image to Cloudinary...");
+  
+        const formData = new FormData();
+        formData.append("file", newMenuItem.image);
+        formData.append("upload_preset", "wildcats_express_menu");
+        formData.append("cloud_name", "dxbkzby8x");
+  
+        console.log("Uploading image to Cloudinary...");
+        const cloudinaryRes = await fetch(
+          "https://api.cloudinary.com/v1_1/dxbkzby8x/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        
+        if (!cloudinaryRes.ok) {
+          throw new Error("Cloudinary upload failed");
+        }
 
+        const cloudinaryData = await cloudinaryRes.json();
+        console.log("Cloudinary Response:", cloudinaryData);
+    
+        imageURL = cloudinaryData.secure_url;
+        publicID = cloudinaryData.public_id;
+        
+        console.log("Image URL:", imageURL);
+        console.log("Image Public ID:", publicID);
+      } else {
+        console.log("No image selected.");
+      }
+  
+      const menuRef = collection(db, 'menu');
+      console.log("Preparing data for Firestore:", {
+        name: newMenuItem.name,
+        price: newMenuItem.price,
+        quantity: newMenuItem.quantity,
+        imageURL: imageURL || "",
+        publicID: publicID || "",
+      });
+  
+      const menuItemData = {
+        name: newMenuItem.name,
+        price: parseFloat(newMenuItem.price),
+        quantity: Number(newMenuItem.quantity),
+        imageURL: imageURL || "",
+        publicID: publicID || "",
+      };
+  
+      if (newMenuItem._id) {
+        console.log("Updating existing menu item:", newMenuItem._id);
+        const menuDocRef = doc(db, 'menu', newMenuItem._id);
+        await updateDoc(menuDocRef, menuItemData);
+        console.log("Menu item updated successfully.");
+        toast.success("Menu item updated successfully.", {
+          autoClose: 5000,
+        });
+      } else {
+        console.log("Adding new menu item.");
+        await addDoc(menuRef, menuItemData);
+        console.log("New menu item added successfully.");
+        toast.success("New menu item added successfully.", {
+          autoClose: 5000,
+        });
+      }
+      console.log("Closing modal...");
+      closeModal();
+    } catch (error) {
+      console.error("Error uploading menu item: ", error);
+      toast.error("Failed to add menu item", {
+        autoClose: 5000,
+      });
+    }
+  }; // Dont touch this handleSubmit function (yet)
+
+  // ???
   const addMenuItem = (newItem) => {
     setMenuItems((prevItems) => {
       const updatedItems = [...prevItems, newItem];
-      // Sort the items alphabetically by name
       updatedItems.sort((a, b) => a.name.localeCompare(b.name));
       return updatedItems;
     });
@@ -86,15 +187,19 @@ const AdminPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB max file size
+        toast.error("Image file is too large. Max size is 5MB.");
+        return;
+      }
       setNewMenuItem((prevState) => ({
         ...prevState,
-        image: file, // Store the image file
+        image: file,
       }));
     }
   };
   
+  // TO DO
   const handleDelete = (index) => {
-    // Remove the item at the given index
     setMenuItems((prevItems) => {
       const updatedItems = prevItems.filter((_, i) => i !== index);
       return updatedItems;
@@ -102,132 +207,129 @@ const AdminPage = () => {
   };
   
 
+  // Add menu component
+  const renderAddmenu = () => (
+    <div className="add-menu-container">
+      <button onClick={openModal} className="add-menu-button">
+        Add New Menu
+      </button>
 
-// Add menu component
-const renderAddmenu = () => (
-  <div className="add-menu-container">
-    <button onClick={openModal} className="add-menu-button">
-      Add New Menu
-    </button>
-
-    {/* Modal for adding/editing item */}
-    {isModalOpen && (
-      <div className="modal-overlay">
-        <div className="modal">
-          <h2>{newMenuItem._id ? "Edit Item" : "Add New Item"}</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="name"
-              value={newMenuItem.name}
-              onChange={handleInputChange}
-              placeholder="Item Name"
-              required
-            />
-            <input
-              type="number"
-              name="price"
-              value={newMenuItem.price}
-              onChange={handleInputChange}
-              placeholder="Price"
-              min="0"
-              step="0.01"
-              required
-            />
-            <input
-              type="number"
-              name="quantity"
-              value={newMenuItem.quantity}
-              onChange={handleInputChange}
-              placeholder="Quantity"
-              min="0"
-              step="1"
-              required
-            />
-            <div className="file-input-container">
-            <label htmlFor="image">Choose Image:</label>
-            <input
-              className="input-image"
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageChange}  // Handle image change
-              accept="image/*"
-            />
-          </div>
-
-          {/* Show image preview */}
-          {newMenuItem.image && (
-            <div className="image-preview">
-              <img
-                src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
-                alt="Preview"
-                className="image-preview-img"
+      {/* Modal for adding/editing item */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>{newMenuItem._id ? "Edit Item" : "Add New Item"}</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="name"
+                value={newMenuItem.name}
+                onChange={handleInputChange}
+                placeholder="Item Name"
+                required
               />
-              <p>{newMenuItem.image.name}</p> {/* Display the image file name */}
+              <input
+                type="number"
+                name="price"
+                value={newMenuItem.price}
+                onChange={handleInputChange}
+                placeholder="Price"
+                min="0"
+                step="0.01"
+                required
+              />
+              <input
+                type="number"
+                name="quantity"
+                value={newMenuItem.quantity}
+                onChange={handleInputChange}
+                placeholder="Quantity"
+                min="0"
+                step="1"
+                required
+              />
+              <div className="file-input-container">
+              <label htmlFor="image">Choose Image:</label>
+              <input
+                className="input-image"
+                type="file"
+                id="image"
+                name="image"
+                onChange={handleImageChange}  // Handle image change
+                accept="image/*"
+              />
             </div>
-          )}
 
+            {/* Show image preview */}
             {newMenuItem.image && (
-              <p className="file-name">Selected file: {newMenuItem.image.name}</p>
+              <div className="image-preview">
+                <img
+                  src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
+                  alt="Preview"
+                  className="image-preview-img"
+                />
+                <p>{newMenuItem.image.name}</p> {/* Display the image file name */}
+              </div>
             )}
-            <div className="modal-actions">
-              <button type="submit">Save</button>
-              <button type="button" onClick={closeModal}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    )}
-  </div>
-);
 
-//Render menu items
-const renderMenuItems = () => (
-  <>
-    <div className="menu-items">
-    {menuItems.map((item, index) => (
-      <div key={index} className="menu-item">
-        <div className="menu-image-container">
-        {item.image ? (
-          <img
-            src={URL.createObjectURL(item.image)}  // Preview the uploaded image
-            alt={item.name}
-            className="menu-image"
-          />
-        ) : (
-          <div className="menu-image-placeholder"><CiImageOff className="no-image-icon"/></div>
-        )}
-        </div>
-        <div className="menu-details">
-          <div className="menu-name">{item.name}</div>
-          <div className="menu-price">
-            Php {Number(item.price).toFixed(2)}
+              {newMenuItem.image && (
+                <p className="file-name">Selected file: {newMenuItem.image.name}</p>
+              )}
+              <div className="modal-actions">
+                <button type="submit">Save</button>
+                <button type="button" onClick={closeModal}>
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-          <div className="menu-quantity">Quantity: {item.quantity}</div>
         </div>
-        <div className="menu-actions">
-          <button
-            className="action-link"
-            >
-            edit
-          </button>
-          <button
-            className="action-link"
-            onClick={() => handleDelete(index)}
-            >
-            delete
-          </button>
+      )}
+    </div>
+  );
+
+  //Render menu items
+  const renderMenuItems = () => (
+    <>
+      <div className="menu-items">
+      {menuItems.map((item) => (
+        <div key={item._id} className="menu-item">
+          <div className="menu-image-container">
+          {item.imageURL ? (
+            <img
+              src={item.imageURL}  // Preview the uploaded image
+              alt={item.name}
+              className="menu-image"
+            />
+          ) : (
+            <div className="menu-image-placeholder"><CiImageOff className="no-image-icon"/></div>
+          )}
+          </div>
+          <div className="menu-details">
+            <div className="menu-name">{item.name}</div>
+            <div className="menu-price">
+              Php {Number(item.price).toFixed(2)}
+            </div>
+            <div className="menu-quantity">Quantity: {item.quantity}</div>
+          </div>
+          <div className="menu-actions">
+            <button
+              className="action-link"
+              >
+              edit
+            </button>
+            <button
+              className="action-link"
+              onClick={() => handleDelete(item.id)}
+              >
+              delete
+            </button>
+          </div>
         </div>
-      </div>
-    ))}
-   </div>
-  </>
-);
-
-
+      ))}
+    </div>
+    </>
+  );
 
   // Render admin Page
   return (
