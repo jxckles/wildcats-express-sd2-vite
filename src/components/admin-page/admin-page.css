@@ -246,13 +246,13 @@
       margin: 4px 2px;
       cursor: pointer;
       border-radius: 4px;
+      transition: 0.3s ease, box-shadow 0.3s ease;
 
       &:hover{
         background-color: linear-gradient(45deg, rgb(223, 172, 4), rgb(223, 172, 4), gold);
         color: whitesmoke; 
         box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.4),
         -10px -10px 10px rgba(255, 222, 75, 0.5); /*floating effect*/
-        transition: 0.5s ease;
       }
 
       &:active{
@@ -260,7 +260,6 @@
         color: whitesmoke; 
         box-shadow: -12px -12px 12px rgba(255, 222, 75, 0.5) inset,
         10px 10px 10px rgba(0, 0, 0, 0.4) inset; /*floating effect*/
-        transition: 1s ease-in-out;
       }
     }
 
