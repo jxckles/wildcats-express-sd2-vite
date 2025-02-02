@@ -27,8 +27,13 @@ const db = getFirestore(app);
 // Create an AdminAuth class to encapsulate login logic
 class AdminAuth {
   // Private variables to hold admin credentials
-  #adminEmail = "wildcats_express.admin@cit.edu"; // Admin email
-  #adminPassword = "wildcats.admin"; // Admin password
+  #adminEmail;
+  #adminPassword;
+
+  constructor() {
+    this.#adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+    this.#adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+  }
 
   // Function to check if credentials are correct
   async login(username, password) {
