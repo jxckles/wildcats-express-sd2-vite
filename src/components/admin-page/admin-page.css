@@ -198,19 +198,20 @@
     
   /* Main content styles */
   .main-content-admin {
-      margin-left: 160px; /* Space for the sidebar */
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh; /* Fill the remaining height */
-      overflow: hidden; /* Prevent scrolling */
-      padding: 2rem;
-      background: linear-gradient(135deg,#7e1215, #a51b22, #e01701, #e01701, #7e1215);
-      border-top: 2px solid rgb(252, 185, 185); /* White border on top */
-      border-top-left-radius: 20px;
-      border-bottom: none; /* No border at the bottom */
-      z-index: 100;
+    margin-left: 160px; /* Space for the fixed sidebar */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - HEADER_HEIGHT); /* Replace HEADER_HEIGHT with your actual header height */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding: 2rem;
+    background: linear-gradient(135deg, #7e1215, #a51b22, #e01701, #e01701, #7e1215);
+    border-top: 2px solid rgb(252, 185, 185);
+    border-top-left-radius: 20px;
+    border-bottom: none;
+    z-index: 100;
   }
+  
 
     /* Tab Content Styles */
     .dashboard, .add-menu,.orders, .admin-reports, .analytics, .settings {
