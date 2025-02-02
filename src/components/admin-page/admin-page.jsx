@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
 import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu";
 import { CiImageOff } from "react-icons/ci";
@@ -305,7 +305,6 @@ const AdminPage = () => {
                   alt="Preview"
                   className="image-preview-img"
                 />
-                <p>{newMenuItem.image.name}</p> {/* Display the image file name */}
               </div>
             )}
 
@@ -389,6 +388,156 @@ const AdminPage = () => {
     </div>
     </>
   );
+
+  //render dashboard
+  //static layout only
+  //Backend please change logic for integration
+  const renderDashboard = () => {
+    return (
+      <div className="dashboard-container-admin">
+        
+        <div className="orders-wrapper">
+          {/* Order Line Section */}
+          <div className="order-line-container">
+            <h3>Order Line</h3>
+            <br/>
+            <div className="order-cards">
+
+              
+              {/* Static Order 1 */}
+              <div className="order-card">
+                <div className="order-card-header">
+                <div className="school-id">19-4566-878</div>
+                <div className="order-id">Order #1</div>
+                </div>
+                <div className="order-details">
+                  <p>James Bond</p>
+                  <div className="order-status">
+                    <span><p>In Progress</p></span>
+                    <div className="progress-bar">
+                      <div className="progress" style={{ width: "90%" }}></div>
+                    </div>
+                    <span class="progress-percentage">90%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Static Order 2 */}
+              <div className="order-card">
+                <div className="order-card-header">
+                  <div className="school-id">20-3454-654</div>
+                  <div className="order-id">Order #2</div>                  
+                </div>
+                <div className="order-details">
+                  <p>Steve Harvey</p>
+                  <div className="order-status">
+                    <span><p>In Progress</p></span>
+                    <div className="progress-bar">
+                      <div className="progress" style={{ width: "50%" }}></div>
+                    </div>
+                    <span class="progress-percentage">50%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Static Order 3 */}
+              <div className="order-card">
+                <div class="order-card-header">
+                  <div class="school-id">19-4566-878</div>
+                  <div class="order-id">Order #3</div>
+                </div>
+                <div className="order-details">
+                  <p>Clark Johnson</p>
+                  <div className="order-status">
+                    <span><p>In Progress</p></span>
+                    <div className="progress-bar">
+                      <div className="progress" style={{ width: "68%" }}></div>
+                    </div>
+                    <span class="progress-percentage">68%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Static Order 4 */}
+              <div className="order-card">
+                <div className="order-card-header">
+                  <div className="school-id">22-4535-765</div>
+                  <div className="order-id">Order #4</div>                    
+                </div>
+                <div className="order-details">
+                  <p>Steve Rogers</p>
+                  <div className="order-status">
+                    <span><p>In Progress</p></span>
+                    <div className="progress-bar">
+                      <div className="progress" style={{ width: "30%" }}></div>
+                    </div>
+                    <span class="progress-percentage">30%</span>
+                  </div>
+                </div>
+              </div>
+    
+            </div>
+          </div>
+    
+          {/* Current Order Section */}
+          <div className="current-order-container">
+            <h3>Current Order</h3>
+            <br/>
+            <div class="current-order-card">
+              <h4>Recipient: Dave Miller</h4>
+              <p>School ID:</p>
+              <p>#123456789</p>
+              <br/>
+              <div class="current-order-card-bottom">
+                <span>Order#: 4</span>
+                <span>Items: 8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        {/* Popular Picks Section */}
+        <div className="popular-picks-container">
+          <h2>Popular Picks</h2>
+          <br/>
+          <div className="popular-picks">
+          <div class="pick">
+            <div class="pick-name-price">
+              <span class="pick-name">Fried Chicken</span>
+              <span class="pick-price">50.00</span>
+            </div>
+          </div>
+
+          <div class="pick">
+            <div class="pick-name-price">
+              <span class="pick-name">Bulalo</span>
+              <span class="pick-price">100.00</span>
+            </div>
+          </div>
+
+          <div class="pick">
+            <div class="pick-name-price">
+              <span class="pick-name">Longganisa</span>
+              <span class="pick-price">80.00</span>
+            </div>
+          </div>
+
+          <div class="pick">
+            <div class="pick-name-price">
+              <span class="pick-name">Rice</span>
+              <span class="pick-price">10.00</span>
+            </div>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+
+
+
 
   // Render admin Page
   return (
@@ -490,10 +639,11 @@ const AdminPage = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2>Welcome, Admin!</h2>
-                  <br />
-                  <p>Every customer counts. Let's serve them better today!</p>
-                </motion.div>
+                  <h3>Welcome, Admin!</h3>
+                  <br/>
+                  <h2>Every customer counts. Let's serve them better today!</h2>
+                  <div>{renderDashboard()}</div>
+                  </motion.div>
               )}
               {activeTab === "addMenu" && (
                 <motion.div 
