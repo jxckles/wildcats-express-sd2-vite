@@ -210,6 +210,10 @@
     border-top-left-radius: 20px;
     border-bottom: none;
     z-index: 100;
+
+    h2{
+      font-weight: lighter;
+    }
   }
   
 
@@ -277,7 +281,7 @@
     .modal-menu {
       background: linear-gradient(145deg, gold, rgb(223, 172, 4), rgb(223, 172, 4));
       padding: 20px;
-      border-radius: 5px;
+      border-radius: 20px;
       width: 300px;
       text-align: center;
     }
@@ -306,13 +310,15 @@
 
   .file-input-container {
     margin-top: 10px;
+    color: maroon;
   }
 
-
   .input-image  {
-    border: #252525 solid;
+    &:hover{
+      border: #252525 solid;
     border-width: 2px;
     border-radius: 5px;
+    }
   }
 
   .file-name {
@@ -485,3 +491,231 @@
       text-decoration: underline;
     }
     
+
+    /* Dashboard Layout Styling */
+    .dashboard-container-admin {
+      padding: 20px;
+      color: white;
+    }
+
+    .orders-wrapper {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .order-line-container {
+      flex: 1; /* This will allow it to expand and contract as needed */
+    }
+    .order-line-container h3{
+      font-size: 2rem;
+      font-weight: lighter;
+    }
+
+    .order-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .order-card {
+      background: linear-gradient(145deg, gold,gold 30%, rgb(223, 172, 4));
+      padding: 10px;
+      border-radius: 10px;
+      width: 280px;
+      height: auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover{
+        transform: scale(1.03); /* Slight scale effect on hover */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), inset 0 2px 6px rgba(255, 255, 255, 0.4);  
+      }
+    }
+
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px; /* Add some spacing below the header if needed */
+    }
+
+
+    .order-id {
+      font-weight: bold;
+      font-size: 1rem;
+      background-color: #a00101;
+      padding: 3px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .school-id {
+      color: #a51b22;
+      font-weight: 600;
+    }
+
+
+    .order-details p {
+      margin: 5px 0;
+      color: #8b0000;
+    }
+
+    .order-status {
+      display: flex;
+      flex-direction: column; /* Stack items vertically */
+      align-items: left;    /* Center align everything horizontally */
+    }
+
+    .order-status p {
+      margin-top: 5px;
+      margin-bottom: 1px; /* Add space between the text and the progress bar */
+      font-size: 1rem;    /* Adjust font size if needed */
+      color: #8b0000;     /* Keep consistent text color */
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: rgb(241, 131, 131);
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .progress {
+      height: 10px;
+      background-color:#a51b22;
+      border-radius: 5px;
+    }
+
+    .progress-percentage {
+      margin-top: 10px;
+      margin-left: 5px;
+      font-size: 1rem;
+      color: #8b0000;
+      text-align: center;
+      display: block;
+    }
+    
+
+    .current-order-container {
+      flex: 0 0 350px; /* Fixed width to ensure it stays the same size */
+      background: linear-gradient(145deg, gold,gold 30%, rgb(223, 172, 4));
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      border: 2px solid #ffeb3b;
+      text-align: left; /* Align text and elements centrally */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .current-order-container:hover {
+      transform: scale(1.03); /* Slight scale effect on hover */
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+    }
+
+    .current-order-container h3{
+      color: #7e1215;
+      font-weight: 400;
+      font-size: 2rem;
+    }
+
+    .current-order-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Push content to top and bottom */
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      font-weight: bold;
+      color: #7e1215;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+      height: 100%; /* Ensure full height to help alignment */
+    }
+
+    .current-order-card p {
+      margin-bottom: 15px; /* Add spacing between paragraphs */
+    }
+
+    .current-order-card h4 {
+      font-size: 1.5rem;
+      margin-bottom: 15px; /* More spacing below headings */
+    }
+    
+    .current-order-card-bottom {
+      display: flex;
+      justify-content: space-between; /* Line up Order and Items horizontally */
+      margin-top: 15px; /* Push this section to the bottom */
+      font-size: 1.3rem;
+    }
+
+    .popular-picks-container {
+      margin-top: 40px;
+      height: auto;
+      padding: 25px;
+      background-color: #e0b233;
+      border-radius: 40px;
+    }
+
+    .popular-picks {
+      display: flex;
+      gap: 100px;
+      flex-wrap: wrap;
+      margin-left: 25px;
+    }
+
+    .pick {
+      background: linear-gradient(145deg, gold, gold 30%, rgb(223, 172, 4));
+      padding: 15px;
+      border-radius: 10px;
+      width: 300px;
+      height: 200px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+      /* Flexbox layout */
+      display: flex;
+      flex-direction: column;  /* Stack items vertically */
+      justify-content: space-between;  /* Push items to top and bottom */
+    }
+    
+
+    .pick {
+      background: linear-gradient(145deg, gold, gold 30%, rgb(223, 172, 4));
+      padding: 15px;
+      border-radius: 10px;
+      width: 300px;
+      height: 250px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+      /* Flexbox layout to stack items vertically */
+      display: flex;
+      flex-direction: column; /* Stack vertically */
+      justify-content: flex-end; /* Align items to the bottom */
+    }
+    
+    .pick-name-price {
+      display: flex; /* Inline layout for name and price */
+      justify-content: space-between; /* Space name and price apart */
+      width: 100%; /* Ensure it takes full width */
+      margin-top: auto; /* Push it to the bottom of the card */
+      font-size: 1.3rem;
+    }
+
+    .pick-name,
+    .pick-price {
+      /* Add shadow effect to the text */
+      text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5); /* Horizontal, vertical, blur radius, color */
+    }
+    
+    .pick-name {
+      /* Styling for the pick name */
+    }
+    
+    .pick-price {
+      /* Styling for the pick price */
+    }
+            
