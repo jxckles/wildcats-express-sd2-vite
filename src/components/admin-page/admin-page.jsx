@@ -67,6 +67,32 @@ const AdminPage = () => {
     setIsModalOpen(true);
   };
   
+  // Modal for editing menu
+  const openEditModal = (item) => {
+    setNewMenuItem({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: null, // No need to set an image since it won't be edited
+      _id: item._id,
+      imageURL: item.imageURL, // Keep the current image URL for display
+    });
+    setIsModalOpen(true);
+  };
+
+  const openAddModal = () => {
+    setNewMenuItem({
+      name: "",
+      price: "",
+      quantity: "",
+      image: null,
+      _id: null,
+      imageURL: "",
+    });
+    setIsModalOpen(true);
+  };
+  
+
   const closeModal = () => {
     setIsModalOpen(false);
     setNewMenuItem({
@@ -93,6 +119,7 @@ const AdminPage = () => {
     }));
   };
   
+  /*
   // Dont touch this function (yet)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,9 +204,71 @@ const AdminPage = () => {
         autoClose: 5000,
       });
     }
-  }; // Dont touch this handleSubmit function (yet)
+  }; // Dont touch this handleSubmit function (yet)*/
 
-  // ???
+
+  //handle submit with edit menu without changing the current image
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      let imageURL = null;
+      let publicID = null;
+  
+      // For editing, the imageURL and publicID are already set. No need to upload a new image.
+      if (newMenuItem.image) {
+        // Same logic you have now for uploading an image (if provided)
+        const formData = new FormData();
+        formData.append("file", newMenuItem.image);
+        formData.append("upload_preset", "wildcats_express_menu");
+        formData.append("cloud_name", "dxbkzby8x");
+  
+        const cloudinaryRes = await fetch(
+          "https://api.cloudinary.com/v1_1/dxbkzby8x/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+  
+        if (!cloudinaryRes.ok) {
+          throw new Error("Cloudinary upload failed");
+        }
+  
+        const cloudinaryData = await cloudinaryRes.json();
+        imageURL = cloudinaryData.secure_url;
+        publicID = cloudinaryData.public_id;
+      }
+  
+      const menuRef = collection(db, 'menu');
+      const menuItemData = {
+        name: newMenuItem.name,
+        price: parseFloat(newMenuItem.price),
+        quantity: Number(newMenuItem.quantity),
+        imageURL: imageURL || newMenuItem.imageURL, // Keep current image URL for edits
+        publicID: publicID || "",
+      };
+  
+      if (newMenuItem._id) {
+        // If _id exists, update the existing menu item
+        const menuDocRef = doc(db, 'menu', newMenuItem._id);
+        await updateDoc(menuDocRef, menuItemData);
+        toast.success("Menu item updated successfully.");
+      } else {
+        // If no _id, add a new menu item
+        await addDoc(menuRef, menuItemData);
+        toast.success("New menu item added successfully.");
+      }
+  
+      closeModal(); // Close modal after saving
+    } catch (error) {
+      console.error("Error uploading menu item: ", error);
+      toast.error("Failed to add menu item.");
+    }
+  };
+  
+
+  // can be delete, was use for mock adding and deletion of items
   const addMenuItem = (newItem) => {
     setMenuItems((prevItems) => {
       const updatedItems = [...prevItems, newItem];
@@ -208,6 +297,7 @@ const AdminPage = () => {
     }
   };
   
+    // can be delete, was use for mock adding and deletion of items
   const handleDelete = async (id) => {
     if (!id) {
       console.error("Invalid menu item ID.");
@@ -288,32 +378,20 @@ const AdminPage = () => {
                 step="1"
                 required
               />
-              <div className="file-input-container">
-              <label htmlFor="image">Choose Image:</label>
-              <input
-                className="input-image"
-                type="file"
-                id="image"
-                name="image"
-                onChange={handleImageChange}  // Handle image change
-                accept="image/*"
-              />
-            </div>
-
-            {/* Show image preview */}
-            {newMenuItem.image && (
-              <div className="image-preview">
-                <img
-                  src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
-                  alt="Preview"
-                  className="image-preview-img"
-                />
-              </div>
-            )}
-
-              {newMenuItem.image && (
-                <p className="file-name">Selected file: {newMenuItem.image.name}</p>
+              {!newMenuItem._id && ( // Only show the image input for new items
+                <div className="file-input-container">
+                  <label htmlFor="image">Choose Image:</label>
+                  <input
+                    className="input-image"
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </div>
               )}
+
               <div className="modal-actions-menu">
                 <button type="submit">Save</button>
                 <button type="button" onClick={closeModal}>
@@ -321,6 +399,7 @@ const AdminPage = () => {
                 </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
@@ -353,15 +432,16 @@ const AdminPage = () => {
           </div>
           <div className="menu-actions">
             <button
-              className="action-link"
+              className="action-link-edit"
+              onClick={() => openEditModal(item)} // Open the modal with the selected item's data
               >
-              edit
+              Edit
             </button>
             <button
-              className="action-link"
+              className="action-link-delete"
               onClick={() => confirmDelete(item._id)}
               >
-              delete
+              Delete
             </button>
             {isDeleteModalOpen && (
               <div className="modal-overlay-delete">
