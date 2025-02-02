@@ -36,13 +36,16 @@ const AdminPage = () => {
     const menuRef = collection(db, "menu");
 
     const unsubscribe = onSnapshot(menuRef, (querySnapshot) => {
-      const menuList = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        _id: doc.id,
-      }));
-      setMenuItems(menuList);
+        const menuList = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          _id: doc.id,
+        }));
+        setMenuItems(menuList);
+    }, (error) => {
+        console.error("Error fetching menu items:", error);
+        toast.error("Failed to fetch menu items.");
     });
-  
+    
     return () => unsubscribe();
   }, []);
    
