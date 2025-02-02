@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
-import { collection, onSnapshot, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
 import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu";
@@ -31,8 +31,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     const menuRef = collection(db, "menu");
-  
-    // Use onSnapshot to listen to real-time updates
+
     const unsubscribe = onSnapshot(menuRef, (querySnapshot) => {
       const menuList = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
@@ -41,7 +40,6 @@ const AdminPage = () => {
       setMenuItems(menuList);
     });
   
-    // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []);
    
@@ -198,14 +196,31 @@ const AdminPage = () => {
     }
   };
   
-  // TO DO
-  const handleDelete = (index) => {
-    setMenuItems((prevItems) => {
-      const updatedItems = prevItems.filter((_, i) => i !== index);
-      return updatedItems;
-    });
+  const handleDelete = async (id) => {
+    if (!id) {
+      console.error("Invalid menu item ID.");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+    if (!confirmDelete) return;
+
+    try {
+      const menuDocRef = doc(db, "menu", id);
+      await deleteDoc(menuDocRef);
+
+      setMenuItems((prevItems) => prevItems.filter((item) => item._id !== id));
+
+      toast.success("Menu item deleted successfully.", {
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.error("Error deleting menu item:", error);
+      toast.error("Failed to delete menu item. Please try again.", {
+        autoClose: 5000,
+      });
+    }
   };
-  
 
   // Add menu component
   const renderAddmenu = () => (
@@ -320,7 +335,7 @@ const AdminPage = () => {
             </button>
             <button
               className="action-link"
-              onClick={() => handleDelete(item.id)}
+              onClick={() => handleDelete(item._id)}
               >
               delete
             </button>
