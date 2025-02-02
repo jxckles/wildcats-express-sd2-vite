@@ -229,7 +229,7 @@
 
     /* Add Menu Contents */
     .add-menu-button{
-      background-color: goldenrod;
+      background: linear-gradient(145deg, gold, rgb(223, 172, 4), rgb(223, 172, 4));
       border: none;
       color: white;
       padding: 10px 20px;
@@ -244,16 +244,16 @@
       border-radius: 4px;
 
       &:hover{
-        background-color: #fcc03e;
-        color: rgb(121, 31, 31); 
+        background-color: linear-gradient(45deg, rgb(223, 172, 4), rgb(223, 172, 4), gold);
+        color: whitesmoke; 
         box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.4),
         -10px -10px 10px rgba(255, 222, 75, 0.5); /*floating effect*/
         transition: 0.5s ease;
       }
 
       &:active{
-        background-color: #fcc03e;
-        color: rgb(121, 31, 31); 
+        background-color: linear-gradient(45deg, rgb(223, 172, 4), rgb(223, 172, 4), gold);
+        color: whitesmoke; 
         box-shadow: -12px -12px 12px rgba(255, 222, 75, 0.5) inset,
         10px 10px 10px rgba(0, 0, 0, 0.4) inset; /*floating effect*/
         transition: 1s ease-in-out;
@@ -262,7 +262,7 @@
 
 
     /* Modal CSS */
-    .modal-overlay {
+    .modal-overlay-menu {
       position: fixed;
       top: 0;
       left: 0;
@@ -274,31 +274,31 @@
       align-items: center;
     }
     
-    .modal {
-      background-color: goldenrod;
+    .modal-menu {
+      background: linear-gradient(145deg, gold, rgb(223, 172, 4), rgb(223, 172, 4));
       padding: 20px;
       border-radius: 5px;
       width: 300px;
       text-align: center;
     }
-    .modal form {
+    .modal-menu form {
       display: flex;
       flex-direction: column;
     }
     
-    .modal input {
+    .modal-menu input {
       margin-bottom: 10px;
       padding: 5px;
     }
     
-    .modal-actions {
+    .modal-actions-menu {
       display: flex;
       justify-content: space-between;
       gap: 30px;
       margin-top: 10px;
     }
 
-    .modal ::placeholder{
+    .modal-menu ::placeholder{
       color: maroon;
       font-size: 1rem;
       font-weight:bold;
@@ -321,11 +321,74 @@
     color: #555;
   }
     
-    .modal-actions button {
+    .modal-actions-menu button {
       padding: 5px 10px;
       cursor: pointer;
+      color: whitesmoke;
+      background-color:#7e1215;
+      border-radius: 5px;
+      border: none;
+      text-decoration: none;
+
+      &:hover{
+        background-color:#a71f24;
+        transition: ease 0.5s;
+      }
+      &:active{
+        background-color:#7e1215;
+        opacity: 80%;
+      }
+      
     }
 
+    /*Delete Modal*/
+    .modal-overlay-delete {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(24, 24, 24, 0.041);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-delete {
+      background: linear-gradient(45deg, gold, rgb(223, 172, 4), gold);
+      padding: 20px;
+      border-radius: 5px;
+      width: 300px;
+      text-align: center;
+    }
+    
+    .modal-actions-delete {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      margin-top: 10px;
+    }
+    
+    .modal-actions-delete button {
+      padding: 5px 10px;
+      cursor: pointer;
+      color: whitesmoke;
+      background-color:#7e1215;
+      border-radius: 5px;
+      border: none;
+      text-decoration: none;
+
+      &:hover{
+        background-color:#a71f24;
+        transition: ease 0.5s;
+      }
+      &:active{
+        background-color:#7e1215;
+        opacity: 80%;
+      }
+    }
+
+    
 
 
     /* Menu Items Card */
@@ -336,7 +399,7 @@
     }
     
     .menu-item {
-      background: linear-gradient(45deg, rgb(223, 172, 4), rgb(223, 172, 4), gold, rgb(223, 172, 4));
+      background: linear-gradient(145deg, gold,gold 30%, rgb(223, 172, 4));
 
       border-radius: 15px;
       padding: 10px;
