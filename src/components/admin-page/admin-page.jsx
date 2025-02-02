@@ -28,6 +28,9 @@ const AdminPage = () => {
     imageURL: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
 
   useEffect(() => {
     const menuRef = collection(db, "menu");
@@ -181,6 +184,12 @@ const AdminPage = () => {
       return updatedItems;
     });
   };
+
+  const confirmDelete = (id) => {
+    setItemToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+  
   
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -201,16 +210,25 @@ const AdminPage = () => {
       console.error("Invalid menu item ID.");
       return;
     }
-
-    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-    if (!confirmDelete) return;
-
+  
+    // Set the item to delete and open the confirmation modal
+    setItemToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+  
+  const confirmDeleteItem = async () => {
+    if (!itemToDelete) {
+      console.error("No item selected for deletion.");
+      return;
+    }
+  
     try {
-      const menuDocRef = doc(db, "menu", id);
+      const menuDocRef = doc(db, "menu", itemToDelete);
       await deleteDoc(menuDocRef);
-
-      setMenuItems((prevItems) => prevItems.filter((item) => item._id !== id));
-
+  
+      setMenuItems((prevItems) => prevItems.filter((item) => item._id !== itemToDelete));
+      setItemToDelete(null);
+  
       toast.success("Menu item deleted successfully.", {
         autoClose: 5000,
       });
@@ -219,8 +237,12 @@ const AdminPage = () => {
       toast.error("Failed to delete menu item. Please try again.", {
         autoClose: 5000,
       });
+    } finally {
+      setIsDeleteModalOpen(false); // Close the modal after attempting deletion
     }
   };
+  
+
 
   // Add menu component
   const renderAddmenu = () => (
@@ -231,8 +253,8 @@ const AdminPage = () => {
 
       {/* Modal for adding/editing item */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="modal-overlay-menu">
+          <div className="modal-menu">
             <h2>{newMenuItem._id ? "Edit Item" : "Add New Item"}</h2>
             <form onSubmit={handleSubmit}>
               <input
@@ -290,7 +312,7 @@ const AdminPage = () => {
               {newMenuItem.image && (
                 <p className="file-name">Selected file: {newMenuItem.image.name}</p>
               )}
-              <div className="modal-actions">
+              <div className="modal-actions-menu">
                 <button type="submit">Save</button>
                 <button type="button" onClick={closeModal}>
                   Cancel
@@ -335,10 +357,32 @@ const AdminPage = () => {
             </button>
             <button
               className="action-link"
-              onClick={() => handleDelete(item._id)}
+              onClick={() => confirmDelete(item._id)}
               >
               delete
             </button>
+            {isDeleteModalOpen && (
+              <div className="modal-overlay-delete">
+                <div className="modal-delete">
+                  <p>Are you sure you want to delete this menu item?</p>
+                  <div className="modal-actions-delete">
+                    <button
+                      onClick={() => confirmDeleteItem()} // Call the confirm delete function
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsDeleteModalOpen(false);
+                        setItemToDelete(null); // Reset the selected item
+                      }}
+                    >
+                      No
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}
