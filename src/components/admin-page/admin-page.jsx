@@ -79,7 +79,8 @@ const AdminPage = () => {
     });
     setIsModalOpen(true);
   };
-
+  
+  //dont touch this function
   const openAddModal = () => {
     setNewMenuItem({
       name: "",
@@ -92,6 +93,7 @@ const AdminPage = () => {
     setIsModalOpen(true);
   };
   
+  
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -103,6 +105,7 @@ const AdminPage = () => {
     });
   };
 
+  
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -118,6 +121,7 @@ const AdminPage = () => {
       [name]: value,
     }));
   };
+  
   
   /*
   // Dont touch this function (yet)
@@ -217,7 +221,7 @@ const AdminPage = () => {
   
       // For editing, the imageURL and publicID are already set. No need to upload a new image.
       if (newMenuItem.image) {
-        // Same logic you have now for uploading an image (if provided)
+        // Logic for uploading an image (if provided)
         const formData = new FormData();
         formData.append("file", newMenuItem.image);
         formData.append("upload_preset", "wildcats_express_menu");
@@ -296,6 +300,8 @@ const AdminPage = () => {
       }));
     }
   };
+  
+  
   
     // can be delete, was use for mock adding and deletion of items
   const handleDelete = async (id) => {
@@ -378,7 +384,7 @@ const AdminPage = () => {
                 step="1"
                 required
               />
-              {!newMenuItem._id && ( // Only show the image input for new items
+              {!newMenuItem._id && (
                 <div className="file-input-container">
                   <label htmlFor="image">Choose Image:</label>
                   <input
@@ -389,6 +395,16 @@ const AdminPage = () => {
                     onChange={handleImageChange}
                     accept="image/*"
                   />
+                </div>
+              )}
+              {newMenuItem.image && (
+                <div className="image-preview">
+                  <img
+                    src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
+                    alt="Preview"
+                    className="image-preview-img"
+                  />
+                  <p>{newMenuItem.image.name}</p>
                 </div>
               )}
 
