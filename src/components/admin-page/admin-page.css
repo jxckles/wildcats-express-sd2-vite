@@ -746,11 +746,115 @@
       text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5); /* Horizontal, vertical, blur radius, color */
     }
     
-    .pick-name {
-      /* Styling for the pick name */
-    }
-    
-    .pick-price {
-      /* Styling for the pick price */
-    }
-            
+
+  /* AdminReports.css */
+  .admin-reports-container {
+    padding: 20px;
+    color: #000;
+  }
+
+  .admin-reports-container h1 {
+    color: gold;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+
+  .search-container {
+    margin-bottom: 20px;
+  }
+
+  .search-container input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #8b0000;
+    border-radius: 25px;
+    font-size: 1rem;
+    background-color: #e0b233;
+  }
+
+  .filters-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .filters-label {
+    font-weight: bold;
+    color: white;
+  }
+
+  .filters-section select {
+    padding: 8px 15px;
+    border: 1px solid gold;
+    border-radius: 5px;
+    background-color: gold;
+    min-width: 100px;
+  }
+
+  .download-button {
+    margin-left: auto;
+    padding: 10px 20px;
+    background-color: #8b0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .download-button:hover {
+    background-color: #660000;
+  }
+
+  .table-container {
+    background-color: #e0b233;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    background-color: gold;
+    padding: 15px;
+    text-align: left;
+    color: #8b0000;
+    font-weight: bold;
+    border-bottom: 2px solid gold;
+  }
+
+  td {
+    padding: 15px;
+    border-bottom: 1px solid #e0b233;
+  }
+
+  tr:hover {
+    background-color: #e0b233;
+  }
+
+  .status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  .status-badge.completed {
+    background-color: #e6ffe6;
+    color: #591111;
+  }
+
+  .status-badge.pending {
+    background-color: #fff3e6;
+    color: #cc7700;
+  }
+
+  .status-badge.cancelled {
+    background-color: #ffe6e6;
+    color: #cc0000;
+  }         
