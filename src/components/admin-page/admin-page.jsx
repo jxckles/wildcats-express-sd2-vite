@@ -658,7 +658,115 @@ const AdminPage = () => {
   };
   
 
+  // Render Orders
+  const renderOrder = () =>{
+    return(
+    <>
+    <div className="orders-modal">
+      <h3>Order Content Here!</h3>
+    </div>
+    </>
+    );
+  };
 
+
+  // Render Admin Reports
+  const renderAdminReports = () => {
+
+    return(
+    <>                  
+  <div className="search-container">
+    <input
+      type="text"
+      placeholder="Search by Order Number, Date, Status, or Product"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
+
+  <div className="filters-section">
+    <span className="filters-label">Filters</span>
+    <select 
+      value={selectedDay}
+      onChange={(e) => setSelectedDay(e.target.value)}
+    >
+      <option value="">Day</option>
+      {/* Add day options 1-31 */}
+      {Array.from({ length: 31 }, (_, i) => (
+        <option key={i + 1} value={i + 1}>{i + 1}</option>
+      ))}
+    </select>
+
+    <select 
+      value={selectedMonth}
+      onChange={(e) => setSelectedMonth(e.target.value)}
+    >
+      <option value="">Month</option>
+      <option value="1">January</option>
+      <option value="2">February</option>
+      <option value="3">March</option>
+      <option value="4">April</option>
+      <option value="5">May</option>
+      <option value="6">June</option>
+      <option value="7">July</option>
+      <option value="8">August</option>
+      <option value="9">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+
+    <select 
+      value={selectedYear}
+      onChange={(e) => setSelectedYear(e.target.value)}
+    >
+      <option value="">Year</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      {/* Add other years */}
+    </select>
+
+    <button 
+      className="download-button"
+      onClick={handleDownloadReport}
+    >
+      Download Report
+    </button>
+  </div>
+
+  <div className="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Order Number</th>
+          <th>Date Ordered</th>
+          <th>Status</th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map((order) => (
+          <tr key={order.orderNumber}>
+            <td>{order.orderNumber}</td>
+            <td>{order.dateOrdered}</td>
+            <td>
+              <span className={`status-badge ${order.status.toLowerCase()}`}>
+                {order.status}
+              </span>
+            </td>
+            <td>{order.product}</td>
+            <td>{order.quantity}</td>
+            <td>{order.totalPrice}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+    </>
+    );
+  };
 
 
   // Render admin Page
@@ -791,6 +899,8 @@ const AdminPage = () => {
                   transition={{ delay: 0.2 }}
                 >
                   <h2>Orders</h2>
+                  <br/>
+                  <div>{renderOrder()}</div>
                 </motion.div>
               )}
               {activeTab === "adminReports" && (
@@ -801,96 +911,8 @@ const AdminPage = () => {
                   transition={{ delay: 0.2 }}
                 >
                   <h2>Admin Reports</h2>
-
-                  <div className="search-container">
-                    <input
-                      type="text"
-                      placeholder="Search by Order Number, Date, Status, or Product"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="filters-section">
-                    <span className="filters-label">Filters</span>
-                    <select 
-                      value={selectedDay}
-                      onChange={(e) => setSelectedDay(e.target.value)}
-                    >
-                      <option value="">Day</option>
-                      {/* Add day options 1-31 */}
-                      {Array.from({ length: 31 }, (_, i) => (
-                        <option key={i + 1} value={i + 1}>{i + 1}</option>
-                      ))}
-                    </select>
-
-                    <select 
-                      value={selectedMonth}
-                      onChange={(e) => setSelectedMonth(e.target.value)}
-                    >
-                      <option value="">Month</option>
-                      <option value="1">January</option>
-                      <option value="2">February</option>
-                      <option value="3">March</option>
-                      <option value="4">April</option>
-                      <option value="5">May</option>
-                      <option value="6">June</option>
-                      <option value="7">July</option>
-                      <option value="8">August</option>
-                      <option value="9">September</option>
-                      <option value="10">October</option>
-                      <option value="11">November</option>
-                      <option value="12">December</option>
-                    </select>
-
-                    <select 
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                    >
-                      <option value="">Year</option>
-                      <option value="2024">2024</option>
-                      <option value="2025">2025</option>
-                      {/* Add other years */}
-                    </select>
-
-                    <button 
-                      className="download-button"
-                      onClick={handleDownloadReport}
-                    >
-                      Download Report
-                    </button>
-                  </div>
-
-                  <div className="table-container">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Order Number</th>
-                          <th>Date Ordered</th>
-                          <th>Status</th>
-                          <th>Product</th>
-                          <th>Quantity</th>
-                          <th>Total Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {orders.map((order) => (
-                          <tr key={order.orderNumber}>
-                            <td>{order.orderNumber}</td>
-                            <td>{order.dateOrdered}</td>
-                            <td>
-                              <span className={`status-badge ${order.status.toLowerCase()}`}>
-                                {order.status}
-                              </span>
-                            </td>
-                            <td>{order.product}</td>
-                            <td>{order.quantity}</td>
-                            <td>{order.totalPrice}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <br/>
+                  <div>{renderAdminReports()}</div>
                 </motion.div>
               )}
               {activeTab === "analytics" && (
