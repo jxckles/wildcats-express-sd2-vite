@@ -37,7 +37,7 @@
     }
     
     .logo {
-      position: absolute;;
+      position: absolute;
       width: 80px;
       height: auto;
       margin-left: 0.5rem;
@@ -72,16 +72,15 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      position: relative; /* To position dropdown menu */
-
-      &:hover span{
-        color: goldenrod;
-      }
-
-      &:active span{
-        color: whitesmoke;
-      }
+      position: relative; /* To position dropdown menu */   
+    }
     
+    .profile-section:hover span {
+      color: goldenrod;
+    }
+    
+    .profile-section:active span {
+      color: whitesmoke;
     }
     
 
