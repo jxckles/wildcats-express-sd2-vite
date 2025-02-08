@@ -548,7 +548,7 @@
 
     .order-cards {
       display: flex;
-      gap: 20px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
