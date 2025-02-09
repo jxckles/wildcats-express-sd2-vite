@@ -856,4 +856,52 @@
   .status-badge.cancelled {
     background-color: #ffe6e6;
     color: #cc0000;
-  }         
+  }  
+  
+ /* Table Style */
+.orders-table {
+  width: 100%;
+  border-collapse: separate; /* This allows us to use border-spacing */
+  border-spacing: 0 12px; /* This creates vertical gap between rows */
+}
+
+.orders-table th, .orders-table td {
+  padding: 12px;
+  text-align: center;
+  border: none;
+}
+
+.orders-table th {
+  background-color: gold;
+}
+
+/*.orders-table tbody tr:nth-child(even) {
+  background-color: rgb(253, 233, 120);
+}*/
+
+.orders-table tbody tr {
+  background-color: rgb(253, 233, 120);
+  border: none;
+
+}
+
+.orders-table tbody tr:hover {
+  background-color: rgb(238, 186, 55);
+  color: whitesmoke;
+}
+
+.orders-table select {
+  background-color: #fde7e7;
+  color: #740b0b;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.orders-modal {
+  padding: 20px;
+  background-color: transparent;
+  color: #6a0000;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
