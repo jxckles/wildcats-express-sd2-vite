@@ -36,18 +36,55 @@ const AdminPage = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
 
-  // Sample data - replace with your actual data
-  const orders = [
+  //Sample mock data for AdminReports
+    // Sample data - replace with your actual data
+    const orderReport = [
+      {
+        orderNumber: '22-5714-674',
+        dateOrdered: '7/16/2024, 1:22:16 AM',
+        status: 'Completed',
+        product: 'Fried Chicken',
+        quantity: '1x',
+        totalPrice: '₱50.00'
+      },
+      // Add more orders as needed
+    ];
+
+  // Sample mock data for Orders
+  const [orders, setOrders] = useState([
     {
-      orderNumber: '22-5714-674',
-      dateOrdered: '7/16/2024, 1:22:16 AM',
-      status: 'Completed',
-      product: 'Fried Chicken',
-      quantity: '1x',
-      totalPrice: '₱50.00'
+      orderNumber: '19-4566-878',
+      name: 'James Bond',
+      totalAmount: '₱100.00',
+      products: 'Fried Chicken, Burger, Rice',
+      status: 'Preparing',
+      paymentMode: 'Cash'
     },
-    // Add more orders as needed
-  ];
+    {
+      orderNumber: '20-3454-654',
+      name: 'Steve Harvey',
+      totalAmount: '₱200.00',
+      products: 'Pasta, Salad',
+      status: 'Preparing',
+      paymentMode: 'Card'
+    },
+    {
+      orderNumber: '21-7784-123',
+      name: 'Clark Kent',
+      totalAmount: '₱150.00',
+      products: 'Fried Chicken, Fries, Soda',
+      status: 'Preparing',
+      paymentMode: 'Cash'
+    }
+  ]);
+
+  // Handle change in status
+  const handleStatusChange = (index, value) => {
+    const updatedOrders = [...orders];
+    updatedOrders[index].status = value;
+    setOrders(updatedOrders); // Update the state with new status
+  };
+
 
   const handleDownloadReport = () => {
     // Implement your download logic here
@@ -539,7 +576,7 @@ const AdminPage = () => {
                     <div className="progress-bar">
                       <div className="progress" style={{ width: "90%" }}></div>
                     </div>
-                    <span class="progress-percentage">90%</span>
+                    <span className="progress-percentage">90%</span>
                   </div>
                 </div>
               </div>
@@ -557,16 +594,16 @@ const AdminPage = () => {
                     <div className="progress-bar">
                       <div className="progress" style={{ width: "50%" }}></div>
                     </div>
-                    <span class="progress-percentage">50%</span>
+                    <span className="progress-percentage">50%</span>
                   </div>
                 </div>
               </div>
 
               {/* Static Order 3 */}
               <div className="order-card">
-                <div class="order-card-header">
-                  <div class="school-id">19-4566-878</div>
-                  <div class="order-id">Order #3</div>
+                <div className="order-card-header">
+                  <div className="school-id">19-4566-878</div>
+                  <div className="order-id">Order #3</div>
                 </div>
                 <div className="order-details">
                   <p>Clark Johnson</p>
@@ -575,7 +612,7 @@ const AdminPage = () => {
                     <div className="progress-bar">
                       <div className="progress" style={{ width: "68%" }}></div>
                     </div>
-                    <span class="progress-percentage">68%</span>
+                    <span className="progress-percentage">68%</span>
                   </div>
                 </div>
               </div>
@@ -593,7 +630,7 @@ const AdminPage = () => {
                     <div className="progress-bar">
                       <div className="progress" style={{ width: "30%" }}></div>
                     </div>
-                    <span class="progress-percentage">30%</span>
+                    <span className="progress-percentage">30%</span>
                   </div>
                 </div>
               </div>
@@ -605,12 +642,12 @@ const AdminPage = () => {
           <div className="current-order-container">
             <h3>Current Order</h3>
             <br/>
-            <div class="current-order-card">
+            <div className="current-order-card">
               <h4>Recipient: Dave Miller</h4>
               <p>School ID:</p>
               <p>#123456789</p>
               <br/>
-              <div class="current-order-card-bottom">
+              <div className="current-order-card-bottom">
                 <span>Order#: 4</span>
                 <span>Items: 8</span>
               </div>
@@ -623,31 +660,31 @@ const AdminPage = () => {
           <h2>Popular Picks</h2>
           <br/>
           <div className="popular-picks">
-          <div class="pick">
-            <div class="pick-name-price">
-              <span class="pick-name">Fried Chicken</span>
-              <span class="pick-price">50.00</span>
+          <div className="pick">
+            <div className="pick-name-price">
+              <span className="pick-name">Fried Chicken</span>
+              <span className="pick-price">50.00</span>
             </div>
           </div>
 
-          <div class="pick">
-            <div class="pick-name-price">
-              <span class="pick-name">Bulalo</span>
-              <span class="pick-price">100.00</span>
+          <div className="pick">
+            <div className="pick-name-price">
+              <span className="pick-name">Bulalo</span>
+              <span className="pick-price">100.00</span>
             </div>
           </div>
 
-          <div class="pick">
-            <div class="pick-name-price">
-              <span class="pick-name">Longganisa</span>
-              <span class="pick-price">80.00</span>
+          <div className="pick">
+            <div className="pick-name-price">
+              <span className="pick-name">Longganisa</span>
+              <span className="pick-price">80.00</span>
             </div>
           </div>
 
-          <div class="pick">
-            <div class="pick-name-price">
-              <span class="pick-name">Rice</span>
-              <span class="pick-price">10.00</span>
+          <div className="pick">
+            <div className="pick-name-price">
+              <span className="pick-name">Rice</span>
+              <span className="pick-price">10.00</span>
             </div>
           </div>
 
@@ -660,12 +697,43 @@ const AdminPage = () => {
 
   // Render Orders
   const renderOrder = () =>{
-    return(
-    <>
-    <div className="orders-modal">
-      <h3>Order Content Here!</h3>
-    </div>
-    </>
+    return (
+      <div className="orders-modal">
+        <table className="orders-table">
+          <thead>
+            <tr>
+              <th>Order Number</th>
+              <th>Name</th>
+              <th>Total Amount</th>
+              <th>Products</th>
+              <th>Status</th>
+              <th>Mode of Payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order, index) => (
+              <tr key={order.orderNumber}>
+                <td>{order.orderNumber}</td>
+                <td>{order.name}</td>
+                <td>{order.totalAmount}</td>
+                <td>{order.products}</td>
+                <td>
+                  <select 
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(index, e.target.value)}
+                  >
+                    <option value="Preparing">Preparing</option>
+                    <option value="Ready to Pickup">Ready to Pickup</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </td>
+                <td>{order.paymentMode}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   };
 
@@ -756,18 +824,18 @@ const AdminPage = () => {
         </tr>
       </thead>
       <tbody>
-        {orders.map((order) => (
-          <tr key={order.orderNumber}>
-            <td>{order.orderNumber}</td>
-            <td>{order.dateOrdered}</td>
+        {orderReport.map((orderReport) => (
+          <tr key={orderReport.orderNumber}>
+            <td>{orderReport.orderNumber}</td>
+            <td>{orderReport.dateOrdered}</td>
             <td>
-              <span className={`status-badge ${order.status.toLowerCase()}`}>
-                {order.status}
+              <span className={`status-badge ${orderReport.status.toLowerCase()}`}>
+                {orderReport.status}
               </span>
             </td>
-            <td>{order.product}</td>
-            <td>{order.quantity}</td>
-            <td>{order.totalPrice}</td>
+            <td>{orderReport.product}</td>
+            <td>{orderReport.quantity}</td>
+            <td>{orderReport.totalPrice}</td>
           </tr>
         ))}
       </tbody>
