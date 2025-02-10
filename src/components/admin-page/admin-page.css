@@ -858,11 +858,11 @@
     color: #cc0000;
   }  
   
- /* Table Style */
+/* Table Style */
 .orders-table {
   width: 100%;
-  border-collapse: separate; /* This allows us to use border-spacing */
-  border-spacing: 0 12px; /* This creates vertical gap between rows */
+  border-collapse: separate;
+  border-spacing: 0 12px;
 }
 
 .orders-table th, .orders-table td {
@@ -871,18 +871,35 @@
   border: none;
 }
 
+/* Header styles with rounded corners */
+.orders-table thead th:first-child {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+
+.orders-table thead th:last-child {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
 .orders-table th {
   background-color: gold;
 }
 
-/*.orders-table tbody tr:nth-child(even) {
-  background-color: rgb(253, 233, 120);
-}*/
-
+/* Body row styles with rounded corners */
 .orders-table tbody tr {
   background-color: rgb(253, 233, 120);
   border: none;
+}
 
+.orders-table tbody td:first-child {
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+}
+
+.orders-table tbody td:last-child {
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
 
 .orders-table tbody tr:hover {
