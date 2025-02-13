@@ -657,6 +657,32 @@ const AdminPage = () => {
     );
   };
   
+  //Render Settings
+  const renderSettings = () => {
+    return (
+      <>
+        <div className="settings-modal">
+          <h3>Settings</h3>
+          <div className="settings-content">
+            <label>Email:</label>
+            <input type="email" placeholder="Enter new email" />
+  
+            <label>Password:</label>
+            <input type="password" placeholder="Enter new password" />
+  
+            <label>Full Name:</label>
+            <input type="text" placeholder="Enter full name" />
+  
+            <label>Phone Number:</label>
+            <input type="text" placeholder="Enter phone number" />
+  
+            <button className="save-btn">Save Changes</button>
+          </div>
+        </div>
+      </>
+    );
+  };    
+
 
   // Render Orders
   const renderOrder = () =>{
@@ -942,6 +968,8 @@ const AdminPage = () => {
                   transition={{ delay: 0.2 }}
                 >
                   <h2>Settings</h2>
+                  <br/>
+                  <div>{renderSettings()}</div>
                 </motion.div>
               )}
             </motion.div>
