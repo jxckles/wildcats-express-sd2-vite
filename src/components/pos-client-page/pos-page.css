@@ -26,7 +26,7 @@
     border-radius: 50%;
   }
 
-  .logo-container h1 {
+  .logo-container-pos h1 {
     color: transparent;
     font-size: 1.5rem;
     margin-left: 7.7rem;
@@ -79,7 +79,7 @@
   }
   
   /* Menu Item */
-  .menu-item {
+  .menu-item-pos {
     background: #fff;
     padding: 10px;
     border-radius: 10px;

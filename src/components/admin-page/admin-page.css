@@ -46,6 +46,7 @@
     .logo-container h1 {
       color: transparent;
       font-size: 2.5rem;
+      font-weight: bold;
       margin-left: 7.7rem;
       background: linear-gradient(35deg, #fff4b7, #daa521 50%,#fff4b7);
       background-size: 700% 100%;
@@ -167,13 +168,14 @@
       background-color: #7e0101;
       color: white;
       border: none;
-      padding: 15px;
+      padding: 20px;
       cursor: pointer;
       transition: background-color 0.3s ease;
       text-align: center;
       width: 80px;
       height: auto;
       margin-right: 20px;
+      align-items: center;
     }
     
     /* Active button styles */

@@ -26,7 +26,7 @@ const PosPage = () => {
   return (
     <div className="pos-page">
       <header className="navbar">
-        <div className="logo-container">
+        <div className="logo-container-pos">
           <img src="logo.png" />
           <span className="title">
             <h1>Wildcats Express</h1>
@@ -44,7 +44,7 @@ const PosPage = () => {
 
       <div className="menu-grid">
         {menuItems.map((item) => (
-          <div key={item.id} className="menu-item">
+          <div key={item.id} className="menu-item-pos">
             <img src={item.image} alt={item.name} className="item-img" />
             <h3 className="item-name">{item.name}</h3>
             <p className="item-price">{item.price}</p>
