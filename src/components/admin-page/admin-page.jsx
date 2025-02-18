@@ -26,6 +26,7 @@ const AdminPage = () => {
     image: null,
     _id: null,
     imageURL: '',
+    category: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -123,6 +124,7 @@ const AdminPage = () => {
       image: null,
       _id: null,
       imageURL: "",
+      category: "",
     });
     setIsModalOpen(true);
   };
@@ -136,6 +138,7 @@ const AdminPage = () => {
       image: null, // No need to set an image since it won't be edited
       _id: item._id,
       imageURL: item.imageURL, // Keep the current image URL for display
+      category: item.category,
     });
     setIsModalOpen(true);
   };
@@ -149,6 +152,7 @@ const AdminPage = () => {
       image: null,
       _id: null,
       imageURL: "",
+      category: "",
     });
     setIsModalOpen(true);
   };
@@ -162,6 +166,7 @@ const AdminPage = () => {
       image: "",
       price: 0,
       quantity: 0,
+      category: "",
     });
   };
 
@@ -414,7 +419,7 @@ const AdminPage = () => {
       {isModalOpen && (
         <div className="modal-overlay-menu">
           <div className="modal-menu">
-            <h2>{newMenuItem._id ? "Edit Item" : "Add New Item"}</h2>
+            <h2>{newMenuItem._id? "Edit Item" : "Add New Item"}</h2>8
             <form onSubmit={handleSubmit}>
               <input
                 type="text"

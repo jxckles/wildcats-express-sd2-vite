@@ -74,6 +74,7 @@ onAuthStateChanged(auth, (user) => {
     } else {
       // If not admin, show an error message
       alert("Access denied: You are not an admin.");
+      window.location.href = "/pos-page";
     }
   }
 });
@@ -117,7 +118,7 @@ const redirectToLandingIfLoggedIn = (navigate) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Trying to access login/signup page while logged in.");
-        navigate("/admin-page");
+        navigate("/pos-page");
       }  else {
         setLoading(false); // Allow access sa login page
       }
