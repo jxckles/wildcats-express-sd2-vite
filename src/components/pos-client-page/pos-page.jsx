@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../../config/firebase-config";
 import { collection, onSnapshot} from 'firebase/firestore';
+import catProfile from "/cat_profile.svg"; 
 import "./pos-page.css";
 
 const PosPage = () => {
@@ -40,7 +41,11 @@ const PosPage = () => {
     <div className="pos-page">
       <header className="navbar">
         <div className="logo-container-pos">
-          <img src="logo.png" />
+          <img
+            src={catProfile}
+            alt="Mascot"
+            className="profile-photo"
+          />
           <span className="title">
             <h1>Wildcats Express</h1>
             <small>CIT-UNIVERSITY</small>
