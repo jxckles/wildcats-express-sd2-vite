@@ -1,19 +1,33 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { db } from "../../config/firebase-config";
+import { collection, onSnapshot} from 'firebase/firestore';
+import catProfile from "/cat_profile.svg"; 
 import "./pos-page.css";
-
-const menuItems = [
-  { id: 1, name: "PALABOK", price: "₱30.00", image: "palabok.png" },
-  { id: 2, name: "BURGERSTEAK", price: "₱50.00", image: "burgersteak.png" },
-  { id: 3, name: "SUNNY SIDE UP", price: "₱10.00", image: "sunny.png" },
-  { id: 4, name: "PALABOK", price: "₱30.00", image: "palabok.png" },
-  { id: 5, name: "PALABOK", price: "₱30.00", image: "palabok.png" },
-  { id: 6, name: "PALABOK", price: "₱30.00", image: "palabok.png" },
-];
 
 const PosPage = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState({});
+  const [menuItems, setMenuItems] = useState([]);
+
+  // Menu Items (Collection) real-time listener
+  useEffect(() => {
+    const menuRef = collection(db, "menu");
+
+    const unsubscribe = onSnapshot(menuRef, (querySnapshot) => {
+        const menuList = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          _id: doc.id,
+        }));
+        setMenuItems(menuList);
+    }, (error) => {
+        console.error("Error fetching menu items:", error);
+        toast.error("Failed to fetch menu items.");
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
 
   const handleQuantityChange = (id, change) => {
     setCart((prev) => ({
@@ -27,7 +41,11 @@ const PosPage = () => {
     <div className="pos-page">
       <header className="navbar">
         <div className="logo-container-pos">
-          <img src="logo.png" />
+          <img
+            src={catProfile}
+            alt="Mascot"
+            className="profile-photo"
+          />
           <span className="title">
             <h1>Wildcats Express</h1>
             <small>CIT-UNIVERSITY</small>
@@ -44,8 +62,8 @@ const PosPage = () => {
 
       <div className="menu-grid">
         {menuItems.map((item) => (
-          <div key={item.id} className="menu-item-pos">
-            <img src={item.image} alt={item.name} className="item-img" />
+          <div key={item._id} className="menu-item-pos">
+            <img src={item.imageURL} alt={item.name} className="item-img" />
             <h3 className="item-name">{item.name}</h3>
             <p className="item-price">{item.price}</p>
             <div className="quantity-selector">
