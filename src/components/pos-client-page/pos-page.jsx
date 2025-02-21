@@ -168,7 +168,7 @@ const PosPage = () => {
               >
                 <img src={item.imageURL} alt={item.name} className="item-img" />
                 <h3 className="item-name">{item.name}</h3>
-                <p className="item-price">{item.price}</p>
+                <p className="item-price">Php {item.price}</p>
                 <div className="quantity-selector">
                   <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>
                     -
