@@ -2,7 +2,7 @@
 .pos-page {
   flex-grow: 1;
   margin-left: 260px; 
-  overflow-y: auto;
+  overflow-y: hidden;
   height: 100vh;
   padding: 20px;
   background-color: #f8f8f8;
