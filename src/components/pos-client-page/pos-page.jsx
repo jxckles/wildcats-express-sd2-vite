@@ -67,7 +67,7 @@ const PosPage = () => {
     >
       {/* Sidebar */}
       <motion.aside
-        className="sidebar"
+        className="sidebar-pos"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: -100, opacity: 0 }}
@@ -100,7 +100,7 @@ const PosPage = () => {
       <div className="pos-page">
         {/* Header */}
         <motion.header
-          className="navbar"
+          className="navbar-pos"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
