@@ -26,6 +26,7 @@ const AdminPage = () => {
     image: null,
     _id: null,
     imageURL: '',
+    category: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -123,6 +124,7 @@ const AdminPage = () => {
       image: null,
       _id: null,
       imageURL: "",
+      category: "",
     });
     setIsModalOpen(true);
   };
@@ -136,6 +138,7 @@ const AdminPage = () => {
       image: null, // No need to set an image since it won't be edited
       _id: item._id,
       imageURL: item.imageURL, // Keep the current image URL for display
+      category: item.category,
     });
     setIsModalOpen(true);
   };
@@ -149,6 +152,7 @@ const AdminPage = () => {
       image: null,
       _id: null,
       imageURL: "",
+      category: "",
     });
     setIsModalOpen(true);
   };
@@ -162,6 +166,7 @@ const AdminPage = () => {
       image: "",
       price: 0,
       quantity: 0,
+      category: "",
     });
   };
 
@@ -311,6 +316,7 @@ const AdminPage = () => {
         quantity: Number(newMenuItem.quantity),
         imageURL: imageURL || newMenuItem.imageURL, // Keep current image URL for edits
         publicID: publicID || "",
+        category: category || "",
       };
   
       if (newMenuItem._id) {
@@ -442,6 +448,14 @@ const AdminPage = () => {
                 placeholder="Quantity"
                 min="0"
                 step="1"
+                required
+              />
+              <input
+                type="text"
+                name="category"
+                value={newMenuItem.category}
+                onChange={handleInputChange}
+                placeholder="Category"
                 required
               />
               {!newMenuItem._id && (
