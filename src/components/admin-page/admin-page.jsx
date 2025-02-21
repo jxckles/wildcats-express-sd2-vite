@@ -316,7 +316,7 @@ const AdminPage = () => {
         quantity: Number(newMenuItem.quantity),
         imageURL: imageURL || newMenuItem.imageURL, // Keep current image URL for edits
         publicID: publicID || "",
-        category: category || "",
+        category: newMenuItem.category,
       };
   
       if (newMenuItem._id) {
