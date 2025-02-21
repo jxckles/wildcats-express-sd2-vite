@@ -9,7 +9,7 @@
 }
 
 /* Navbar */
-.navbar {
+.navbar-pos {
   display: flex;
   justify-content: space-between;
   align-items: center;
