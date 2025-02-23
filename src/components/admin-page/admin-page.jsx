@@ -871,12 +871,9 @@ const AdminPage = () => {
   
             <label>Password:</label>
             <input type="password" placeholder="Enter new password" />
-  
-            <label>Full Name:</label>
-            <input type="text" placeholder="Enter full name" />
-  
-            <label>Phone Number:</label>
-            <input type="text" placeholder="Enter phone number" />
+
+            <label>Confirm Password:</label>
+            <input type="password" placeholder="Confirm new password" />
   
             <button className="save-btn">Save Changes</button>
           </div>
