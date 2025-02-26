@@ -67,15 +67,8 @@ const PosPage = () => {
   //render menu
   const renderMenuView = () => {
     return (
-      <motion.div
-        key="menu-view"
-        className="view-container"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3 }}
-      >
-        <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <>
+      <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </motion.div>
         <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
@@ -106,7 +99,7 @@ const PosPage = () => {
               ))}
           </AnimatePresence>
         </motion.div>
-      </motion.div>
+      </>
     );
   };
 
@@ -183,6 +176,34 @@ const PosPage = () => {
   );
   }
 
+  //render track order
+  const renderTrackOrderView = () => {
+    return (
+      <> 
+      <div className="track-order">
+      <h2 className="view-title">Track Your Order</h2>
+
+        <div className="track-order-content">
+          {/* You would implement order tracking here */}
+          <div className="order-tracking-form">
+            <input 
+              type="text" 
+              placeholder="Enter your order number"
+              className="order-number-input"
+            />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="track-button"
+            >
+              Track
+            </motion.button>
+          </div>
+        </div>
+      </div>
+      </>
+    )
+  }
 
   return (
     <motion.div 
@@ -251,7 +272,16 @@ const PosPage = () => {
 
           {"Menu Modal"}
           {currentView === "menu" && (
-            <div>{renderMenuView()}</div>    
+            <motion.div
+            key="menu-view"
+            className="view-container"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div>{renderMenuView()}</div> 
+          </motion.div>   
           )}
 
           {"Cart Modal"}
@@ -278,24 +308,7 @@ const PosPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="view-title">Track Your Order</h2>
-                <div className="track-order-content">
-                  {/* You would implement order tracking here */}
-                  <div className="order-tracking-form">
-                    <input 
-                      type="text" 
-                      placeholder="Enter your order number"
-                      className="order-number-input"
-                    />
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="track-button"
-                    >
-                      Track
-                    </motion.button>
-                  </div>
-                </div>
+                <div>{renderTrackOrderView()}</div>
               </motion.div>
             )}
           </AnimatePresence>
