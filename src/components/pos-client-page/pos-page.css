@@ -214,3 +214,10 @@
 .add-to-cart:hover {
   background: #c9302c;
 }
+
+/* Cart Modal */
+.cart-items{
+  margin-top: 70px;
+  padding: 20px;
+  color: #911507;
+}
