@@ -114,7 +114,7 @@ const PosPage = () => {
   const renderCartView = () => {
   return (
     <>
-      <div className="cart-items"> 
+      <div className="cart"> 
       
       <h2 className="view-title">Your Cart</h2>
       
@@ -178,11 +178,8 @@ const PosPage = () => {
         </div>
       </div>
     )}
-        
       </div>
-     
     </>
-
   );
   }
 
