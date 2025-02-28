@@ -14,6 +14,7 @@ const PosPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentView, setCurrentView] = useState("menu"); // Possible values: "menu", "cart", "trackOrder"
+  const [schoolId, setSchoolId] = useState(""); // New state for School ID
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -63,6 +64,45 @@ const PosPage = () => {
     setCurrentView(view);
   };
 
+  const handleCheckout = () => {
+    if (!schoolId) {
+      alert("Please enter your School ID before proceeding to checkout.");
+      return;
+    }
+  const selectedPayment = document.querySelector('input[name="payment"]:checked');
+  
+    if (!selectedPayment) {
+      alert("Please select a payment method before proceeding to checkout.");
+      return;
+    }
+
+  const paymentMethod = selectedPayment.value;
+    alert(`Proceeding to checkout with payment method: ${paymentMethod}`);
+    
+    // Here, you can add logic to send the order details to a backend or navigate to a confirmation page.
+    console.log("Checkout successful with payment method:", paymentMethod);
+    
+    // Clear the cart after checkout (if needed)
+    // setCart({});
+  };
+
+  const finalizeCheckout = () => {
+    document.getElementById("modal").style.display = "none"; // Close the previous modal
+
+    let confirmationModal = `
+      <h3>Order Confirmed</h3>
+      <p>Thank you for your purchase!</p>
+      <button onclick='closeConfirmation()'>Close</button>
+    `;
+
+    document.getElementById("confirmationModal").innerHTML = confirmationModal;
+    document.getElementById("confirmationModal").style.display = "block";
+  };
+
+  const closeConfirmation = () => {
+    document.getElementById("confirmationModal").style.display = "none";
+  };
+
 
   //render menu
   const renderMenuView = () => {
@@ -108,6 +148,17 @@ const PosPage = () => {
     return (
       <div className="cart-container">
         <h2 className="view-title">🛒 Your Cart</h2>
+
+        <div className="school-id-input">
+          <label htmlFor="school-id">School ID Number:</label>
+          <input
+                      type="text"
+                      id="school-id"
+                      placeholder="Enter your School ID"
+                      value={schoolId}
+                      onChange={(e) => setSchoolId(e.target.value)}
+                    />
+          </div>
         
         {Object.keys(cart).length === 0 ? (
           <div className="empty-state-cart">
@@ -176,6 +227,7 @@ const PosPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="checkout-button"
+              onClick={handleCheckout}
             >
               ✅ Proceed to Checkout
             </motion.button>
