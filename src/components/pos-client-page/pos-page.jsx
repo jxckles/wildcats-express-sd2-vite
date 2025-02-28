@@ -105,76 +105,88 @@ const PosPage = () => {
 
   //render cart
   const renderCartView = () => {
-  return (
-    <>
-      <div className="cart"> 
-      
-      <h2 className="view-title">Your Cart</h2>
-      
-      {Object.keys(cart).length === 0 ? (
-        <div className="empty-state-cart">
-          <p>Your cart is empty</p>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => changeView("menu")}
-            className="return-to-menu"
-          >
-            Return to Menu
-          </motion.button>
-        </div>
-      ) : (
-        <div className="cart-items">
-          {/* You would implement cart view here */}
-          {Object.keys(cart).map((itemId) => {
-            const item = menuItems.find(item => item._id === itemId);
-            if (!item) return null;
-            
-            return (
-              <motion.div 
-                key={itemId}
-                className="cart-item"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div className="cart-item-details">
-                  <h3>{item.name}</h3>
-                  <p>Php {item.price} × {cart[itemId]} = Php {(item.price * cart[itemId]).toFixed(2)}</p>
-                </div>
-                <div className="cart-item-actions">
-                  <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, -1)}>-</motion.button>
-                  <span>{cart[itemId]}</span>
-                  <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, 1)}>+</motion.button>
-                </div>
-              </motion.div>
-          );
-        })}
+    return (
+      <div className="cart-container">
+        <h2 className="view-title">🛒 Your Cart</h2>
         
-        <div className="cart-summary">
-          <div className="cart-total">
-            <strong>Total:</strong>
-            <span>
-              Php {Object.keys(cart).reduce((total, itemId) => {
-                const item = menuItems.find(item => item._id === itemId);
-                return total + (item ? item.price * cart[itemId] : 0);
-              }, 0).toFixed(2)}
-            </span>
+        {Object.keys(cart).length === 0 ? (
+          <div className="empty-state-cart">
+            <p>Your cart is empty</p>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => changeView("menu")}
+              className="return-to-menu"
+            >
+              🍽 Return to Menu
+            </motion.button>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="checkout-button"
-          >
-            Proceed to Checkout
-          </motion.button>
+        ) : (
+          <div className="cart-items">
+            {Object.keys(cart).map((itemId) => {
+              const item = menuItems.find(item => item._id === itemId);
+              if (!item) return null;
+              
+              return (
+                <motion.div 
+                  key={itemId}
+                  className="cart-item"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="cart-item-details">
+                    <h3>{item.name}</h3>
+                    <p>Php {item.price} × {cart[itemId]} = Php {(item.price * cart[itemId]).toFixed(2)}</p>
+                  </div>
+                  <div className="cart-item-actions">
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, -1)}>-</motion.button>
+                    <span>{cart[itemId]}</span>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, 1)}>+</motion.button>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleRemoveItem(itemId)} className="trash-button">🗑</motion.button>
+                  </div>
+                </motion.div>
+            );
+          })}
+          
+          <div className="cart-summary">
+            <div className="cart-total">
+              <strong>Total:</strong>
+              <span>
+                Php {Object.keys(cart).reduce((total, itemId) => {
+                  const item = menuItems.find(item => item._id === itemId);
+                  return total + (item ? item.price * cart[itemId] : 0);
+                }, 0).toFixed(2)}
+              </span>
+            </div>
+  
+            <div className="payment-method">
+              <h4>Select Payment Method:</h4>
+              <div className="payment-options">
+                <label>
+                  <input type="radio" name="payment" value="cash" /> Cash 💵
+                </label>
+                <label>
+                  <input type="radio" name="payment" value="gcash" /> GCash 📱
+                </label>
+              </div>
+            </div>
+  
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="checkout-button"
+            >
+              ✅ Proceed to Checkout
+            </motion.button>
+          </div>
         </div>
+      )}
       </div>
-    )}
-      </div>
-    </>
-  );
-  }
+    );
+  };
+
+  
 
   //render track order
   const renderTrackOrderView = () => {
