@@ -203,23 +203,151 @@
   background: #d9534f;
   color: white;
   border: none;
-  padding: 8px;
+  padding: 10px;
   width: 100%;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 8px;
+  transition: background 0.3s ease;
 }
 
 .add-to-cart:hover {
   background: #c9302c;
 }
 
-/* Cart Modal */
-.cart{
-  margin-top: 70px;
+/* Cart Container */
+.cart-container {
+  max-width: 500px;
+  margin: 50px auto;
   padding: 20px;
+  background: maroon;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 2px solid #911507;
+}
+
+/* Cart Modal */
+.cart {
+  padding: 20px;
+  background: gold;
+  border-radius: 10px;
   color: #911507;
+  font-weight: bold;
+}
+
+.cart h2 {
+  color: #911507;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.cart-items {
+  background: gold;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.trash-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+}
+
+.trash-button:hover {
+  color: white;
+}
+
+.cart-summary {
+  background: #fff5c3;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cart-total strong {
+  font-size: 18px;
+  color: #911507;
+}
+
+.cart-total span {
+  font-size: 18px;
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.return-to-menu {
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Payment Method */
+.payment-method {
+  background: #a39f9f;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.payment-method h4 {
+  font-size: 18px;
+  color: #911507;
+  margin-bottom: 10px;
+}
+
+.payment-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.payment-options label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  background: #d27979;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid #911507;
+  cursor: pointer;
+}
+
+.payment-options input {
+  margin-right: 8px;
+}
+
+/* Checkout Button */
+.checkout-button {
+  width: 100%;
+  background: #ffffff;
+  color: #911507;
+  border: 2px solid #911507;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.checkout-button:hover {
+  background: #911507;
+  color: white;
 }
 
 /* Track Order Modal */
