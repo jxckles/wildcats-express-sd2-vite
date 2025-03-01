@@ -340,17 +340,48 @@ const handleSchoolIdChange = (e) => {
 
   //render track order
   const renderTrackOrderView = () => {
-    return (
-      <> 
-      <div className="track-order">
-      <h2 className="view-title">Track Your Order</h2>
+    const orders = [
+      {
+        id: "20-3950-969",
+        date: "February 14, 2025",
+        items: [
+          { name: "Fried Chicken", quantity: 1, price: 30 },
+          { name: "Chicken Adobo", quantity: 1, price: 80 },
+        ],
+        total: 110,
+        status: "Pending",
+      },
+      {
+        id: "20-3950-969",
+        date: "February 27, 2025",
+        items: [
+          { name: "Chicken Adobo", quantity: 1, price: 80 },
+          { name: "Bulalo", quantity: 1, price: 100 },
+        ],
+        total: 180,
+        status: "Pending",
+      },
+      {
+        id: "20-3950-969",
+        date: "February 28, 2025",
+        items: [{ name: "Chicken Adobo", quantity: 1, price: 80 }],
+        total: 80,
+        status: "Pending",
+      },
+    ];
 
+    return (
+      <div className="track-order">
+        <h2 className="view-title">Track Your Order</h2>
         <div className="track-order-content">
-          {/* You would implement order tracking here */}
-          <div className="order-tracking-form">
+          <form className="order-tracking-form">
+            <label htmlFor="orderNumber" className="order-label">
+              Enter your order number:
+            </label>
             <input 
               type="text" 
-              placeholder="Enter your order number"
+              id="orderNumber"
+              placeholder="e.g., xx-xxxx-xx" 
               className="order-number-input"
             />
             <motion.button
@@ -358,14 +389,49 @@ const handleSchoolIdChange = (e) => {
               whileTap={{ scale: 0.95 }}
               className="track-button"
             >
-              Track
+              Track Order
             </motion.button>
-          </div>
+          </form>
+        </div>
+  
+        {/* Recent Orders Table */}
+        <div className="recent-orders">
+        <h2 className="orders-title">Recent Orders</h2>
+        <div className="orders-table-container"> {/* Scrollable wrapper */}
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date Ordered</th>
+                <th>Menus Ordered</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order, index) => (
+                <tr key={index}>
+                  <td>{order.id}</td>
+                  <td>{order.date}</td>
+                  <td>
+                    {order.items.map((item, idx) => (
+                      <div key={idx}>
+                        {item.name} (x{item.quantity}) - ₱{item.price}
+                      </div>
+                    ))}
+                  </td>
+                  <td>₱{order.total}</td>
+                  <td className="status">{order.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      </>
-    )
-  }
+      </div>
+    );
+  };
+  
 
   return (
     <motion.div 
