@@ -440,9 +440,111 @@ input {
   color: maroon;
 }
 
-/* Track Order Modal */
+/* Track Order Section */
 .track-order {
-  margin-top: 70px;
   padding: 20px;
+  color: #911507;
+  text-align: center;
+}
+
+/* Order Tracking Form */
+.order-tracking-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.order-number-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.order-number-input:focus {
+  border-color: #911507;
+}
+
+.track-button {
+  padding: 6px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #911507;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.track-button:hover {
+  background: #b71c1c;
+}
+
+/* Recent Orders Section */
+.recent-orders {
+  margin-top: 15px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.orders-title {
+  text-align: center;
+  color: #911507;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Orders Table */
+.orders-table-container {
+  max-height: 400px; 
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd; 
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  white-space: nowrap; 
+}
+
+.orders-table th {
+  background: #f4f4f4;
+  color: #911507;
+  font-weight: bold;
+}
+
+.orders-table td {
+  color: #911507;
+}
+
+.orders-table .status {
+  font-weight: bold;
   color: #911507;
 }
