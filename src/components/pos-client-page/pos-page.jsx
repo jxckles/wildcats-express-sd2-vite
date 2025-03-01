@@ -20,6 +20,8 @@ const PosPage = () => {
   const [amountPaid, setAmountPaid] = useState("");
   const [receipt, setReceipt] = useState(null); 
   const [orderNumber, setOrderNumber] = useState(null);
+  const [clientName, setClientName] = useState(""); // Store client's name
+
 
 
   // Fetch menu items in real-time
@@ -125,7 +127,7 @@ const closeConfirmation = () => {
 const handleRemoveItem = (itemId) => {
   setCart((prevCart) => {
     const newCart = { ...prevCart };
-    delete newCart[itemId]; // Remove the item from the cart
+    delete newCart[itemId]; 
     return newCart;
   });
 };
@@ -144,7 +146,13 @@ const totalAmount = Object.keys(cart).reduce((total, itemId) => {
   return total + (item ? item.price * cart[itemId] : 0);
 }, 0);
 
+const handleNameChange = (e) => {
+  setClientName(e.target.value);
+};
 
+const handleSchoolIdChange = (e) => {
+  setSchoolId(e.target.value);
+};
 
 
   //render menu
@@ -190,18 +198,31 @@ const totalAmount = Object.keys(cart).reduce((total, itemId) => {
   const renderCartView = () => {
     return (
       <div className="cart-container">
+        {/* Display Client's Name at the Top Left */}
+        {clientName && <h3 className="client-name">👤 {clientName}</h3>}
         <h2 className="view-title">🛒 Your Cart</h2>
+
+        <div className="client-info-input">
+          <label htmlFor="client-name">Full Name:</label>
+          <input
+            type="text"
+            id="client-name"
+            placeholder="Enter your Full Name"
+            value={clientName}
+            onChange={handleNameChange}
+          />  
+        </div>
 
         <div className="school-id-input">
           <label htmlFor="school-id">School ID Number:</label>
           <input
-                      type="text"
-                      id="school-id"
-                      placeholder="Enter your School ID"
-                      value={schoolId}
-                      onChange={(e) => setSchoolId(e.target.value)}
-                    />
-          </div>
+            type="text"
+            id="school-id"
+            placeholder="Enter your School ID"
+            value={schoolId}
+            onChange={handleSchoolIdChange}
+          />
+        </div>
 
           {showConfirmation && (
             <div className="confirmation-modal">
