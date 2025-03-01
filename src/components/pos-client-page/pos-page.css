@@ -240,7 +240,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   border: 2px solid #911507;
-  max-height: 600px; 
+  max-height: 80vh;
   overflow-y: auto; 
 }
 
@@ -412,6 +412,32 @@
   border-radius: 5px;
   font-size: 12px;
   color: #911507;
+}
+
+.client-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: gold;
+  position: absolute;
+  left: 10px;
+  background-color: maroon;
+  padding: 2px 5px;
+  border-radius: 2px;
+  color: maroon;
+}
+
+.client-info-input,
+.school-id-input {
+  margin-bottom: 8px;
+}
+
+input { 
+  width: 100%;
+  padding: 4px;
+  margin-top: 3px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  color: maroon;
 }
 
 /* Track Order Modal */
