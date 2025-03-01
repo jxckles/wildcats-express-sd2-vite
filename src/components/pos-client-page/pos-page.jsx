@@ -13,8 +13,14 @@ const PosPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentView, setCurrentView] = useState("menu"); // Possible values: "menu", "cart", "trackOrder"
-  const [schoolId, setSchoolId] = useState(""); // New state for School ID
+  const [currentView, setCurrentView] = useState("menu"); 
+  const [schoolId, setSchoolId] = useState(""); 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [amountPaid, setAmountPaid] = useState("");
+  const [receipt, setReceipt] = useState(null); 
+  const [orderNumber, setOrderNumber] = useState(null);
+
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -66,42 +72,79 @@ const PosPage = () => {
 
   const handleCheckout = () => {
     if (!schoolId) {
-      alert("Please enter your School ID before proceeding to checkout.");
-      return;
-    }
-  const selectedPayment = document.querySelector('input[name="payment"]:checked');
-  
-    if (!selectedPayment) {
-      alert("Please select a payment method before proceeding to checkout.");
-      return;
+        alert("Please enter your School ID before proceeding to checkout.");
+        return;
     }
 
-  const paymentMethod = selectedPayment.value;
-    alert(`Proceeding to checkout with payment method: ${paymentMethod}`);
-    
-    // Here, you can add logic to send the order details to a backend or navigate to a confirmation page.
+    if (!paymentMethod) {
+        alert("Please select a payment method before proceeding to checkout.");
+        return;
+    }
+
+    if (paymentMethod === "gcash") {
+        if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
+            alert("Please enter a valid amount paid.");
+            return;
+        }
+        if (!receipt) {
+            alert("Please upload a receipt image.");
+            return;
+        }
+    }
+
+    // Generate a unique order number (e.g., based on timestamp)
+    const newOrderNumber = `WCE-${Date.now()}`;
+    setOrderNumber(newOrderNumber);
+
+    alert(`Order Successful! Your order number is: ${newOrderNumber}`);
+
+    console.log("Order Number:", newOrderNumber);
     console.log("Checkout successful with payment method:", paymentMethod);
-    
-    // Clear the cart after checkout (if needed)
-    // setCart({});
-  };
+    if (paymentMethod === "gcash") {
+        console.log("Amount Paid:", amountPaid);
+        console.log("Receipt Image:", receipt);
+    }
 
-  const finalizeCheckout = () => {
-    document.getElementById("modal").style.display = "none"; // Close the previous modal
+    // Clear cart after successful checkout
+    setCart({});
+    setAmountPaid("");
+    setReceipt(null);
 
-    let confirmationModal = `
-      <h3>Order Confirmed</h3>
-      <p>Thank you for your purchase!</p>
-      <button onclick='closeConfirmation()'>Close</button>
-    `;
+    // Show confirmation modal
+    finalizeCheckout(newOrderNumber);
+};
 
-    document.getElementById("confirmationModal").innerHTML = confirmationModal;
-    document.getElementById("confirmationModal").style.display = "block";
-  };
+ const finalizeCheckout = () => {
+  setShowConfirmation(true);
+};
 
-  const closeConfirmation = () => {
-    document.getElementById("confirmationModal").style.display = "none";
-  };
+const closeConfirmation = () => {
+  setShowConfirmation(false);
+};
+
+const handleRemoveItem = (itemId) => {
+  setCart((prevCart) => {
+    const newCart = { ...prevCart };
+    delete newCart[itemId]; // Remove the item from the cart
+    return newCart;
+  });
+};
+
+const handlePaymentChange = (e) => {
+  setPaymentMethod(e.target.value);
+};
+
+const handleReceiptUpload = (e) => {
+  const file = e.target.files[0];
+  setReceipt(file);
+};
+
+const totalAmount = Object.keys(cart).reduce((total, itemId) => {
+  const item = menuItems.find(item => item._id === itemId);
+  return total + (item ? item.price * cart[itemId] : 0);
+}, 0);
+
+
 
 
   //render menu
@@ -159,6 +202,15 @@ const PosPage = () => {
                       onChange={(e) => setSchoolId(e.target.value)}
                     />
           </div>
+
+          {showConfirmation && (
+            <div className="confirmation-modal">
+              <h3>Order Confirmed</h3>
+              <p>Thank you for your purchase!</p>
+              <button onClick={closeConfirmation}>Close</button>
+            </div>
+          )}
+
         
         {Object.keys(cart).length === 0 ? (
           <div className="empty-state-cart">
@@ -211,18 +263,36 @@ const PosPage = () => {
               </span>
             </div>
   
+                
+            {/* Payment Method Section */}
             <div className="payment-method">
               <h4>Select Payment Method:</h4>
               <div className="payment-options">
-                <label>
-                  <input type="radio" name="payment" value="cash" /> Cash 💵
-                </label>
-                <label>
-                  <input type="radio" name="payment" value="gcash" /> GCash 📱
-                </label>
-              </div>
+                  <label>
+                      <input type="radio" name="payment" value="cash" onChange={handlePaymentChange} /> Cash 💵
+                  </label>
+                  <label>
+                      <input type="radio" name="payment" value="gcash" onChange={handlePaymentChange} /> GCash 📱
+                  </label>
             </div>
-  
+
+            {/* Show GCash fields if selected */}
+            {paymentMethod === "gcash" && (
+                <div className="gcash-fields">
+                    <label>Amount Paid:</label>
+                    <input
+                        type="number"
+                        placeholder="Enter amount paid"
+                        value={amountPaid}
+                        onChange={(e) => setAmountPaid(e.target.value)}
+                    />
+
+                    <label>Upload Receipt:</label>
+                    <input type="file" accept="image/*" onChange={handleReceiptUpload} />
+                </div>
+                )}
+            </div>      
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -230,6 +300,13 @@ const PosPage = () => {
               onClick={handleCheckout}
             >
               ✅ Proceed to Checkout
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => handleRemoveItem(itemId)}
+              className="trash-button"
+            >
             </motion.button>
           </div>
         </div>
