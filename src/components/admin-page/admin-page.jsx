@@ -931,7 +931,7 @@ const AdminPage = () => {
                     <FaCog /> Settings
                   </div>
                   <div className="dropdown-item"  onClick={() => handleTabChange("pos-page")}>
-                    <FaArrowRightToBracket /> Customer {"Backend Please Redirect this to /pos-page"}
+                    <FaArrowRightToBracket /> Customer 
                   </div>
                   <div className="dropdown-item"  onClick={() => handleLogout(navigate)}>
                     <FaSignOutAlt /> Sign Out
