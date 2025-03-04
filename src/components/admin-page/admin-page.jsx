@@ -4,7 +4,8 @@ import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/fireb
 import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
-import {LuTrello, LuHandPlatter, LuPlus} from "react-icons/lu";
+import { FaArrowRightToBracket } from "react-icons/fa6";
+import {LuTrello, LuHandPlatter, LuPlus,} from "react-icons/lu";
 import { CiImageOff } from "react-icons/ci";
 import catLogo from "/new-mainlogo.svg"; 
 import catProfile from "/cat_profile.svg"; 
@@ -929,6 +930,9 @@ const AdminPage = () => {
                   <div className="dropdown-item" onClick={() => handleTabChange("settings")}>
                     <FaCog /> Settings
                   </div>
+                  <div className="dropdown-item"  onClick={() => handleTabChange("pos-page")}>
+                    <FaArrowRightToBracket /> Customer {"Backend Please Redirect this to /pos-page"}
+                  </div>
                   <div className="dropdown-item"  onClick={() => handleLogout(navigate)}>
                     <FaSignOutAlt /> Sign Out
                   </div>
@@ -1049,6 +1053,16 @@ const AdminPage = () => {
                   <h2>Settings</h2>
                   <br />
                   <div>{renderSettings()}</div>
+                </motion.div>
+              )}
+              {activeTab === "pos-page" && (
+                <motion.div 
+                  className="pos-page"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <h2>Backend please redirect this to /pos-page</h2>
                 </motion.div>
               )}
             </motion.div>
