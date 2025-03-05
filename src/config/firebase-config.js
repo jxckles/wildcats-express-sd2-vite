@@ -67,10 +67,10 @@ const adminAuth = new AdminAuth();
 onAuthStateChanged(auth, (user) => {
   if (user) {
     if (adminAuth.isAdminEmail(user.email)) {
-      // Only redirect if not already on admin page
-      if (window.location.pathname !== "/admin-page") {
-        window.location.href = "/admin-page";
-      }
+      // Problematic, need to redo logic
+      // if (window.location.pathname !== "/admin-page") {
+      //   window.location.href = "/admin-page";
+      // }
     } else {
       // If not admin, show an error message
       alert("Access denied: You are not an admin.");

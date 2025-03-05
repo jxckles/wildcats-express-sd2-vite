@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { db } from "../../config/firebase-config";
+import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +9,7 @@ import "./pos-page.css";
 
 const PosPage = () => {
   const navigate = useNavigate();
+  const loading = redirectToLoginIfLoggedOut(navigate);
   const [cart, setCart] = useState({});
   const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -21,8 +22,6 @@ const PosPage = () => {
   const [receipt, setReceipt] = useState(null); 
   const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
-
-
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -45,6 +44,10 @@ const PosPage = () => {
 
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Prevent UI from showing unless logged in
+  }
 
   const handleQuantityChange = (id, change) => {
     setCart((prev) => ({

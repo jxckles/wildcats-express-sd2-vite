@@ -930,7 +930,7 @@ const AdminPage = () => {
                   <div className="dropdown-item" onClick={() => handleTabChange("settings")}>
                     <FaCog /> Settings
                   </div>
-                  <div className="dropdown-item"  onClick={() => handleTabChange("pos-page")}>
+                  <div className="dropdown-item"  onClick={() => navigate("/pos-page")}>
                     <FaArrowRightToBracket /> Customer 
                   </div>
                   <div className="dropdown-item"  onClick={() => handleLogout(navigate)}>
