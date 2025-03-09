@@ -399,9 +399,9 @@ const handleSchoolIdChange = (e) => {
   
         {/* Recent Orders Table */}
         <div className="recent-orders">
-        <h2 className="orders-title">Recent Orders</h2>
-        <div className="orders-table-container"> {/* Scrollable wrapper */}
-          <table className="orders-table">
+        <h2 className="orders-title-pos">Recent Orders</h2>
+        <div className="orders-table-container-pos"> {/* Scrollable wrapper */}
+          <table className="orders-table-pos">
             <thead>
               <tr>
                 <th>Order ID</th>
