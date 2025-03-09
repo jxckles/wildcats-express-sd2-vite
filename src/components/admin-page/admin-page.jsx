@@ -59,7 +59,7 @@ const AdminPage = () => {
       name: 'James Bond',
       totalAmount: '₱100.00',
       products: 'Fried Chicken, Burger, Rice',
-      status: 'Preparing',
+      status: 'Pending',
       paymentMode: 'Cash'
     },
     {
@@ -67,15 +67,15 @@ const AdminPage = () => {
       name: 'Steve Harvey',
       totalAmount: '₱200.00',
       products: 'Pasta, Salad',
-      status: 'Preparing',
-      paymentMode: 'Card'
+      status: 'Pending',
+      paymentMode: 'G-Cash'
     },
     {
       orderNumber: '21-7784-123',
       name: 'Clark Kent',
       totalAmount: '₱150.00',
       products: 'Fried Chicken, Fries, Soda',
-      status: 'Preparing',
+      status: 'Pending',
       paymentMode: 'Cash'
     }
   ]);
@@ -737,6 +737,7 @@ const AdminPage = () => {
                     value={order.status}
                     onChange={(e) => handleStatusChange(index, e.target.value)}
                   >
+                    <option value="Pending">Pending</option>
                     <option value="Preparing">Preparing</option>
                     <option value="Ready to Pickup">Ready to Pickup</option>
                     <option value="Completed">Completed</option>

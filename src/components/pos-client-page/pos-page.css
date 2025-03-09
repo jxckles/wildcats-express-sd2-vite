@@ -234,7 +234,7 @@
 .cart-container {
   width: 90%;
   max-width: 600px;
-  margin: 50px auto;
+  margin: 90px auto;
   padding: 20px;
   background: maroon;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -278,20 +278,46 @@
   border-bottom: 1px solid #ccc;
 }
 
-.trash-button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-item-actions button {
+  background-color: #d9534f; 
   color: white;
-  font-size: 18px;
+  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.cart-item-actions button:hover {
+  background-color: #c9302c; 
+}
+
+.cart-item-actions button:active {
+  transform: scale(0.9);
+}
+
+.cart-item-actions span {
+  font-size: 20px;
+  font-weight: bold;
+  color: #d9534f;
 }
 
 .trash-button:hover {
-  background: #d9534f;
-  color: white;
-  border-radius: 5px;
-  transition: background 0.3s ease-in-out;
+  background-color: #700b05;
 }
+
 
 .cart-summary {
   background: #fff5c3;
@@ -453,8 +479,9 @@ input {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  max-width: 400px;
-  margin: 0 auto;
+  width: 80%;
+  max-width: 500px;
+  margin: 40px auto;
   padding: 30px;
   background: #f9f9f9;
   border-radius: 10px;
@@ -504,7 +531,7 @@ input {
   overflow-x: auto;
 }
 
-.orders-title {
+.orders-title-pos {
   text-align: center;
   color: #911507;
   font-size: 14px;
@@ -513,38 +540,39 @@ input {
 }
 
 /* Orders Table */
-.orders-table-container {
+.orders-table-container-pos {
   max-height: 400px; 
   overflow-y: auto;
   overflow-x: auto;
   border: 1px solid #ddd; 
+  display: block;
 }
 
-.orders-table {
+.orders-table-pos {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
 }
 
-.orders-table th,
-.orders-table td {
+.orders-table-pos th,
+.orders-table-pos td {
   padding: 12px;
   text-align: left;
   border: 1px solid #ddd;
   white-space: nowrap; 
 }
 
-.orders-table th {
+.orders-table-pos th {
   background: #f4f4f4;
   color: #911507;
   font-weight: bold;
 }
 
-.orders-table td {
+.orders-table-pos td {
   color: #911507;
 }
 
-.orders-table .status {
+.orders-table-pos .status {
   font-weight: bold;
   color: #911507;
 }
