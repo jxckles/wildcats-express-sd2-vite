@@ -789,9 +789,9 @@
 
   .filters-section select {
     padding: 8px 15px;
-    border: 1px solid gold;
+    border: 1px solid white;
     border-radius: 5px;
-    background-color: gold;
+    background-color: rgb(247, 187, 48);
     min-width: 100px;
   }
 
