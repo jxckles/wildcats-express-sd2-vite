@@ -162,36 +162,38 @@ const handleSchoolIdChange = (e) => {
   const renderMenuView = () => {
     return (
       <>
-      <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      <motion.div className="menu-container-pos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+        <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </motion.div>
-        <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
-            <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-              {cat}
-            </motion.button>
-          ))}
-        </motion.div>
-        <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <AnimatePresence mode="wait">
-            {menuItems
-              .filter((item) => (selectedCategory === "All" || item.category === selectedCategory) && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
-              .map((item) => (
-                <motion.div key={item._id} className="menu-item-pos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-                  <img src={item.imageURL} alt={item.name} className="item-img" />
-                  <h3 className="item-name">{item.name}</h3>
-                  <p className="item-price">Php {item.price}</p>
-                  <div className="quantity-selector">
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>-</motion.button>
-                    <span>{cart[item._id] || 0}</span>
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, 1)}>+</motion.button>
-                  </div>
-                  <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleAddToCart(item)}>
-                    Add to Cart
-                  </motion.button>
-                </motion.div>
-              ))}
-          </AnimatePresence>
+          <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
+              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
+                {cat}
+              </motion.button>
+            ))}
+          </motion.div>
+          <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <AnimatePresence mode="wait">
+              {menuItems
+                .filter((item) => (selectedCategory === "All" || item.category === selectedCategory) && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((item) => (
+                  <motion.div key={item._id} className="menu-item-pos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+                    <img src={item.imageURL} alt={item.name} className="item-img" />
+                    <h3 className="item-name">{item.name}</h3>
+                    <p className="item-price">Php {item.price}</p>
+                    <div className="quantity-selector">
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>-</motion.button>
+                      <span>{cart[item._id] || 0}</span>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, 1)}>+</motion.button>
+                    </div>
+                    <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleAddToCart(item)}>
+                      Add to Cart
+                    </motion.button>
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+          </motion.div>
         </motion.div>
       </>
     );

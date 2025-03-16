@@ -147,11 +147,19 @@
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  padding: 5px;
   gap: 15px;
   margin-top: 20px;
   overflow-y: auto;
   max-height: calc(100vh - 180px);
-  padding-bottom: 20px;
+  padding-bottom: 40px;
+}
+
+
+.menu-container-pos{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Menu Item */
