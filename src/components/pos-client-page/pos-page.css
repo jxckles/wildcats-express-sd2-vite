@@ -147,7 +147,7 @@
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  padding: 5px;
+  padding: 15px;
   gap: 15px;
   margin-top: 20px;
   overflow-y: auto;
