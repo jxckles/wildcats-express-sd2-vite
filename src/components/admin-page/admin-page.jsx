@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
 import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
@@ -902,7 +902,11 @@ const AdminPage = () => {
               alt="Wildcats Express Logo" 
               className="logo"       
             />
-            <h1>Wildcats Express</h1>
+            <h1>    
+              <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                Wildcats Express
+              </Link>
+              </h1>
           </div>
 
           <div className="profile-section" onClick={toggleDropdown}>
