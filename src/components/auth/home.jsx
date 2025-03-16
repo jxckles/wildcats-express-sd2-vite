@@ -1,8 +1,38 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, adminAuth } from "../../config/firebase-config"; // Ensure correct import path
+import { onAuthStateChanged } from "firebase/auth";
 import catImage from "/src/svg/new-mainlogo.svg";
 import "./homestyles.css";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && adminAuth.isAdminEmail(user.email)) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleOrderClick = () => {
+    if (isAdmin) {
+      navigate("/pos-page");
+    } else {
+      navigate("/login-page");
+    }
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <>
       <main className="main-content">
@@ -12,17 +42,15 @@ const Home = () => {
               Wildcats <span className="express-mobile">Express</span>
             </h1>
           </div>
-          <div className="hide-title">
-          </div>
+          <div className="hide-title"></div>
           <h3 className="typing-text">Fast. Fresh. Fierce.</h3>
           <h3 className="typing-text-mobile">Fast. Fresh. Fierce.</h3>
           <div className="order-button">
-            <Link to="/login-page" className="primary-cta">
+            <button onClick={handleOrderClick} className="primary-cta">
               Order Here
-            </Link>
+            </button>
           </div>
-          </div>
-
+        </div>
 
         <div className="cat">
           <img src={catImage} alt="Photo of Wildcat chef" />

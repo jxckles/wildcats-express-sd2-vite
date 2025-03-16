@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -456,7 +456,11 @@ const handleSchoolIdChange = (e) => {
         <div className="logo-container-pos">
           <img src="/new-mainlogo.svg" className="new-logo" alt="Wildcats Express" />
           <span className="title">
-            <h1>Wildcats Express</h1>
+            <h1>
+              <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                    Wildcats Express
+              </Link>
+            </h1>
             <small>CIT-UNIVERSITY</small>
           </span>
         </div>
