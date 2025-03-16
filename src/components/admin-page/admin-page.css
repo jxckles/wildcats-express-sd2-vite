@@ -168,6 +168,7 @@
       background-color: #7e0101;
       color: white;
       border: none;
+      border-radius: 10px;
       padding: 20px;
       cursor: pointer;
       transition: background-color 0.3s ease;
