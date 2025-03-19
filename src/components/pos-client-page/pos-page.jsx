@@ -19,7 +19,7 @@ const PosPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
-  const [receipt, setReceipt] = useState(null); 
+  const [gcashRefNumber, setGcashRefNumber] = useState("");
   const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
 
@@ -91,9 +91,9 @@ const PosPage = () => {
             alert("Please enter a valid amount paid.");
             return;
         }
-        if (!receipt) {
-            alert("Please upload a receipt image.");
-            return;
+        if (!gcashRefNumber) {
+          alert("Please enter the GCash reference number.");
+          return;
         }
     }
 
@@ -107,13 +107,13 @@ const PosPage = () => {
     console.log("Checkout successful with payment method:", paymentMethod);
     if (paymentMethod === "gcash") {
         console.log("Amount Paid:", amountPaid);
-        console.log("Receipt Image:", receipt);
+        console.log("GCash Reference Number:", gcashRefNumber);
     }
 
     // Clear cart after successful checkout
     setCart({});
     setAmountPaid("");
-    setReceipt(null);
+    setGcashRefNumber(""); 
 
     // Show confirmation modal
     finalizeCheckout(newOrderNumber);
@@ -137,11 +137,6 @@ const handleRemoveItem = (itemId) => {
 
 const handlePaymentChange = (e) => {
   setPaymentMethod(e.target.value);
-};
-
-const handleReceiptUpload = (e) => {
-  const file = e.target.files[0];
-  setReceipt(file);
 };
 
 const totalAmount = Object.keys(cart).reduce((total, itemId) => {
@@ -312,9 +307,15 @@ const handleSchoolIdChange = (e) => {
                         value={amountPaid}
                         onChange={(e) => setAmountPaid(e.target.value)}
                     />
+                    <br />
 
-                    <label>Upload Receipt:</label>
-                    <input type="file" accept="image/*" onChange={handleReceiptUpload} />
+                    <label>GCash Reference Number:</label>
+                      <input
+                          type="text"
+                          placeholder="Enter reference number"
+                          value={gcashRefNumber}
+                          onChange={(e) => setGcashRefNumber(e.target.value)}
+                    />
                 </div>
                 )}
             </div>      
