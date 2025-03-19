@@ -22,6 +22,7 @@ const PosPage = () => {
   const [gcashRefNumber, setGcashRefNumber] = useState("");
   const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
+  const [trackedOrder, setTrackedOrder] = useState(null);
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -348,7 +349,7 @@ const handleSchoolIdChange = (e) => {
   const renderTrackOrderView = () => {
     const orders = [
       {
-        id: "20-3950-969",
+        id: "19-3950-969",
         date: "February 14, 2025",
         items: [
           { name: "Fried Chicken", quantity: 1, price: 30 },
@@ -368,7 +369,7 @@ const handleSchoolIdChange = (e) => {
         status: "Pending",
       },
       {
-        id: "20-3950-969",
+        id: "18-3950-969",
         date: "February 28, 2025",
         items: [{ name: "Chicken Adobo", quantity: 1, price: 80 }],
         total: 80,
@@ -376,12 +377,23 @@ const handleSchoolIdChange = (e) => {
       },
     ];
 
+    const handleTrackOrder = () => {
+      const foundOrder = orders.find((order) => order.id === orderNumber);
+      setTrackedOrder(foundOrder || null);
+    };
+
     return (
       <div className="track-order">
         <h2 className="view-title">Track Your Order</h2>
         <div className="track-order-content">
-          <form className="order-tracking-form">
-            <label htmlFor="orderNumber" className="order-label">
+        <form 
+          className="order-tracking-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleTrackOrder();
+          }}
+        >
+              <label htmlFor="orderNumber" className="order-label">
               Enter your order number:
             </label>
             <input 
@@ -389,6 +401,8 @@ const handleSchoolIdChange = (e) => {
               id="orderNumber"
               placeholder="e.g., xx-xxxx-xx" 
               className="order-number-input"
+              value={orderNumber}
+              onChange={(e) => setOrderNumber(e.target.value)}
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -399,11 +413,31 @@ const handleSchoolIdChange = (e) => {
             </motion.button>
           </form>
         </div>
+
+          {/* Display Tracked Order */}
+        {trackedOrder && (
+          <div className="tracked-order">
+            <h2>Order Details</h2>
+            <p><strong>Order ID:</strong> {trackedOrder.id}</p>
+            <p><strong>Date Ordered:</strong> {trackedOrder.date}</p>
+            <p><strong>Total Amount:</strong> ₱{trackedOrder.total}</p>
+            <p><strong>Status:</strong> {trackedOrder.status}</p>
+            <h3>Items Ordered:</h3>
+            <ul>
+              {trackedOrder.items.map((item, idx) => (
+                <li key={idx}>
+                  {item.name} (x{item.quantity}) - ₱{item.price}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
   
         {/* Recent Orders Table */}
         <div className="recent-orders">
         <h2 className="orders-title-pos">Recent Orders</h2>
-        <div className="orders-table-container-pos"> {/* Scrollable wrapper */}
+        <div className="orders-table-container-pos"> 
           <table className="orders-table-pos">
             <thead>
               <tr>
