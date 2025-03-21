@@ -45,6 +45,20 @@ const PosPage = () => {
 
     return () => unsubscribe();
   }, []);
+  
+  useEffect(() => {
+    const handleSecretShortcut = (event) => {
+      if (event.altKey && event.shiftKey && event.key === "A") {
+        navigate("/admin-page");
+      }
+    };
+  
+    document.addEventListener("keydown", handleSecretShortcut);
+    return () => {
+      document.removeEventListener("keydown", handleSecretShortcut);
+    };
+  }, [navigate]);
+  
 
   if (loading) {
     return <div>Loading...</div>; // Prevent UI from showing unless logged in
