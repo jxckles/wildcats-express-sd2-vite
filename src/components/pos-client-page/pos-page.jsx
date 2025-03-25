@@ -382,7 +382,14 @@ const handleSchoolIdChange = (e) => {
         total: 180,
         status: "Pending",
       },
-        
+      {
+        id: "18-3950-969",
+        date: "February 28, 2025",
+        items: [{ name: "Chicken Adobo", quantity: 2, price: 80 }],
+        total: 160,
+        status: "Pending",
+      },
+      
     ];
 
     const handleTrackOrder = () => {
