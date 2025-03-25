@@ -385,14 +385,18 @@ const handleSchoolIdChange = (e) => {
       {
         id: "18-3950-969",
         date: "February 28, 2025",
-        items: [{ name: "Chicken Adobo", quantity: 1, price: 80 }],
-        total: 80,
+        items: [{ name: "Chicken Adobo", quantity: 2, price: 80 }],
+        total: 160,
         status: "Pending",
       },
+      
     ];
 
     const handleTrackOrder = () => {
-      const foundOrder = orders.find((order) => order.id === orderNumber);
+      const validStatuses = ["Pending", "Preparing", "Ready"];
+      const foundOrder = orders.find(
+        (order) => order.id === orderNumber && validStatuses.includes(order.status)
+      );
       setTrackedOrder(foundOrder || null);
     };
 
