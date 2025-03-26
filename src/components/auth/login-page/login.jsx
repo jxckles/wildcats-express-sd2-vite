@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { adminAuth, redirectToLandingIfLoggedIn } from "../../../config/firebase-config"; 
+import { login, redirectToLandingIfLoggedIn } from "../../../config/firebase-config"; 
 import { useGetUserInfo } from "../../../hooks/useGetUserInfo";
 import catImage from "/src/svg/thinking-cat.svg";
 import { toast, ToastContainer } from "react-toastify";
@@ -38,24 +38,21 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     toast.dismiss();
-     
     try {
-      await adminAuth.login(username, password);
+      await login(username, password);
       setIsSuccess(true);
-      toast.success("Login successful!");
-      // Add delay for animation
+      toast.success("Login successful!", {
+        autoClose: 3000,
+      });
+      sessionStorage.setItem("hasLoggedIn", "true");
       setTimeout(() => {
         navigate("/admin-page");
-      }, 5000);
+      }, 3000);
     } catch (error) {
       console.error("Login failed: ", error.message);
       toast.error(`${error.message}`);
     }
   };
-
-  if (isAuth) {
-    return <Navigate to="/admin-page" />;
-  }
 
   const handleBack = () => {
     navigate('/');

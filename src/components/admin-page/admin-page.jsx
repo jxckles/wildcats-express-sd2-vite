@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
+import { redirectToLoginIfLoggedOut, handleLogout, auth, db } from "../../config/firebase-config";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaChartBar, FaClipboardList, FaCog } from "react-icons/fa";
@@ -32,7 +33,8 @@ const AdminPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  //admin reports
+
+  // for Admin reports
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -80,6 +82,51 @@ const AdminPage = () => {
     }
   ]);
 
+  // For Tracking Password Changes
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Handle Save Password
+  const handleSavePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirm password do not match.");
+      return;
+    }
+
+    try {
+      const user = auth.currentUser; // Get the currently logged-in user
+      if (!user) {
+        toast.error("No user is currently logged in.");
+        return;
+      }
+
+      // Reauthenticate the user with the old password
+      const credential = EmailAuthProvider.credential(user.email, oldPassword);
+      await reauthenticateWithCredential(user, credential);
+
+      // Check if the new password is the same as the old password
+      const newCredential = EmailAuthProvider.credential(user.email, newPassword);
+      try {
+        await reauthenticateWithCredential(user, newCredential);
+        toast.error("New password cannot be the same as the current password.");
+        return;
+      } catch {
+          console.log("Password is new.");
+      }
+
+      // Update the user's password
+      await updatePassword(user, newPassword);
+      toast.success("Password updated successfully!\nPlease log in again.");
+      setTimeout(() => {
+        handleLogout(navigate); // Logout the user after changing the password
+      }, 3000);
+    } catch (error) {
+      console.error("Error updating password:", error.message);
+      toast.error(<> Failed to update password: <br /> {error.message} </>);
+    }
+  };
+
   // Handle change in status
   const handleStatusChange = (index, value) => {
     const updatedOrders = [...orders];
@@ -93,6 +140,16 @@ const AdminPage = () => {
     console.log('Downloading report...');
   };
 
+  // For Login succes Toast
+  useEffect(() => {
+    const hasLoggedIn = sessionStorage.getItem("hasLoggedIn");
+    if (hasLoggedIn === "true") {
+      setTimeout(() => {
+        toast.success("Login successful!");
+      }, 500); 
+      sessionStorage.removeItem("hasLoggedIn");
+    }
+  }, []);
 
   useEffect(() => {
     const menuRef = collection(db, "menu");
@@ -866,18 +923,42 @@ const AdminPage = () => {
     return (
       <>
         <div className="settings-modal">
-          
           <div className="settings-content">
-            <label>Email:</label>
-            <input type="email" placeholder="Enter new email" />
-  
-            <label>Password:</label>
-            <input type="password" placeholder="Enter new password" />
+            <form onSubmit={(e) => {
+              e.preventDefault(); 
+              handleSavePassword(); 
+            }}>
+              <label>Old Password:</label>
+              <input
+                type="password"
+                placeholder="Enter current password"
+                value={oldPassword}
+                required
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
 
-            <label>Confirm Password:</label>
-            <input type="password" placeholder="Confirm new password" />
-  
-            <button className="save-btn">Save Changes</button>
+              <label>New Password:</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                required
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+
+              <label>Confirm Password:</label>
+              <input
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                required
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <button className="save-btn" type="submit">
+                Save Changes
+              </button>
+            </form>
           </div>
         </div>
       </>

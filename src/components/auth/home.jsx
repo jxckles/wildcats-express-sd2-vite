@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, adminAuth } from "../../config/firebase-config"; // Ensure correct import path
+import { auth } from "../../config/firebase-config"; // Ensure correct import path
 import { onAuthStateChanged } from "firebase/auth";
 import catImage from "/src/svg/new-mainlogo.svg";
 import "./homestyles.css";
@@ -8,28 +8,30 @@ import "./homestyles.css";
 const Home = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && adminAuth.isAdminEmail(user.email)) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-      setIsLoading(false);
-    });
+  ///// Brb ani block of code, overhaul admin flaggng
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user && adminAuth.isAdminEmail(user.email)) {
+  //       setIsAdmin(true);
+  //     } else {
+  //       setIsAdmin(false);
+  //     }
+  //     setIsLoading(false);
+  //   });
 
-    return () => unsubscribe();
-  }, []);
+  //   return () => unsubscribe();
+  // }, []);
 
   const handleOrderClick = () => {
-    if (isAdmin) {
-      navigate("/pos-page");
-    } else {
+    // if (isAdmin) {
+    //   navigate("/pos-page");
+    // } else {
       navigate("/login-page");
-    }
+    //}
   };
+  /////
 
   if (isLoading) return <p>Loading...</p>;
 
