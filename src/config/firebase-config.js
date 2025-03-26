@@ -24,59 +24,20 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Create an AdminAuth class to encapsulate login logic
-class AdminAuth {
-  // Private variables to hold admin credentials
-  #adminEmail = import.meta.env.VITE_ADMIN_EMAIL; // Admin email
-  #adminPassword = import.meta.env.VITE_ADMIN_PASSWORD; // Admin password
-
-  // Function to check if credentials are correct
-  async login(username, password) {
-    if (this.#checkCredentials(username, password)) {
-      return await this.signInAdmin();
-    } else {
-      throw new Error("Invalid admin credentials!");
-    }
+// Function to handle Firebase login
+const login = async (username, password) => {
+  try {
+    // Use Firebase authentication to sign in
+    const userCredential = await signInWithEmailAndPassword(auth, username, password);
+    console.log("User logged in:", userCredential.user);
+    toast.success("Login successful!");
+    return userCredential.user;
+  } catch (error) {
+    console.error("Error during login:", error.message);
+    throw new Error("Error during login: Invalid Credentials");
+    
   }
-
-  // Protected method to simulate credentials checking
-  #checkCredentials(username, password) {
-    return username === this.#adminEmail && password === this.#adminPassword;
-  }
-
-  // Function to handle the actual Firebase admin login
-  async signInAdmin() {
-    try {
-      // Use Firebase authentication to sign in as admin
-      const userCredential = await signInWithEmailAndPassword(auth, this.#adminEmail, this.#adminPassword);
-      console.log("Admin logged in:", userCredential.user);
-      return userCredential.user;
-    } catch (error) {
-      throw new Error("Error during login: " + error.message);
-    }
-  }
-
-  // Public method to access the admin email (for checking purposes)
-  isAdminEmail(email) {
-    return email === this.#adminEmail;
-  }
-}
-
-// Instantiate AdminAuth
-const adminAuth = new AdminAuth();
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    if (adminAuth.isAdminEmail(user.email)) {
-      // Problematic, need to redo logic
-      // if (window.location.pathname !== "/admin-page") {
-      //   window.location.href = "/admin-page";
-      // }
-    } else {
-      // If not admin, show an error message
-      alert("Access denied: You are not an admin.");
-    }
-  }
-});
+};
 
 // To check if user is logged out and trying to access pages other than login/signup:
 const redirectToLoginIfLoggedOut = (navigate) => {
@@ -131,7 +92,7 @@ const redirectToLandingIfLoggedIn = (navigate) => {
 
 // Export
 export { 
-  auth, db, adminAuth,
+  auth, db, login,
   redirectToLoginIfLoggedOut,
   handleLogout,
   redirectToLandingIfLoggedIn
