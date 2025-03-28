@@ -23,6 +23,7 @@ const PosPage = () => {
   const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
   const [trackedOrder, setTrackedOrder] = useState(null);
+  const [tempQuantities, setTempQuantities] = useState({});
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -65,16 +66,31 @@ const PosPage = () => {
   }
 
   const handleQuantityChange = (id, change) => {
-    setCart((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + change),
-    }));
+    setCart((prev) => {
+      const newQuantity = (prev[id] || 0) + change;
+  
+      if (newQuantity <= 0) {
+        // Remove the item from the cart if the quantity is zero
+        const { [id]: _, ...rest } = prev;
+        return rest;
+      }
+  
+      return {
+        ...prev,
+        [id]: newQuantity,
+      };
+    });
   };
+  
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = (item, quantity) => {
     setCart((prev) => ({
       ...prev,
-      [item._id]: (prev[item._id] || 1),
+      [item._id]: (prev[item._id] || 0) + quantity,
+    }));
+    setTempQuantities((prev) => ({
+      ...prev,
+      [item._id]: 0,
     }));
   };
 
@@ -193,12 +209,26 @@ const handleSchoolIdChange = (e) => {
                     <h3 className="item-name">{item.name}</h3>
                     <p className="item-price">Php {item.price}</p>
                     <div className="quantity-selector">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>-</motion.button>
-                      <span>{cart[item._id] || 0}</span>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, 1)}>+</motion.button>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => {
+                        setTempQuantities((prev) => ({
+                          ...prev,
+                          [item._id]: Math.max((prev[item._id] || 0) - 1, 0),
+                        }));
+                      }} disabled={!!cart[item._id]}>-</motion.button>
+                      <span>{tempQuantities[item._id] || 0}</span>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => {
+                        setTempQuantities((prev) => ({
+                          ...prev,
+                          [item._id]: (prev[item._id] || 0) + 1,
+                        }));
+                      }} disabled={!!cart[item._id]}>+</motion.button>
                     </div>
-                    <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleAddToCart(item)}>
-                      Add to Cart
+                    <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => {
+                      if (tempQuantities[item._id] > 0) {
+                        handleAddToCart(item, tempQuantities[item._id]);
+                      }
+                    }} disabled={!!cart[item._id]}>
+                      {cart[item._id] ? "In Cart" : "Add to Cart"}
                     </motion.button>
                   </motion.div>
                 ))}
@@ -520,7 +550,7 @@ const handleSchoolIdChange = (e) => {
       </motion.header>
       
       {/* Main content container that includes both sidebar and content */}
-      <div className="main-content-container">
+      <div class="main-content-container">
         {/* Sidebar moved inside main content container */}
         <motion.aside
           className="sidebar-pos"
