@@ -13,6 +13,8 @@ import catProfile from "/cat_profile.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -49,9 +51,64 @@ const AdminPage = () => {
         status: 'Completed',
         product: 'Fried Chicken',
         quantity: '1x',
-        totalPrice: '₱50.00'
+        totalPrice: '₱50.00',
       },
-      // Add more orders as needed
+      {
+        orderNumber: '23-1234-567',
+        dateOrdered: '3/15/2025, 10:45:00 AM',
+        status: 'Cancelled',
+        product: 'Burger',
+        quantity: '2x',
+        totalPrice: '₱150.00',
+      },
+      {
+        orderNumber: '24-9876-543',
+        dateOrdered: '3/30/2025, 2:30:00 PM',
+        status: 'Completed',
+        product: 'Pizza',
+        quantity: '1x',
+        totalPrice: '₱200.00',
+      },
+      {
+        orderNumber: '25-4567-890',
+        dateOrdered: '2/28/2025, 5:15:00 PM',
+        status: 'Pending',
+        product: 'Pasta',
+        quantity: '3x',
+        totalPrice: '₱300.00',
+      },
+      {
+        orderNumber: '26-6543-210',
+        dateOrdered: '1/10/2025, 8:00:00 AM',
+        status: 'Completed',
+        product: 'Steak',
+        quantity: '1x',
+        totalPrice: '₱500.00',
+      },
+      {
+        orderNumber: '27-7890-123',
+        dateOrdered: '12/25/2024, 6:00:00 PM',
+        status: 'Cancelled',
+        product: 'Salad',
+        quantity: '2x',
+        totalPrice: '₱100.00',
+      },
+      {
+        orderNumber: '28-3456-789',
+        dateOrdered: '11/11/2024, 11:11:11 AM',
+        status: 'Completed',
+        product: 'Soda',
+        quantity: '5x',
+        totalPrice: '₱75.00',
+      },
+      {
+        orderNumber: '29-1122-334',
+        dateOrdered: '3/30/2025, 4:45:00 PM',
+        status: 'Completed',
+        product: 'Rice',
+        quantity: '10x',
+        totalPrice: '₱100.00',
+      },
     ];
 
   // Sample mock data for Orders
@@ -61,31 +118,93 @@ const AdminPage = () => {
       name: 'James Bond',
       totalAmount: '₱100.00',
       products: 'Fried Chicken, Burger, Rice',
-      status: 'Pending',
-      paymentMode: 'Cash'
+      status: 'Completed', // Placeholder for Completed transaction
+      paymentMode: 'Cash',
     },
     {
       orderNumber: '20-3454-654',
       name: 'Steve Harvey',
       totalAmount: '₱200.00',
       products: 'Pasta, Salad',
-      status: 'Pending',
-      paymentMode: 'G-Cash'
+      status: 'Cancelled', // Placeholder for Cancelled transaction
+      paymentMode: 'G-Cash',
     },
     {
       orderNumber: '21-7784-123',
       name: 'Clark Kent',
       totalAmount: '₱150.00',
       products: 'Fried Chicken, Fries, Soda',
-      status: 'Pending',
-      paymentMode: 'Cash'
-    }
+      status: 'Pending', // Example of a non-completed transaction
+      paymentMode: 'Cash',
+    },
+    {
+      orderNumber: '22-5714-674',
+      name: 'Bruce Wayne',
+      totalAmount: '₱300.00',
+      products: 'Steak, Mashed Potatoes',
+      status: 'Completed', // Another Completed transaction
+      paymentMode: 'Credit Card',
+    },
   ]);
 
   // For Tracking Password Changes
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+
+  // Filter Completed or Cancelled transactions
+  const completedOrCancelledOrders = orders.filter(
+    (order) => order.status === "Completed" || order.status === "Cancelled"
+  );
+
+  // Function to toggle the modal
+  const toggleTransactionModal = () => {
+    setIsTransactionModalOpen(!isTransactionModalOpen);
+  };
+
+  // Render the modal
+  const renderTransactionModal = () => (
+    isTransactionModalOpen && (
+      <div className="modal-overlay">
+        <div className="modal">
+          <h2>Past Transactions</h2>
+          <table className="transactions-table">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Name</th>
+                <th>Total Amount</th>
+                <th>Products</th>
+                <th>Status</th>
+                <th>Mode of Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedOrCancelledOrders.map((order) => (
+                <tr key={order.orderNumber}>
+                  <td>{order.orderNumber}</td>
+                  <td>{order.name}</td>
+                  <td>{order.totalAmount}</td>
+                  <td>{order.products}</td>
+                  <td>
+                    <span className={`status-badge ${order.status.toLowerCase()}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>{order.paymentMode}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button className="close-modal-button" onClick={toggleTransactionModal}>
+            Close
+          </button>
+        </div>
+      </div>
+    )
+  );
 
   // Handle Save Password
   const handleSavePassword = async () => {
@@ -132,12 +251,6 @@ const AdminPage = () => {
     const updatedOrders = [...orders];
     updatedOrders[index].status = value;
     setOrders(updatedOrders); // Update the state with new status
-  };
-
-
-  const handleDownloadReport = () => {
-    // Implement your download logic here
-    console.log('Downloading report...');
   };
 
   // For Login succes Toast
@@ -813,108 +926,134 @@ const AdminPage = () => {
 
   // Render Admin Reports
   const renderAdminReports = () => {
+    // Filter the orderReport based on search term and selected filters
+    const filteredReports = orderReport.filter((report) => {
+      const matchesSearchTerm =
+        report.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.dateOrdered.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.product.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return(
-    <>                  
-  <div className="search-container">
-    <input
-      type="text"
-      placeholder="Search by Order Number, Date, Status, or Product"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-  </div>
+      const matchesDay = selectedDay
+        ? report.dateOrdered.split("/")[1].padStart(2, "0") === selectedDay
+        : true;
 
-  <div className="filters-section">
-    <span className="filters-label">Filters</span>
-    <select 
-      value={selectedDay}
-      onChange={(e) => setSelectedDay(e.target.value)}
-    >
-      <option value="">Day</option>
-      {/* Add day options 1-31 */}
-      {Array.from({ length: 31 }, (_, i) => (
-        <option key={i + 1} value={i + 1}>{i + 1}</option>
-      ))}
-    </select>
+      const matchesMonth = selectedMonth
+        ? report.dateOrdered.split("/")[0].padStart(2, "0") === selectedMonth
+        : true;
 
-    <select 
-      value={selectedMonth}
-      onChange={(e) => setSelectedMonth(e.target.value)}
-    >
-      <option value="">Month</option>
-      <option value="1">January</option>
-      <option value="2">February</option>
-      <option value="3">March</option>
-      <option value="4">April</option>
-      <option value="5">May</option>
-      <option value="6">June</option>
-      <option value="7">July</option>
-      <option value="8">August</option>
-      <option value="9">September</option>
-      <option value="10">October</option>
-      <option value="11">November</option>
-      <option value="12">December</option>
-    </select>
+      const matchesYear = selectedYear
+        ? report.dateOrdered.split("/")[2].split(",")[0] === selectedYear
+        : true;
 
-    <select 
-      value={selectedYear}
-      onChange={(e) => setSelectedYear(e.target.value)}
-    >
-      <option value="">Year</option>
-      <option value="2025">2025</option>
-      <option value="2026">2026</option>
-      <option value="2026">2027</option>
-      <option value="2028">2028</option>
-      <option value="2029">2029</option>
-      <option value="2030">2030</option>
-      <option value="2031">2031</option>
-      <option value="2032">2032</option>
-      <option value="2033">2033</option>
-      <option value="2034">2034</option>
-      <option value="2035">2035</option>
-      {/* Add other years */}
-    </select>
+      return matchesSearchTerm && matchesDay && matchesMonth && matchesYear;
+    });
 
-    <button 
-      className="download-button"
-      onClick={handleDownloadReport}
-    >
-      Download Report
-    </button>
-  </div>
+    // Function to download the filtered report as a PDF
+    const handleDownloadReport = () => {
+      try {
+        const doc = new jsPDF();
+        doc.text("Admin Reports", 14, 10);
 
-  <div className="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Order Number</th>
-          <th>Date Ordered</th>
-          <th>Status</th>
-          <th>Product</th>
-          <th>Quantity</th>
-          <th>Total Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orderReport.map((orderReport) => (
-          <tr key={orderReport.orderNumber}>
-            <td>{orderReport.orderNumber}</td>
-            <td>{orderReport.dateOrdered}</td>
-            <td>
-              <span className={`status-badge ${orderReport.status.toLowerCase()}`}>
-                {orderReport.status}
-              </span>
-            </td>
-            <td>{orderReport.product}</td>
-            <td>{orderReport.quantity}</td>
-            <td>{orderReport.totalPrice}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-    </>
+        doc.autoTable({
+          head: [["Order Number", "Date Ordered", "Status", "Product", "Quantity", "Total Price"]],
+          body: filteredReports.map((report) => [
+            report.orderNumber,
+            report.dateOrdered,
+            report.status,
+            report.product,
+            report.quantity,
+            report.totalPrice,
+          ]),
+        });
+
+        doc.save("admin-reports.pdf");
+        toast.success("Report downloaded successfully!");
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast.error("Failed to download the report. Please try again.");
+      }
+    };
+
+    return (
+      <>
+        {/* Search Bar */}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by Order Number, Date, Status, or Product"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/* Filters Section */}
+        <div className="filters-section">
+          <span className="filters-label">Filters</span>
+          <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)}>
+            <option value="">Day</option>
+            {Array.from({ length: 31 }, (_, i) => (
+              <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+
+          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+            <option value="">Month</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
+                {new Date(0, i).toLocaleString("default", { month: "long" })}
+              </option>
+            ))}
+          </select>
+
+          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+            <option value="">Year</option>
+            {Array.from({ length: 10 }, (_, i) => (
+              <option key={2025 + i} value={String(2025 + i)}>
+                {2025 + i}
+              </option>
+            ))}
+          </select>
+
+          <button className="download-button" onClick={handleDownloadReport}>
+            Download Report
+          </button>
+        </div>
+
+        {/* Table Section */}
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Date Ordered</th>
+                <th>Status</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReports.map((report) => (
+                <tr key={report.orderNumber}>
+                  <td>{report.orderNumber}</td>
+                  <td>{report.dateOrdered}</td>
+                  <td>
+                    <span className={`status-badge ${report.status.toLowerCase()}`}>
+                      {report.status}
+                    </span>
+                  </td>
+                  <td>{report.product}</td>
+                  <td>{report.quantity}</td>
+                  <td>{report.totalPrice}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   };
 
@@ -1105,6 +1244,10 @@ const AdminPage = () => {
                   <h2>Orders</h2>
                   <br/>
                   <div>{renderOrder()}</div>
+                  <button className="view-transactions-button" onClick={toggleTransactionModal}>
+                    View Past Transactions
+                  </button>
+                  {renderTransactionModal()}
                 </motion.div>
               )}
               {activeTab === "adminReports" && (
