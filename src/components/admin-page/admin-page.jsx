@@ -1468,7 +1468,7 @@ const AdminPage = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2>Register Customer</h2>
+                  <h2>Add Customer</h2>
                   <div>{renderRegisterCustomer()}</div>
                 </motion.div>
               )}
