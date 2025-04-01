@@ -965,6 +965,31 @@ const AdminPage = () => {
     );
   };
   
+  //Render registerCustomer
+  const renderRegisterCustomer = () => {
+    return (
+      <>
+      <div className="registerCustomer-modal">
+        <div className="registerCustomer-content">
+          <form onSubmit={(e) => e.preventDefault()}>
+            <label>Customer Name:</label>
+            <input type="text" placeholder="Enter customer name" required />
+
+            <label>School ID:</label>
+            <input type="text" placeholder="Enter school ID" required />
+
+            <label>Contact Number:</label>
+            <input type="text" placeholder="Enter contact number" required />
+
+            <button className="save-btn" type="submit">
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
+      </>
+    );
+  }
 
   // Render admin Page
   return (
@@ -1127,6 +1152,7 @@ const AdminPage = () => {
                   transition={{ delay: 0.2 }}
                 >
                   <h2>Register Customer</h2>
+                  <div>{renderRegisterCustomer()}</div>
                 </motion.div>
               )}
               {activeTab === "settings" && (
