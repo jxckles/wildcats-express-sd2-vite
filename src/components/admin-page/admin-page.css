@@ -220,12 +220,12 @@
   
 
     /* Tab Content Styles */
-    .dashboard, .add-menu,.orders, .admin-reports, .analytics, .settings {
+    .dashboard, .add-menu,.orders, .admin-reports, .register-customer, .settings {
       color: white;
 
     }
     
-    .dashboard h2, .add-menu h2, .orders h2, .admin-reports h2, .analytics h2, .settings h2 {
+    .dashboard h2, .add-menu h2, .orders h2, .admin-reports h2, .register-customer h2, .settings h2 {
       font-size: 2rem;
     }
     .dashboard p{

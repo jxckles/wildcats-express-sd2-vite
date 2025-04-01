@@ -1010,8 +1010,8 @@ const AdminPage = () => {
                   <div className="dropdown-item" onClick={() => handleTabChange("adminReports")}>
                     <FaClipboardList /> Admin Reports
                   </div>
-                  <div className="dropdown-item" onClick={() => handleTabChange("analytics")}>
-                    <FaChartBar /> Analytics
+                  <div className="dropdown-item" onClick={() => handleTabChange("register customer")}>
+                    <FaChartBar /> Register Customer
                   </div>
                   <div className="dropdown-item" onClick={() => handleTabChange("settings")}>
                     <FaCog /> Settings
@@ -1119,14 +1119,14 @@ const AdminPage = () => {
                   <div>{renderAdminReports()}</div>
                 </motion.div>
               )}
-              {activeTab === "analytics" && (
+              {activeTab === "register customer" && (
                 <motion.div 
-                  className="analytics"
+                  className="register-customer"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2>Analytics</h2>
+                  <h2>Register Customer</h2>
                 </motion.div>
               )}
               {activeTab === "settings" && (
