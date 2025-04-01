@@ -978,7 +978,7 @@ const AdminPage = () => {
             <label>School ID:</label>
             <input type="text" placeholder="Enter school ID" required />
 
-            <label>Contact Number:</label>
+            <label>Course & Year:</label>
             <input type="text" placeholder="Enter contact number" required />
 
             <button className="save-btn" type="submit">
