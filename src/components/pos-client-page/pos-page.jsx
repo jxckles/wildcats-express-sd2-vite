@@ -1,7 +1,7 @@
 import {Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +23,7 @@ const PosPage = () => {
   const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
   const [trackedOrder, setTrackedOrder] = useState(null);
+  const [recentOrders, setRecentOrders] = useState([]); // State for recent orders
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -46,6 +47,28 @@ const PosPage = () => {
     return () => unsubscribe();
   }, []);
   
+  // Fetch recent orders in real-time
+  useEffect(() => {
+    const ordersRef = collection(db, "orders");
+
+    const unsubscribe = onSnapshot(
+      ordersRef,
+      (querySnapshot) => {
+        const fetchedOrders = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id, // Include the document ID
+        }));
+        setRecentOrders(fetchedOrders); // Update the state with fetched orders
+      },
+      (error) => {
+        console.error("Error fetching recent orders:", error);
+        toast.error("Failed to fetch recent orders.");
+      }
+    );
+
+    return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
+
   useEffect(() => {
     const handleSecretShortcut = (event) => {
       if (event.altKey && event.shiftKey && event.key === "A") {
@@ -90,49 +113,74 @@ const PosPage = () => {
     setCurrentView(view);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!schoolId) {
-        alert("Please enter your School ID before proceeding to checkout.");
-        return;
+      alert("Please enter your School ID before proceeding to checkout.");
+      return;
     }
-
+  
     if (!paymentMethod) {
-        alert("Please select a payment method before proceeding to checkout.");
+      alert("Please select a payment method before proceeding to checkout.");
+      return;
+    }
+  
+    if (paymentMethod === "gcash") {
+      if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
+        alert("Please enter a valid amount paid.");
         return;
+      }
+      if (!gcashRefNumber) {
+        alert("Please enter the GCash reference number.");
+        return;
+      }
     }
-
-    if (paymentMethod === "gcash") {
-        if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
-            alert("Please enter a valid amount paid.");
-            return;
-        }
-        if (!gcashRefNumber) {
-          alert("Please enter the GCash reference number.");
-          return;
-        }
+  
+    // Prepare the order data
+    const newOrder = {
+      id: schoolId, // Use the school ID as the order ID
+      schoolId, // Customer's school ID
+      name: clientName, // Customer's name
+      paymentMethod, // Payment method (e.g., cash, GCash)
+      amountPaid: paymentMethod === "gcash" ? parseFloat(amountPaid) : null, // Amount paid (if applicable)
+      gcashRefNumber: paymentMethod === "gcash" ? gcashRefNumber : null, // GCash reference number (if applicable)
+      totalAmount, // Total amount to be paid
+      quantity: Object.keys(cart).reduce((total, itemId) => total + cart[itemId], 0), // Total quantity
+      dateTime: new Date().toLocaleString(), // Current date and time
+      status: "Pending", // Initial status
+      items: Object.keys(cart).map((itemId) => {
+        const item = menuItems.find((item) => item._id === itemId);
+        return {
+          name: item.name,
+          price: item.price,
+          quantity: cart[itemId],
+        };
+      }), // List of items ordered
+    };
+  
+    try {
+      // Save the order to Firestore with the school ID as the document ID
+      const ordersRef = collection(db, "orders");
+      const orderDoc = doc(ordersRef, schoolId); // Use schoolId as the document ID
+      await setDoc(orderDoc, newOrder);
+  
+      // Set the order number for confirmation
+      setOrderNumber(schoolId);
+  
+      // Show success message
+      alert(`Order Successful! Your order number is: ${schoolId}`);
+  
+      // Clear the cart and reset fields
+      setCart({});
+      setClientName("");
+      setSchoolId("");
+      setAmountPaid("");
+      setGcashRefNumber("");
+      setPaymentMethod("");
+    } catch (error) {
+      console.error("Error saving order:", error);
+      toast.error("Failed to place the order. Please try again.");
     }
-
-    // Generate a unique order number (e.g., based on timestamp)
-    const newOrderNumber = `WCE-${Date.now()}`;
-    setOrderNumber(newOrderNumber);
-
-    alert(`Order Successful! Your order number is: ${newOrderNumber}`);
-
-    console.log("Order Number:", newOrderNumber);
-    console.log("Checkout successful with payment method:", paymentMethod);
-    if (paymentMethod === "gcash") {
-        console.log("Amount Paid:", amountPaid);
-        console.log("GCash Reference Number:", gcashRefNumber);
-    }
-
-    // Clear cart after successful checkout
-    setCart({});
-    setAmountPaid("");
-    setGcashRefNumber(""); 
-
-    // Show confirmation modal
-    finalizeCheckout(newOrderNumber);
-};
+  };
 
  const finalizeCheckout = () => {
   setShowConfirmation(true);
@@ -361,63 +409,35 @@ const handleSchoolIdChange = (e) => {
 
   //render track order
   const renderTrackOrderView = () => {
-    const orders = [
-      {
-        id: "19-3950-969",
-        date: "February 14, 2025",
-        items: [
-          { name: "Fried Chicken", quantity: 1, price: 30 },
-          { name: "Chicken Adobo", quantity: 1, price: 80 },
-        ],
-        total: 110,
-        status: "Pending",
-      },
-      {
-        id: "20-3950-969",
-        date: "February 27, 2025",
-        items: [
-          { name: "Chicken Adobo", quantity: 1, price: 80 },
-          { name: "Bulalo", quantity: 1, price: 100 },
-        ],
-        total: 180,
-        status: "Pending",
-      },
-      {
-        id: "18-3950-969",
-        date: "February 28, 2025",
-        items: [{ name: "Chicken Adobo", quantity: 2, price: 80 }],
-        total: 160,
-        status: "Pending",
-      },
-      
-    ];
-
     const handleTrackOrder = () => {
       const validStatuses = ["Pending", "Preparing", "Ready"];
-      const foundOrder = orders.find(
+      const foundOrder = recentOrders.find(
         (order) => order.id === orderNumber && validStatuses.includes(order.status)
       );
       setTrackedOrder(foundOrder || null);
     };
-
+  
+    // Filter out the "order" document
+    const filteredOrders = recentOrders.filter((order) => order.id !== "order");
+  
     return (
       <div className="track-order">
         <h2 className="view-title">Track Your Order</h2>
         <div className="track-order-content">
-        <form 
-          className="order-tracking-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleTrackOrder();
-          }}
-        >
-              <label htmlFor="orderNumber" className="order-label">
+          <form
+            className="order-tracking-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleTrackOrder();
+            }}
+          >
+            <label htmlFor="orderNumber" className="order-label">
               Enter your order number:
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="orderNumber"
-              placeholder="e.g., xx-xxxx-xx" 
+              placeholder="e.g., WCE-123456789"
               className="order-number-input"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value)}
@@ -431,15 +451,23 @@ const handleSchoolIdChange = (e) => {
             </motion.button>
           </form>
         </div>
-
-          {/* Display Tracked Order */}
+  
+        {/* Display Tracked Order */}
         {trackedOrder && (
           <div className="tracked-order">
             <h2>Order Details</h2>
-            <p><strong>Order ID:</strong> {trackedOrder.id}</p>
-            <p><strong>Date Ordered:</strong> {trackedOrder.date}</p>
-            <p><strong>Total Amount:</strong> ₱{trackedOrder.total}</p>
-            <p><strong>Status:</strong> {trackedOrder.status}</p>
+            <p>
+              <strong>Order ID:</strong> {trackedOrder.id}
+            </p>
+            <p>
+              <strong>Date Ordered:</strong> {trackedOrder.dateTime}
+            </p>
+            <p>
+              <strong>Total Amount:</strong> ₱{trackedOrder.totalAmount.toFixed(2)}
+            </p>
+            <p>
+              <strong>Status:</strong> {trackedOrder.status}
+            </p>
             <h3>Items Ordered:</h3>
             <ul>
               {trackedOrder.items.map((item, idx) => (
@@ -450,42 +478,41 @@ const handleSchoolIdChange = (e) => {
             </ul>
           </div>
         )}
-
   
         {/* Recent Orders Table */}
         <div className="recent-orders">
-        <h2 className="orders-title-pos">Recent Orders</h2>
-        <div className="orders-table-container-pos"> 
-          <table className="orders-table-pos">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date Ordered</th>
-                <th>Menus Ordered</th>
-                <th>Total Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => (
-                <tr key={index}>
-                  <td>{order.id}</td>
-                  <td>{order.date}</td>
-                  <td>
-                    {order.items.map((item, idx) => (
-                      <div key={idx}>
-                        {item.name} (x{item.quantity}) - ₱{item.price}
-                      </div>
-                    ))}
-                  </td>
-                  <td>₱{order.total}</td>
-                  <td className="status">{order.status}</td>
+          <h2 className="orders-title-pos">Recent Orders</h2>
+          <div className="orders-table-container-pos">
+            <table className="orders-table-pos">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date Ordered</th>
+                  <th>Menus Ordered</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredOrders.map((order, index) => (
+                  <tr key={index}>
+                    <td>{order.id}</td>
+                    <td>{order.dateTime}</td>
+                    <td>
+                      {order.items.map((item, idx) => (
+                        <div key={idx}>
+                          {item.name} (x{item.quantity}) - ₱{item.price}
+                        </div>
+                      ))}
+                    </td>
+                    <td>₱{order.totalAmount.toFixed(2)}</td>
+                    <td className="status">{order.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       </div>
     );
   };

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, auth, db } from "../../config/firebase-config";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaUserPlus , FaClipboardList, FaCog } from "react-icons/fa";
 import { FaArrowRightToBracket } from "react-icons/fa6";
@@ -13,6 +13,8 @@ import catProfile from "/cat_profile.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -124,43 +126,143 @@ const AdminPage = () => {
         status: 'Completed',
         product: 'Fried Chicken',
         quantity: '1x',
-        totalPrice: '₱50.00'
+        totalPrice: '₱50.00',
       },
-      // Add more orders as needed
+      {
+        orderNumber: '23-1234-567',
+        dateOrdered: '3/15/2025, 10:45:00 AM',
+        status: 'Cancelled',
+        product: 'Burger',
+        quantity: '2x',
+        totalPrice: '₱150.00',
+      },
+      {
+        orderNumber: '24-9876-543',
+        dateOrdered: '3/30/2025, 2:30:00 PM',
+        status: 'Completed',
+        product: 'Pizza',
+        quantity: '1x',
+        totalPrice: '₱200.00',
+      },
+      {
+        orderNumber: '25-4567-890',
+        dateOrdered: '2/28/2025, 5:15:00 PM',
+        status: 'Pending',
+        product: 'Pasta',
+        quantity: '3x',
+        totalPrice: '₱300.00',
+      },
+      {
+        orderNumber: '26-6543-210',
+        dateOrdered: '1/10/2025, 8:00:00 AM',
+        status: 'Completed',
+        product: 'Steak',
+        quantity: '1x',
+        totalPrice: '₱500.00',
+      },
+      {
+        orderNumber: '27-7890-123',
+        dateOrdered: '12/25/2024, 6:00:00 PM',
+        status: 'Cancelled',
+        product: 'Salad',
+        quantity: '2x',
+        totalPrice: '₱100.00',
+      },
+      {
+        orderNumber: '28-3456-789',
+        dateOrdered: '11/11/2024, 11:11:11 AM',
+        status: 'Completed',
+        product: 'Soda',
+        quantity: '5x',
+        totalPrice: '₱75.00',
+      },
+      {
+        orderNumber: '29-1122-334',
+        dateOrdered: '3/30/2025, 4:45:00 PM',
+        status: 'Completed',
+        product: 'Rice',
+        quantity: '10x',
+        totalPrice: '₱100.00',
+      },
     ];
 
   // Sample mock data for Orders
-  const [orders, setOrders] = useState([
-    {
-      orderNumber: '19-4566-878',
-      name: 'James Bond',
-      totalAmount: '₱100.00',
-      products: 'Fried Chicken, Burger, Rice',
-      status: 'Pending',
-      paymentMode: 'Cash'
-    },
-    {
-      orderNumber: '20-3454-654',
-      name: 'Steve Harvey',
-      totalAmount: '₱200.00',
-      products: 'Pasta, Salad',
-      status: 'Pending',
-      paymentMode: 'G-Cash'
-    },
-    {
-      orderNumber: '21-7784-123',
-      name: 'Clark Kent',
-      totalAmount: '₱150.00',
-      products: 'Fried Chicken, Fries, Soda',
-      status: 'Pending',
-      paymentMode: 'Cash'
-    }
-  ]);
+  const [orders, setOrders] = useState([]);
 
   // For Tracking Password Changes
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+
+  // Filter Completed or Cancelled transactions
+  const completedOrCancelledOrders = orders.filter(
+    (order) => order.status === "Completed" || order.status === "Cancelled"
+  );
+
+  // Function to toggle the modal
+  const toggleTransactionModal = () => {
+    setIsTransactionModalOpen(!isTransactionModalOpen);
+  };
+
+  // Render the modal
+  const renderTransactionModal = () => {
+    if (!orders || orders.length === 0) {
+      return <p>No past transactions available.</p>; // Handle empty state
+    }
+  
+    const completedOrCancelledOrders = orders.filter(
+      (order) => order.status === "Completed" || order.status === "Cancelled"
+    );
+  
+    return (
+      isTransactionModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Past Transactions</h2>
+            <table className="transactions-table">
+              <thead>
+                <tr>
+                  <th>Order Number</th>
+                  <th>Name</th>
+                  <th>Date Ordered</th>
+                  <th>Total Amount</th>
+                  <th>Items</th>
+                  <th>Status</th>
+                  <th>Payment Method</th>
+                </tr>
+              </thead>
+              <tbody>
+                {completedOrCancelledOrders.map((order) => (
+                  <tr key={order.orderNumber}>
+                    <td>{order.orderNumber}</td>
+                    <td>{order.name || "N/A"}</td>
+                    <td>{order.dateTime || "N/A"}</td>
+                    <td>{order.totalAmount ? `₱${order.totalAmount.toFixed(2)}` : "N/A"}</td>
+                    <td>
+                      {order.items?.map((item, idx) => (
+                        <div key={idx}>{item.name} (x{item.quantity})</div>
+                      )) || "N/A"}
+                    </td>
+                    <td>
+                      <span className={`status-badge ${order.status.toLowerCase()}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td>{order.paymentMethod || "N/A"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button className="close-modal-button" onClick={toggleTransactionModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )
+    );
+  };
 
   // Handle Save Password
   const handleSavePassword = async () => {
@@ -203,16 +305,50 @@ const AdminPage = () => {
   };
 
   // Handle change in status
-  const handleStatusChange = (index, value) => {
+  const handleStatusChange = async (index, value) => {
     const updatedOrders = [...orders];
-    updatedOrders[index].status = value;
-    setOrders(updatedOrders); // Update the state with new status
-  };
+    const orderToUpdate = updatedOrders[index];
+    orderToUpdate.status = value;
 
+    try {
+      const orderDocRef = doc(db, "orders", orderToUpdate.orderNumber);
 
-  const handleDownloadReport = () => {
-    // Implement your download logic here
-    console.log('Downloading report...');
+      if (value === "Cancelled" || value === "Completed") {
+        // Update the status in Firestore
+        await updateDoc(orderDocRef, { status: value });
+
+        // Schedule deletion after 24 hours (1 day)
+        setTimeout(async () => {
+          try {
+            // Check if the order still exists and has the same status
+            const orderSnapshot = await getDoc(orderDocRef);
+            if (
+              orderSnapshot.exists() &&
+              (orderSnapshot.data().status === "Cancelled" || orderSnapshot.data().status === "Completed")
+            ) {
+              await deleteDoc(orderDocRef); // Remove the order from Firestore
+              setOrders((prevOrders) =>
+                prevOrders.filter((order) => order.orderNumber !== orderToUpdate.orderNumber)
+              ); // Update local state
+              toast.success(`Order with status '${value}' removed after 24 hours.`);
+            }
+          } catch (error) {
+            console.error(`Error removing ${value} order after 24 hours:`, error);
+          }
+        }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+
+        toast.success(`Order status updated to '${value}'. It will be removed after 24 hours.`);
+      } else {
+        // Update the status in Firestore
+        await updateDoc(orderDocRef, { status: value });
+        toast.success("Order status updated successfully.");
+      }
+
+      setOrders(updatedOrders); // Update the local state
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      toast.error("Failed to update order status.");
+    }
   };
 
   // For Login succes Toast
@@ -241,6 +377,30 @@ const AdminPage = () => {
     });
     
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const ordersRef = collection(db, "orders");
+
+    const unsubscribe = onSnapshot(
+      ordersRef,
+      (querySnapshot) => {
+        const fetchedOrders = querySnapshot.docs
+          .map((doc) => ({
+            ...doc.data(),
+            orderNumber: doc.id, // Use Firestore document ID as the order number
+          }))
+          .filter((order) => order.orderNumber !== "order"); // Exclude the document named "order"
+
+        setOrders(fetchedOrders); // Update the orders state
+      },
+      (error) => {
+        console.error("Error fetching orders:", error);
+        toast.error("Failed to fetch orders.");
+      }
+    );
+
+    return () => unsubscribe(); // Cleanup listener on unmount
   }, []);
    
 
@@ -844,7 +1004,16 @@ const AdminPage = () => {
   
 
   // Render Orders
-  const renderOrder = () =>{
+  const renderOrder = () => {
+    if (!orders || orders.length === 0) {
+      return <p>No orders available.</p>; // Handle empty state
+    }
+  
+    // Exclude orders with status "Cancelled" or "Completed"
+    const filteredOrders = orders.filter(
+      (order) => order.status !== "Cancelled" && order.status !== "Completed"
+    );
+  
     return (
       <div className="orders-modal">
         <table className="orders-table">
@@ -852,21 +1021,27 @@ const AdminPage = () => {
             <tr>
               <th>Order Number</th>
               <th>Name</th>
+              <th>Date Ordered</th>
               <th>Total Amount</th>
-              <th>Products</th>
+              <th>Items</th>
               <th>Status</th>
-              <th>Mode of Payment</th>
+              <th>Payment Method</th>
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) => (
+            {filteredOrders.map((order, index) => (
               <tr key={order.orderNumber}>
                 <td>{order.orderNumber}</td>
-                <td>{order.name}</td>
-                <td>{order.totalAmount}</td>
-                <td>{order.products}</td>
+                <td>{order.name || "N/A"}</td>
+                <td>{order.dateTime || "N/A"}</td>
+                <td>{order.totalAmount ? `₱${order.totalAmount.toFixed(2)}` : "N/A"}</td>
                 <td>
-                  <select 
+                  {order.items?.map((item, idx) => (
+                    <div key={idx}>{item.name} (x{item.quantity})</div>
+                  )) || "N/A"}
+                </td>
+                <td>
+                  <select
                     value={order.status}
                     onChange={(e) => handleStatusChange(index, e.target.value)}
                   >
@@ -877,7 +1052,7 @@ const AdminPage = () => {
                     <option value="Cancelled">Cancelled</option>
                   </select>
                 </td>
-                <td>{order.paymentMode}</td>
+                <td>{order.paymentMethod || "N/A"}</td>
               </tr>
             ))}
           </tbody>
@@ -885,114 +1060,150 @@ const AdminPage = () => {
       </div>
     );
   };
-
+  
 
   // Render Admin Reports
   const renderAdminReports = () => {
-
-    return(
-    <>                  
-  <div className="search-container">
-    <input
-      type="text"
-      placeholder="Search by Order Number, Date, Status, or Product"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-  </div>
-
-  <div className="filters-section">
-    <span className="filters-label">Filters</span>
-    <select 
-      value={selectedDay}
-      onChange={(e) => setSelectedDay(e.target.value)}
-    >
-      <option value="">Day</option>
-      {/* Add day options 1-31 */}
-      {Array.from({ length: 31 }, (_, i) => (
-        <option key={i + 1} value={i + 1}>{i + 1}</option>
-      ))}
-    </select>
-
-    <select 
-      value={selectedMonth}
-      onChange={(e) => setSelectedMonth(e.target.value)}
-    >
-      <option value="">Month</option>
-      <option value="1">January</option>
-      <option value="2">February</option>
-      <option value="3">March</option>
-      <option value="4">April</option>
-      <option value="5">May</option>
-      <option value="6">June</option>
-      <option value="7">July</option>
-      <option value="8">August</option>
-      <option value="9">September</option>
-      <option value="10">October</option>
-      <option value="11">November</option>
-      <option value="12">December</option>
-    </select>
-
-    <select 
-      value={selectedYear}
-      onChange={(e) => setSelectedYear(e.target.value)}
-    >
-      <option value="">Year</option>
-      <option value="2025">2025</option>
-      <option value="2026">2026</option>
-      <option value="2026">2027</option>
-      <option value="2028">2028</option>
-      <option value="2029">2029</option>
-      <option value="2030">2030</option>
-      <option value="2031">2031</option>
-      <option value="2032">2032</option>
-      <option value="2033">2033</option>
-      <option value="2034">2034</option>
-      <option value="2035">2035</option>
-      {/* Add other years */}
-    </select>
-
-    <button 
-      className="download-button"
-      onClick={handleDownloadReport}
-    >
-      Download Report
-    </button>
-  </div>
-
-  <div className="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Order Number</th>
-          <th>Date Ordered</th>
-          <th>Status</th>
-          <th>Product</th>
-          <th>Quantity</th>
-          <th>Total Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orderReport.map((orderReport) => (
-          <tr key={orderReport.orderNumber}>
-            <td>{orderReport.orderNumber}</td>
-            <td>{orderReport.dateOrdered}</td>
-            <td>
-              <span className={`status-badge ${orderReport.status.toLowerCase()}`}>
-                {orderReport.status}
-              </span>
-            </td>
-            <td>{orderReport.product}</td>
-            <td>{orderReport.quantity}</td>
-            <td>{orderReport.totalPrice}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-    </>
+    if (!orders || orders.length === 0) {
+      return <p>No data available for Admin Reports.</p>; // Handle empty state
+    }
+  
+    const filteredReports = orders.filter((report) => {
+      const matchesSearchTerm =
+        report.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.dateTime?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.items?.some((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+  
+      const matchesDay = selectedDay
+        ? report.dateTime.split("/")[1].padStart(2, "0") === selectedDay
+        : true;
+  
+      const matchesMonth = selectedMonth
+        ? report.dateTime.split("/")[0].padStart(2, "0") === selectedMonth
+        : true;
+  
+      const matchesYear = selectedYear
+        ? report.dateTime.split("/")[2].split(",")[0] === selectedYear
+        : true;
+  
+      return matchesSearchTerm && matchesDay && matchesMonth && matchesYear;
+    });
+  
+    const handleDownloadReport = () => {
+      try {
+        const doc = new jsPDF();
+        doc.text("Admin Reports", 14, 10);
+  
+        doc.autoTable({
+          head: [["Order Number", "Date Ordered", "Status", "Items", "Quantity", "Total Price"]],
+          body: filteredReports.map((report) => [
+            report.orderNumber,
+            report.dateTime,
+            report.status,
+            report.items
+              ?.map((item) => `${item.name} (x${item.quantity})`)
+              .join(", "),
+            report.items?.reduce((sum, item) => sum + item.quantity, 0),
+            report.totalAmount,
+          ]),
+        });
+  
+        doc.save("admin-reports.pdf");
+        toast.success("Report downloaded successfully!");
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast.error("Failed to download the report. Please try again.");
+      }
+    };
+  
+    return (
+      <>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by Order Number, Date, Status, or Item"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+  
+        <div className="filters-section">
+          <span className="filters-label">Filters</span>
+          <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)}>
+            <option value="">Day</option>
+            {Array.from({ length: 31 }, (_, i) => (
+              <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+  
+          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+            <option value="">Month</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={String(i + 1).padStart(2, "0")}>
+                {new Date(0, i).toLocaleString("default", { month: "long" })}
+              </option>
+            ))}
+          </select>
+  
+          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+            <option value="">Year</option>
+            {Array.from({ length: 10 }, (_, i) => (
+              <option key={2025 + i} value={String(2025 + i)}>
+                {2025 + i}
+              </option>
+            ))}
+          </select>
+  
+          <button className="download-button" onClick={handleDownloadReport}>
+            Download Report
+          </button>
+        </div>
+  
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Date Ordered</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReports.map((report) => (
+                <tr key={report.orderNumber}>
+                  <td>{report.orderNumber}</td>
+                  <td>{report.dateTime}</td>
+                  <td>
+                    <span className={`status-badge ${report.status.toLowerCase()}`}>
+                      {report.status}
+                    </span>
+                  </td>
+                  <td>
+                    {report.items?.map((item, idx) => (
+                      <div key={idx}>{item.name} (x{item.quantity})</div>
+                    ))}
+                  </td>
+                  <td>
+                    {report.items?.reduce((sum, item) => sum + item.quantity, 0)}
+                  </td>
+                  <td>{report.totalAmount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   };
+  
 
   //Render Settings
   const renderSettings = () => {
@@ -1447,6 +1658,10 @@ const AdminPage = () => {
                   <h2>Orders</h2>
                   <br/>
                   <div>{renderOrder()}</div>
+                  <button className="view-transactions-button" onClick={toggleTransactionModal}>
+                    View Past Transactions
+                  </button>
+                  {renderTransactionModal()}
                 </motion.div>
               )}
               {activeTab === "adminReports" && (
