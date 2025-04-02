@@ -28,7 +28,7 @@ const Home = () => {
     // if (isAdmin) {
     //   navigate("/pos-page");
     // } else {
-      navigate("/login-page");
+      navigate("/pos-page");
     //}
   };
   /////
