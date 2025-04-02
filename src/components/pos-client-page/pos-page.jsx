@@ -20,10 +20,13 @@ const PosPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [gcashRefNumber, setGcashRefNumber] = useState("");
-  const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]); // State for recent orders
+  const [showTrackOrderModal, setShowTrackOrderModal] = useState(false);// State for showing the track order modal
+  const [hasSearched, setHasSearched] = useState(false); // State to track if the user has searched for an order
+  const [orderNumber, setOrderNumber] = useState(""); // State for order number input
+  const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -213,6 +216,33 @@ const handleNameChange = (e) => {
 
 const handleSchoolIdChange = (e) => {
   setSchoolId(e.target.value);
+};
+
+// Validate order number format
+const validateOrderNumber = (input) => {
+  const regex = /^\d{2}-\d{4}-\d{3}$/; // Matches format like 12-3456-789
+  return regex.test(input);
+};
+
+const handleOrderNumberChange = (e) => {
+  const value = e.target.value;
+  // Auto-insert hyphens at specific positions
+  let formattedValue = value;
+  
+  if (value.length === 2 && orderNumber.length === 1) {
+    formattedValue = value + '-';
+  } 
+  else if (value.length === 7 && orderNumber.length === 6) {
+    formattedValue = value + '-';
+  }
+  // Prevent input longer than the format allows
+  else if (value.length > 11) {
+    formattedValue = value.slice(0, 11);
+  }
+  
+  setOrderNumber(formattedValue);
+  setIsValidOrderNumber(validateOrderNumber(formattedValue));
+  setHasSearched(false);
 };
 
 
@@ -410,11 +440,20 @@ const handleSchoolIdChange = (e) => {
   //render track order
   const renderTrackOrderView = () => {
     const handleTrackOrder = () => {
-      const validStatuses = ["Pending", "Preparing", "Ready"];
+      const validStatuses = ["Pending", "Preparing", "Ready to Pickup"];
       const foundOrder = recentOrders.find(
         (order) => order.id === orderNumber && validStatuses.includes(order.status)
       );
       setTrackedOrder(foundOrder || null);
+      setHasSearched(true);
+      setShowTrackOrderModal(true); // Always show modal after search
+    };
+  
+    const closeTrackOrderModal = () => {
+      setShowTrackOrderModal(false);
+      setOrderNumber("");
+      setTrackedOrder(null);
+      setHasSearched(false);
     };
   
     // Filter out the "order" document
@@ -423,63 +462,99 @@ const handleSchoolIdChange = (e) => {
     return (
       <div className="track-order">
         <h2 className="view-title">Track Your Order</h2>
-        <div className="track-order-content">
-          <form
-            className="order-tracking-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleTrackOrder();
-            }}
+        
+        {/* Order Tracking Form */}
+        <form
+          className="order-tracking-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleTrackOrder();
+          }}
+        >
+          <label htmlFor="orderNumber" className="order-label">
+            Enter your order number:
+          </label>
+          <input
+            type="text"
+            id="orderNumber"
+            placeholder="e.g., 12-3456-789"
+            className="order-number-input"
+            value={orderNumber}
+            onChange={handleOrderNumberChange}
+            maxLength={11} // Limits to XX-XXXX-XXX format
+          />
+          <motion.button
+            whileHover={{ scale: isValidOrderNumber ? 1.05 : 1 }}
+            whileTap={{ scale: isValidOrderNumber ? 0.95 : 1 }}
+            className={`track-button ${!isValidOrderNumber ? 'disabled-button' : ''}`}
+            type="submit"
+            disabled={!isValidOrderNumber}
           >
-            <label htmlFor="orderNumber" className="order-label">
-              Enter your order number:
-            </label>
-            <input
-              type="text"
-              id="orderNumber"
-              placeholder="e.g., WCE-123456789"
-              className="order-number-input"
-              value={orderNumber}
-              onChange={(e) => setOrderNumber(e.target.value)}
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="track-button"
-            >
-              Track Order
-            </motion.button>
-          </form>
-        </div>
+            Track Order
+          </motion.button>
+        </form>
   
-        {/* Display Tracked Order */}
-        {trackedOrder && (
-          <div className="tracked-order">
-            <h2>Order Details</h2>
-            <p>
-              <strong>Order ID:</strong> {trackedOrder.id}
-            </p>
-            <p>
-              <strong>Date Ordered:</strong> {trackedOrder.dateTime}
-            </p>
-            <p>
-              <strong>Total Amount:</strong> ₱{trackedOrder.totalAmount.toFixed(2)}
-            </p>
-            <p>
-              <strong>Status:</strong> {trackedOrder.status}
-            </p>
-            <h3>Items Ordered:</h3>
-            <ul>
-              {trackedOrder.items.map((item, idx) => (
-                <li key={idx}>
-                  {item.name} (x{item.quantity}) - ₱{item.price}
-                </li>
-              ))}
-            </ul>
+        {/* Track Order Modal (shows for both found and not found cases) */}
+        {showTrackOrderModal && (
+          <div className="track-order-modal">
+            <div className="track-order-modal-content">
+              <button 
+                className="back-button"
+                onClick={closeTrackOrderModal}
+              >
+                ← Back
+              </button>
+              
+              {/* Show order details if found */}
+              {trackedOrder ? (
+                <div className="tracked-order-details">
+                  <h2>Order Details</h2>
+                  <table className="tracked-order-table">
+                    <tbody>
+                      <tr>
+                        <td className="tracked-order-label"><strong>Order ID:</strong></td>
+                        <td className="tracked-order-value">{trackedOrder.id}</td>
+                      </tr>
+                      <tr>
+                        <td className="tracked-order-label"><strong>Date Ordered:</strong></td>
+                        <td className="tracked-order-value">{trackedOrder.dateTime}</td>
+                      </tr>
+                      <tr>
+                        <td className="tracked-order-label"><strong>Total Amount:</strong></td>
+                        <td className="tracked-order-value">₱{trackedOrder.totalAmount.toFixed(2)}</td>
+                      </tr>
+                      <tr>
+                        <td className="tracked-order-label"><strong>Status:</strong></td>
+                        <td className="tracked-order-value">{trackedOrder.status}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <h3>Items Ordered:</h3>
+                  <ul className="tracked-order-items">
+                    {trackedOrder.items.map((item, idx) => (
+                      <li key={idx} className="tracked-order-item">
+                        {item.name} (x{item.quantity}) - ₱{item.price}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                /* Show not found message if search was performed but no order found */
+                <div className="no-order-found-modal">
+                  <h2>Order Not Found</h2>
+                  <div className="no-order-message">
+                    <p>No active order found with ID: <strong>{orderNumber}</strong></p>
+                    <p>Please check the number and try again.</p>
+                    <p className="note">Note: Only orders with status "Pending", "Preparing", or "Ready to Pickup" can be tracked.</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
   
-        {/* Recent Orders Table */}
+        {/* Recent Orders Table (always visible) */}
         <div className="recent-orders">
           <h2 className="orders-title-pos">Recent Orders</h2>
           <div className="orders-table-container-pos">
@@ -516,6 +591,7 @@ const handleSchoolIdChange = (e) => {
       </div>
     );
   };
+  
   
 
   return (

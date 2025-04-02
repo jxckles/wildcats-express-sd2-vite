@@ -482,6 +482,245 @@ input {
   text-align: center;
 }
 
+/* Track Order Modal */
+.track-order-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.track-order-modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  color: #911507;
+}
+
+.back-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  color: #911507;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.back-button:hover {
+  background-color: #f0f0f0;
+}
+
+.tracked-order-details {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.tracked-order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.tracked-order-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.tracked-order-label {
+  width: 30%;
+  font-weight: bold;
+}
+
+.tracked-order-value {
+  width: 70%;
+}
+
+.tracked-order-items {
+  list-style-type: none;
+  padding: 0;
+}
+
+.tracked-order-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tracked-order-item:last-child {
+  border-bottom: none;
+}
+
+.no-order-found {
+  padding: 20px;
+  text-align: center;
+  color: #911507;
+  font-size: 16px;
+}
+
+/* Existing track order form styles (keep these) */
+.order-tracking-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 80%;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.order-number-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.order-number-input:focus {
+  border-color: #911507;
+}
+
+
+/* Disabled button style */
+.disabled-button {
+  background-color: #cccccc !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* No order message */
+.no-order-message {
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #fff3f3;
+  border: 1px solid #ffcccc;
+  border-radius: 5px;
+  color: #911507;
+  max-width: 500px;
+  text-align: center;
+}
+
+.no-order-message p {
+  margin: 5px 0;
+}
+
+/* Track button */
+.track-button {
+  padding: 6px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #911507;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+  min-width: 120px;
+}
+
+.track-button:hover:not(:disabled) {
+  background: #b71c1c;
+}
+
+/* Order input */
+.order-number-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.order-number-input:invalid {
+  border-color: #ff6b6b;
+}
+
+.order-number-input:focus {
+  border-color: #911507;
+}
+
+/* No order found in modal */
+.no-order-found-modal {
+  text-align: center;
+  padding: 20px;
+}
+
+.no-order-found-modal h2 {
+  color: #911507;
+  margin-bottom: 15px;
+}
+
+.no-order-message {
+  background-color: #fff3f3;
+  border: 1px solid #ffcccc;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.no-order-message p {
+  margin: 8px 0;
+  color: #911507;
+}
+
+.no-order-message .note {
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 15px;
+}
+
+/* Disabled button styling */
+.disabled-button {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Valid input indicator */
+.order-number-input:valid {
+  border-color: #51cf66;
+}
+
+/* Modal content adjustments */
+.track-order-modal-content {
+  text-align: left;
+}
+
 /* Order Tracking Form */
 .order-tracking-form {
   display: flex;
