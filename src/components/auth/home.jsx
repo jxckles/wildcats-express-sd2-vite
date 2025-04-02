@@ -25,11 +25,11 @@ const Home = () => {
   // }, []);
 
   const handleOrderClick = () => {
-     if (isAdmin) {
-       navigate("/pos-page");
-     } else {
+    // if (isAdmin) {
+    //   navigate("/pos-page");
+    // } else {
       navigate("/login-page");
-    }
+    //}
   };
   /////
 
