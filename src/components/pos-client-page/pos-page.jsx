@@ -6,6 +6,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import "./pos-page.css";
+import { GrStatusGood } from "react-icons/gr";
+import { LuShoppingCart } from "react-icons/lu";
+import { BiFoodMenu } from "react-icons/bi";
+
 
 const PosPage = () => {
   const navigate = useNavigate();
@@ -638,7 +642,10 @@ const handleOrderNumberChange = (e) => {
             className={currentView === "menu" ? "active-view-button" : ""}
             onClick={() => changeView("menu")}
           >
-            Menu
+            <div className="button-content">
+              <BiFoodMenu className="menu-icon"/>
+              <span>Menu</span>
+            </div>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -646,7 +653,10 @@ const handleOrderNumberChange = (e) => {
             className={currentView === "cart" ? "active-view-button" : ""}
             onClick={() => changeView("cart")}
           >
-            Cart
+            <div className="button-content">
+              <LuShoppingCart className="cart-icon"/>
+              <span>Cart</span>
+            </div>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -654,7 +664,10 @@ const handleOrderNumberChange = (e) => {
             className={currentView === "trackOrder" ? "active-view-button" : ""}
             onClick={() => changeView("trackOrder")}
           >
-            Track Order
+             <div className="button-content">
+                <GrStatusGood className="track-icon"/>
+                <span>Track Order</span>
+              </div>
           </motion.button>
         </motion.aside>
     
@@ -674,6 +687,7 @@ const handleOrderNumberChange = (e) => {
             transition={{ duration: 0.3 }}
           >
             <div>{renderMenuView()}</div> 
+            
           </motion.div>   
           )}
 
@@ -688,6 +702,7 @@ const handleOrderNumberChange = (e) => {
             transition={{ duration: 0.3 }}
           >
             <div>{renderCartView()}</div>
+            
           </motion.div>
             )}
 
@@ -702,6 +717,7 @@ const handleOrderNumberChange = (e) => {
                 transition={{ duration: 0.3 }}
               >
                 <div>{renderTrackOrderView()}</div>
+                
               </motion.div>
             )}
           </AnimatePresence>
