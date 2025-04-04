@@ -10,24 +10,26 @@ import "./pos-page.css";
 const PosPage = () => {
   const navigate = useNavigate();
   const loading = redirectToLoginIfLoggedOut(navigate);
+
+  
   const [cart, setCart] = useState({});
   const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentView, setCurrentView] = useState("menu"); 
-  const [schoolId, setSchoolId] = useState(""); 
+  const [currentView, setCurrentView] = useState("menu");
+  const [schoolId, setSchoolId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [gcashRefNumber, setGcashRefNumber] = useState("");
-  const [clientName, setClientName] = useState(""); // Store client's name
-  const [trackedOrder, setTrackedOrder] = useState(null);
+  const [clientName, setClientName] = useState("");
   const [tempQuantities, setTempQuantities] = useState({});
-  const [recentOrders, setRecentOrders] = useState([]); // State for recent orders
-  const [showTrackOrderModal, setShowTrackOrderModal] = useState(false); // State for showing the track order modal
-  const [hasSearched, setHasSearched] = useState(false); // State to track if the user has searched for an order
-  const [orderNumber, setOrderNumber] = useState(""); // State for order number input
-  const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [showTrackOrderModal, setShowTrackOrderModal] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [orderNumber, setOrderNumber] = useState("");
+  const [isValidOrderNumber, setIsValidOrderNumber] = useState(false);
+  const [trackedOrder, setTrackedOrder] = useState(null);
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -50,42 +52,63 @@ const PosPage = () => {
 
     return () => unsubscribe();
   }, []);
-  
+
+  // Fetch recent orders in real-time
+  useEffect(() => {
+    const ordersRef = collection(db, "orders");
+
+    const unsubscribe = onSnapshot(
+      ordersRef,
+      (querySnapshot) => {
+        const fetchedOrders = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setRecentOrders(fetchedOrders);
+      },
+      (error) => {
+        console.error("Error fetching recent orders:", error);
+        toast.error("Failed to fetch recent orders.");
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  // Handle secret shortcut
   useEffect(() => {
     const handleSecretShortcut = (event) => {
       if (event.altKey && event.shiftKey && event.key === "A") {
         navigate("/admin-page");
       }
     };
-  
+
     document.addEventListener("keydown", handleSecretShortcut);
     return () => {
       document.removeEventListener("keydown", handleSecretShortcut);
     };
   }, [navigate]);
-  
 
   if (loading) {
-    return <div>Loading...</div>; // Prevent UI from showing unless logged in
+    return <div>Loading...</div>;
   }
 
+  
   const handleQuantityChange = (id, change) => {
     setCart((prev) => {
       const newQuantity = (prev[id] || 0) + change;
-  
+
       if (newQuantity <= 0) {
-        // Remove the item from the cart if the quantity is zero
         const { [id]: _, ...rest } = prev;
         return rest;
       }
-  
+
       return {
         ...prev,
         [id]: newQuantity,
       };
     });
   };
-  
 
   const handleAddToCart = (item, quantity) => {
     setCart((prev) => ({
@@ -97,6 +120,38 @@ const PosPage = () => {
       [item._id]: 0,
     }));
   };
+
+  const handleCheckout = async () => {
+    
+  };
+
+  const handleTrackOrder = () => {
+    
+  };
+
+  const validateOrderNumber = (input) => {
+    const regex = /^\d{2}-\d{4}-\d{3}$/;
+    return regex.test(input);
+  };
+
+  const handleOrderNumberChange = (e) => {
+    const value = e.target.value;
+    let formattedValue = value;
+
+    if (value.length === 2 && orderNumber.length === 1) {
+      formattedValue = value + "-";
+    } else if (value.length === 7 && orderNumber.length === 6) {
+      formattedValue = value + "-";
+    } else if (value.length > 11) {
+      formattedValue = value.slice(0, 11);
+    }
+
+    setOrderNumber(formattedValue);
+    setIsValidOrderNumber(validateOrderNumber(formattedValue));
+    setHasSearched(false);
+  };
+
+  
 
   // Filter menu items by category and search query
   const filteredItems = menuItems.filter(
