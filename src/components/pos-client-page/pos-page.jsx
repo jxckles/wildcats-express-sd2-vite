@@ -20,10 +20,14 @@ const PosPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [gcashRefNumber, setGcashRefNumber] = useState("");
-  const [orderNumber, setOrderNumber] = useState(null);
   const [clientName, setClientName] = useState(""); // Store client's name
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [tempQuantities, setTempQuantities] = useState({});
+  const [recentOrders, setRecentOrders] = useState([]); // State for recent orders
+  const [showTrackOrderModal, setShowTrackOrderModal] = useState(false); // State for showing the track order modal
+  const [hasSearched, setHasSearched] = useState(false); // State to track if the user has searched for an order
+  const [orderNumber, setOrderNumber] = useState(""); // State for order number input
+  const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
 
   // Fetch menu items in real-time
   useEffect(() => {
