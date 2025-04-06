@@ -992,8 +992,8 @@
 }
 
 
-/* Register Customer Styles */
-.registerCustomer-container {
+/* Registered Customer Styles */
+.registeredCustomer-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1061,4 +1061,154 @@
 .customer-card p {
   margin: 0.5rem 0;
   color: #555;
+}
+
+
+/* Delete Confirmation Modal */
+/* Customer List Styles */
+.registerCustomer-container {
+  padding: 20px;
+}
+
+.customer-list-section h2 {
+  margin-bottom: 20px;
+}
+
+.customer-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.customer-card {
+  background: gold;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.customer-card.student {
+  border-left: 4px solid #EA4335;
+}
+
+.customer-card.faculty {
+  border-left: 4px solid #00b35f;
+}
+
+.customer-card.staff {
+  border-left: 4px solid #ad05fb;
+}
+
+.customer-info h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.customer-info p {
+  margin: 5px 0;
+}
+
+.delete-customer-button {
+  background-color: #a00000;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.delete-customer-button:hover {
+  background-color: #ff1a1a;
+}
+
+/* Delete Modal Styles */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.delete-modal {
+  background-color: gold;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.delete-modal h3 {
+  color: #6a0000;
+  margin-top: 0;
+}
+
+.delete-modal p {
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal-buttons button {
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.confirm-button {
+  background-color: #d9534f;
+  color: white;
+  border: 1px solid #d43f3a;
+}
+
+.confirm-button:hover {
+  background-color: #c9302c;
+}
+
+/* Empty State Styles */
+.empty-customer-state {
+  grid-column: 1 / -1;
+  text-align: left;
+  background-color: transparent;
+  border-radius: 8px;
+  color: #8b0000;
+}
+
+.empty-customer-state p {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.empty-customer-state .subtext {
+  font-size: 1.2rem;
+  margin-top: 2.5px;
 }
