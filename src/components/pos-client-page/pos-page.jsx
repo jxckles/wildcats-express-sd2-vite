@@ -334,7 +334,14 @@ const renderCartView = () => {
               whileTap={{ scale: 0.95 }}
               onClick={() => handleCustomerTypeChange("student")}
             >
-              Student/Faculty
+              Student
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleCustomerTypeChange("faculty")}
+            >
+              Faculty
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -360,7 +367,9 @@ const renderCartView = () => {
               Customer Type:{" "}
               <strong>
                 {customerType === "student"
-                  ? "Student/Faculty"
+                  ? "Student"
+                  : customerType === "faculty"
+                  ? "Faculty"
                   : customerType === "staff"
                   ? "Staff"
                   : "Walk-in"}
@@ -389,10 +398,14 @@ const renderCartView = () => {
             </div>
 
             {/* School ID field only for students/faculty and staff */}
-            {(customerType === "student" || customerType === "staff") && (
+            {(customerType === "student" || customerType === "faculty" || customerType === "staff") && (
               <div className="school-id-input">
                 <label htmlFor="school-id">
-                  {customerType === "student" ? "Student/Faculty ID:" : "Staff ID:"}
+                  {customerType === "student" 
+                    ? "Student ID:" 
+                    : customerType === "faculty"
+                    ? "Faculty ID:"
+                    : "Staff ID:"}
                 </label>
                 <input
                   type="text"
