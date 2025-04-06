@@ -41,6 +41,33 @@ const AdminPage = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
 
+  // For Customer Management
+  const [customerToDelete, setCustomerToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Sample mock data for customers
+  const [mockCustomers, setMockCustomers] = useState([
+    {
+      id: 1,
+      name: "Juan Dela Cruz",
+      schoolId: "27-5646-456",
+      type: "student"
+    },
+    {
+      id: 2,
+      name: "Maria Clara",
+      schoolId: "43-5455-454",
+      type: "faculty"
+    },
+    {
+      id: 3,
+      name: "Pedro Penduko",
+      schoolId: "23-2345-546",
+      type: "staff",
+    },
+  ]);
+
+
   //Sample mock data for AdminReports
     // Sample data - replace with your actual data
     const orderReport = [
@@ -112,6 +139,7 @@ const AdminPage = () => {
 
   // Sample mock data for Orders
   const [orders, setOrders] = useState([]);
+
 
   // For Tracking Password Changes
   const [oldPassword, setOldPassword] = useState("");
@@ -626,6 +654,23 @@ const AdminPage = () => {
   };
   
 
+  // Handle customer deletion
+  const handleDeleteCustomerClick = (customer) => {
+    setCustomerToDelete(customer);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCustomer = () => {
+    setMockCustomers(mockCustomers.filter(c => c.id !== customerToDelete.id));
+    setShowDeleteModal(false);
+    setCustomerToDelete(null);
+    toast.success("Customer removed successfully!");
+  };
+
+  const cancelDeleteCustomer = () => {
+    setShowDeleteModal(false);
+    setCustomerToDelete(null);
+  };
 
   // Add menu component
   const renderAddmenu = () => (
@@ -1176,49 +1221,60 @@ const AdminPage = () => {
     );
   };
   
-  //Render Customer List
-  const renderCustomerList = () => {
-    const mockCustomers = [
-      {
-        id: 1,
-        name: "Juan Dela Cruz",
-        schoolId: "27-5646-456",
-        type: "student"
-      },
-      {
-        id: 2,
-        name: "Maria Clara",
-        schoolId: "43-5455-454",
-        type: "faculty"
-      },
-      {
-        id: 3,
-        name: "Pedro Penduko",
-        schoolId: "23-2345-546",
-        type: "staff",
-      },
-    ];
-  
-    return (
-      <div className="registerCustomer-container">
-        <div className="customer-list-section">
-          <h2>Registered Customers</h2>       
-          <div className="customer-cards">
-            {mockCustomers.map(customer => (
+
+ //Render Customer List
+const renderCustomerList = () => {
+  return (
+    <div className="registerCustomer-container">
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="delete-modal-overlay">
+          <div className="delete-modal">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to remove {customerToDelete?.name}?</p>
+            <div className="modal-buttons">
+              <button onClick={cancelDeleteCustomer} className="cancel-button">Cancel</button>
+              <button onClick={confirmDeleteCustomer} className="confirm-button">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="customer-list-section">
+        <h2>Registered Customers</h2>       
+        <div className="customer-cards">
+          {mockCustomers.length > 0 ? (
+            mockCustomers.map(customer => (
               <div
                 key={customer.id}
                 className={`customer-card ${customer.type}`}
               >
-                <h3>{customer.name}</h3>
-                <p><strong>School ID:</strong> {customer.schoolId}</p>
-                <p><strong>Type:</strong> {customer.type.charAt(0).toUpperCase() + customer.type.slice(1)}</p>
+                <div className="customer-info">
+                  <h3>{customer.name}</h3>
+                  <p><strong>School ID:</strong> {customer.schoolId}</p>
+                  <p><strong>Type:</strong> {customer.type.charAt(0).toUpperCase() + customer.type.slice(1)}</p>
+                </div>
+                <button 
+                  className="delete-customer-button"
+                  onClick={() => handleDeleteCustomerClick(customer)}
+                >
+                  🗑️ Remove
+                </button>
               </div>
-            ))}
-          </div>
+            ))
+          ) : (
+            <div className="empty-customer-state">
+              <p>No customers registered yet.</p>
+              <p className="subtext">Customers will appear here once they order.</p>
+            </div>
+          )}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
+
+
   
   // Render admin Page
   return (
