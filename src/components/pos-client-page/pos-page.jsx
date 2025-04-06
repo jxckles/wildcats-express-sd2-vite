@@ -9,6 +9,15 @@ import "./pos-page.css";
 import { GrStatusGood } from "react-icons/gr";
 import { LuShoppingCart } from "react-icons/lu";
 import { BiFoodMenu } from "react-icons/bi";
+import { TbCash } from "react-icons/tb";
+import { TbDeviceMobileDollar } from "react-icons/tb";
+import AllIcon from "/src/assets/category/all-icon-new.png";
+import RiceIcon from "/src/assets/category/rice-icon-new.png";
+import DishesIcon from "/src/assets/category/dishes-icon-new.png";
+import HotDrinksIcon from "/src/assets/category/hot-drinks-icon.png";
+import ColdDrinksIcon from "/src/assets/category/cold-drinks-icon.png";
+import SnacksIcon from "/src/assets/category/snacks-icon-new.png";
+
 
 
 const PosPage = () => {
@@ -205,8 +214,8 @@ const handleRemoveItem = (itemId) => {
   });
 };
 
-const handlePaymentChange = (e) => {
-  setPaymentMethod(e.target.value);
+const handlePaymentChange = (method) => {
+  setPaymentMethod(method);
 };
 
 const totalAmount = Object.keys(cart).reduce((total, itemId) => {
@@ -249,6 +258,15 @@ const handleOrderNumberChange = (e) => {
   setHasSearched(false);
 };
 
+const categoryIcons = {
+  All: AllIcon,
+  Rice: RiceIcon,
+  Dishes: DishesIcon,
+  Coffee: HotDrinksIcon,
+  Drinks: ColdDrinksIcon,
+  Snacks: SnacksIcon,
+};
+
 
   //render menu
   const renderMenuView = () => {
@@ -258,12 +276,19 @@ const handleOrderNumberChange = (e) => {
         <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </motion.div>
-          <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-                {cat}
-              </motion.button>
-            ))}
+          <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.1 }}>
+          {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
+            <motion.button
+              key={cat}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={selectedCategory === cat ? "active-category" : ""}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              <img src={categoryIcons[cat]} alt={cat} style={{ width: "50px", height: "50px", marginRight: "5px" }} />
+              {cat}
+            </motion.button>
+          ))}
           </motion.div>
           <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
             <AnimatePresence mode="wait">
@@ -386,12 +411,26 @@ const handleOrderNumberChange = (e) => {
             <div className="payment-method">
               <h4>Select Payment Method:</h4>
               <div className="payment-options">
+
+              <div className="cash-button"> 
+                <label>
+                  <button className={`payment-button ${paymentMethod === 'Cash' ? 'active' : ''}`} 
+                    onClick={() => handlePaymentChange('Cash')}>
+                    Cash
+                    <TbCash className="cash-icon" />
+                  </button>
+                </label>
+              </div>
+
+                <div className="gcash-button"> 
                   <label>
-                      <input type="radio" name="payment" value="cash" onChange={handlePaymentChange} /> Cash 💵
+                    <button className={`payment-button ${paymentMethod === 'gcash' ? 'active' : ''}`} 
+                     onClick={() => handlePaymentChange('gcash')}>
+                      GCash
+                      <TbDeviceMobileDollar className="gcash-icon" />
+                    </button>
                   </label>
-                  <label>
-                      <input type="radio" name="payment" value="gcash" onChange={handlePaymentChange} /> GCash 📱
-                  </label>
+                </div>
             </div>
 
             {/* Show GCash fields if selected */}
@@ -423,7 +462,7 @@ const handleOrderNumberChange = (e) => {
               className="checkout-button"
               onClick={handleCheckout}
             >
-              ✅ Proceed to Checkout
+              Proceed to Checkout
             </motion.button>
 
             <motion.button
