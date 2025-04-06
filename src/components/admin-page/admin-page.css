@@ -1071,7 +1071,6 @@
 }
 
 .customer-list-section h2 {
-  color: #8b0000;
   margin-bottom: 20px;
 }
 
@@ -1201,7 +1200,7 @@
   text-align: left;
   background-color: transparent;
   border-radius: 8px;
-  color: whitesmoke;
+  color: #8b0000;
 }
 
 .empty-customer-state p {
