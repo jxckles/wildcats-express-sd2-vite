@@ -1023,55 +1023,6 @@
   font-weight: 500;
 }
 
-.form-group input, 
-.form-group select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.radio-group, .checkbox-group {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.radio-group label, .checkbox-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: normal;
-}
-
-.register-button {
-  background-image: linear-gradient(to bottom, #f43b47 0%, #831111 100%);  
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  width: 100%;
-  max-width: 180px;
-  display: inline-block;
-  font-size: 1rem;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover{
-    color: whitesmoke; 
-    box-shadow: 12px 12px 12px rgba(0, 0, 0, 0.4),
-    -10px -10px 10px rgba(176, 3, 3, 0.5); /*floating effect*/
-  }
-
-  &:active{
-    color: whitesmoke; 
-    box-shadow: -12px -12px 12px rgba(176, 3, 3, 0.5) inset,
-    10px 10px 10px rgba(0, 0, 0, 0.4) inset; /*floating effect*/
-  }
-}
-
 
 .customer-cards {
   display: grid;
@@ -1087,15 +1038,19 @@
 }
 
 .customer-card.student {
-  border-left: 4px solid #4285F4;
-}
-
-.customer-card.faculty {
   border-left: 4px solid #EA4335;
 }
 
+.customer-card.faculty {
+  border-left: 4px solid #00b35f;
+}
+
 .customer-card.staff {
-  border-left: 4px solid #FBBC05;
+  border-left: 4px solid #ad05fb;
+}
+
+.customer-card.walk-in {
+  border-left: 4px solid #05fbfb;
 }
 
 .customer-card h3 {

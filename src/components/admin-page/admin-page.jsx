@@ -19,82 +19,6 @@ import "jspdf-autotable";
 const AdminPage = () => {
   const navigate = useNavigate();
   const loading = redirectToLoginIfLoggedOut(navigate);
-
-  // Register customer states
-  const [customerType, setCustomerType] = useState('student');
-  const [customers, setCustomers] = useState([]);
-  const [formData, setFormData] = useState({
-    schoolId: '',
-    name: '',
-    courseYear: '',
-    department: '',
-    gradesTeaching: [],
-    yearsTeaching: [],
-    position: '',
-    staffDepartment: '',
-    staffPosition: ''
-  });
-
-  const handleCustomerInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    const { name, value, checked } = e.target;
-    if (checked) {
-      setFormData(prev => ({
-        ...prev,
-        [name]: [...prev[name], value]
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: prev[name].filter(item => item !== value)
-      }));
-    }
-  };
-
-  const handleCustomerSubmit = (e) => {
-    e.preventDefault();
-    const newCustomer = {
-      type: customerType,
-      schoolId: formData.schoolId,
-      name: formData.name,
-      ...(customerType === 'student' && {
-        courseYear: formData.courseYear
-      }),
-      ...(customerType === 'faculty' && {
-        department: formData.department,
-        gradesTeaching: formData.gradesTeaching,
-        yearsTeaching: formData.yearsTeaching,
-        position: formData.position
-      }),
-      ...(customerType === 'staff' && {
-        department: formData.staffDepartment,
-        position: formData.staffPosition
-      })
-    };
-
-    setCustomers([...customers, newCustomer]);
-    // Reset form
-    setFormData({
-      schoolId: '',
-      name: '',
-      courseYear: '',
-      department: '',
-      gradesTeaching: [],
-      yearsTeaching: [],
-      position: '',
-      staffDepartment: '',
-      staffPosition: ''
-    });
-  };
-
-
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
@@ -1252,273 +1176,50 @@ const AdminPage = () => {
     );
   };
   
-  //Render registerCustomer
-  const renderRegisterCustomer = () => {
+  //Render Customer List
+  const renderCustomerList = () => {
+    const mockCustomers = [
+      {
+        id: 1,
+        name: "Juan Dela Cruz",
+        schoolId: "27-5646-456",
+        type: "student"
+      },
+      {
+        id: 2,
+        name: "Maria Clara",
+        schoolId: "43-5455-454",
+        type: "faculty"
+      },
+      {
+        id: 3,
+        name: "Pedro Penduko",
+        schoolId: "23-2345-546",
+        type: "staff",
+      },
+    ];
+  
     return (
       <div className="registerCustomer-container">
-        <div className="customer-form-section">
-          <h2>Register New Customer</h2>
-          <form onSubmit={handleCustomerSubmit}>
-            <div className="form-group">
-              <label>Customer Type:</label>
-              <div className="radio-group">
-                <label>
-                  <input
-                    type="radio"
-                    name="customerType"
-                    value="student"
-                    checked={customerType === 'student'}
-                    onChange={() => setCustomerType('student')}
-                  />
-                  Student
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="customerType"
-                    value="faculty"
-                    checked={customerType === 'faculty'}
-                    onChange={() => setCustomerType('faculty')}
-                  />
-                  Faculty
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="customerType"
-                    value="staff"
-                    checked={customerType === 'staff'}
-                    onChange={() => setCustomerType('staff')}
-                  />
-                  Staff
-                </label>
-              </div>
-            </div>
-  
-            <div className="form-group">
-              <label>School ID:</label>
-              <input
-                type="text"
-                name="schoolId"
-                value={formData.schoolId}
-                onChange={handleCustomerInputChange}
-                placeholder="Enter school ID"
-                required
-              />
-            </div>
-  
-            <div className="form-group">
-              <label>Full Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleCustomerInputChange}
-                placeholder="Enter full name"
-                required
-              />
-            </div>
-  
-            {/* Student-specific fields */}
-            {customerType === 'student' && (
-              <div className="form-group">
-                <label>Course & Year:</label>
-                <input
-                  type="text"
-                  name="courseYear"
-                  value={formData.courseYear}
-                  onChange={handleCustomerInputChange}
-                  placeholder="e.g. BSCpE-3"
-                  required
-                />
-              </div>
-            )}
-  
-            {/* Faculty-specific fields */}
-            {customerType === 'faculty' && (
-              <>
-                <div className="form-group">
-                  <label>Department:</label>
-                  <select
-                    name="department"
-                    value={formData.department}
-                    onChange={handleCustomerInputChange}
-                    required
-                  >
-                    <option value="">Select Department</option>
-                    <option value="HS">High School (Grade 7-10)</option>
-                    <option value="SHS">Senior High School (Grade 11-12)</option>
-                    <option value="College">College</option>
-                  </select>
-                </div>
-  
-                {formData.department === 'HS' && (
-                  <div className="form-group">
-                    <label>Grades Teaching:</label>
-                    <div className="checkbox-group">
-                      {[7, 8, 9, 10].map(grade => (
-                        <label key={grade}>
-                          <input
-                            type="checkbox"
-                            name="gradesTeaching"
-                            value={`Grade ${grade}`}
-                            checked={formData.gradesTeaching.includes(`Grade ${grade}`)}
-                            onChange={handleCheckboxChange}
-                          />
-                          Grade {grade}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-  
-                {formData.department === 'SHS' && (
-                  <div className="form-group">
-                    <label>Grades Teaching:</label>
-                    <div className="checkbox-group">
-                      <label>
-                        <input
-                          type="checkbox"
-                          name="gradesTeaching"
-                          value="Grade 11"
-                          checked={formData.gradesTeaching.includes('Grade 11')}
-                          onChange={handleCheckboxChange}
-                        />
-                        Grade 11
-                      </label>
-                      <label>
-                        <input
-                          type="checkbox"
-                          name="gradesTeaching"
-                          value="Grade 12"
-                          checked={formData.gradesTeaching.includes('Grade 12')}
-                          onChange={handleCheckboxChange}
-                        />
-                        Grade 12
-                      </label>
-                    </div>
-                  </div>
-                )}
-  
-                {formData.department === 'College' && (
-                  <div className="form-group">
-                    <label>Years Teaching:</label>
-                    <div className="checkbox-group">
-                      {['1st Year', '2nd Year', '3rd Year', '4th Year'].map(year => (
-                        <label key={year}>
-                          <input
-                            type="checkbox"
-                            name="yearsTeaching"
-                            value={year}
-                            checked={formData.yearsTeaching.includes(year)}
-                            onChange={handleCheckboxChange}
-                          />
-                          {year}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-  
-                <div className="form-group">
-                  <label>Position:</label>
-                  <select
-                    name="position"
-                    value={formData.position}
-                    onChange={handleCustomerInputChange}
-                    required
-                  >
-                    <option value="">Select Position</option>
-                    <option value="Advisor">Advisor</option>
-                    <option value="Instructor/Teacher">Instructor/Teacher</option>
-                    <option value="Chairman">Chairman</option>
-                    <option value="Dean">Dean</option>
-                    <option value="Vice Position">Vice Position</option>
-                    <option value="President">President</option>
-                  </select>
-                </div>
-              </>
-            )}
-  
-            {/* Staff-specific fields */}
-            {customerType === 'staff' && (
-              <>
-                <div className="form-group">
-                  <label>Department:</label>
-                  <input
-                    type="text"
-                    name="staffDepartment"
-                    value={formData.staffDepartment}
-                    onChange={handleCustomerInputChange}
-                    placeholder="Enter department"
-                    required
-                  />
-                </div>
-  
-                <div className="form-group">
-                  <label>Position:</label>
-                  <input
-                    type="text"
-                    name="staffPosition"
-                    value={formData.staffPosition}
-                    onChange={handleCustomerInputChange}
-                    placeholder="Enter position"
-                    required
-                  />
-                </div>
-              </>
-            )}
-  
-            <button type="submit" className="register-button">
-              Register Customer
-            </button>
-          </form>
-        </div>
-  
         <div className="customer-list-section">
-          <h2>Registered Customers</h2>
-          {customers.length === 0 ? (
-            <p>No customers registered yet.</p>
-          ) : (
-            <div className="customer-cards">
-              {customers.map((customer, index) => (
-                <div key={index} className={`customer-card ${customer.type}`}>
-                  <h3>{customer.name}</h3>
-                  <p><strong>ID:</strong> {customer.schoolId}</p>
-                  <p><strong>Type:</strong> {customer.type.charAt(0).toUpperCase() + customer.type.slice(1)}</p>
-                  
-                  {customer.type === 'student' && (
-                    <p><strong>Course & Year:</strong> {customer.courseYear}</p>
-                  )}
-                  
-                  {customer.type === 'faculty' && (
-                    <>
-                      <p><strong>Department:</strong> {customer.department}</p>
-                      {customer.gradesTeaching.length > 0 && (
-                        <p><strong>Grades:</strong> {customer.gradesTeaching.join(', ')}</p>
-                      )}
-                      {customer.yearsTeaching.length > 0 && (
-                        <p><strong>Years:</strong> {customer.yearsTeaching.join(', ')}</p>
-                      )}
-                      <p><strong>Position:</strong> {customer.position}</p>
-                    </>
-                  )}
-                  
-                  {customer.type === 'staff' && (
-                    <>
-                      <p><strong>Department:</strong> {customer.department}</p>
-                      <p><strong>Position:</strong> {customer.position}</p>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          <h2>Registered Customers</h2>       
+          <div className="customer-cards">
+            {mockCustomers.map(customer => (
+              <div
+                key={customer.id}
+                className={`customer-card ${customer.type}`}
+              >
+                <h3>{customer.name}</h3>
+                <p><strong>School ID:</strong> {customer.schoolId}</p>
+                <p><strong>Type:</strong> {customer.type.charAt(0).toUpperCase() + customer.type.slice(1)}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
-  }
-
+  };
+  
   // Render admin Page
   return (
     <>
@@ -1564,7 +1265,7 @@ const AdminPage = () => {
                     <FaClipboardList /> Admin Reports
                   </div>
                   <div className="dropdown-item" onClick={() => handleTabChange("registerCustomer")}>
-                    <FaUserPlus /> Add Customer
+                    <FaUserPlus /> Customer List
                   </div>
                   <div className="dropdown-item" onClick={() => handleTabChange("settings")}>
                     <FaCog /> Settings
@@ -1683,8 +1384,8 @@ const AdminPage = () => {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h2>Add Customer</h2>
-                  <div>{renderRegisterCustomer()}</div>
+                  <h2>Customer List</h2>
+                  <div>{renderCustomerList()}</div>
                 </motion.div>
               )}
               {activeTab === "settings" && (
