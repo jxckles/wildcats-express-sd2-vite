@@ -15,12 +15,13 @@ const PosPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentView, setCurrentView] = useState("menu"); 
-  const [schoolId, setSchoolId] = useState(""); 
+  const [customerType, setCustomerType] = useState(""); // "student", "staff", or "walkIn"
+  const [schoolId, setSchoolId] = useState(""); // Store school ID
+  const [clientName, setClientName] = useState(""); // Store client's name
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [gcashRefNumber, setGcashRefNumber] = useState("");
-  const [clientName, setClientName] = useState(""); // Store client's name
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]); // State for recent orders
   const [showTrackOrderModal, setShowTrackOrderModal] = useState(false);// State for showing the track order modal
@@ -89,6 +90,14 @@ const PosPage = () => {
   if (loading) {
     return <div>Loading...</div>; // Prevent UI from showing unless logged in
   }
+
+  // Handler function can stay here or be moved down near renderCartView
+  const handleCustomerTypeChange = (type) => {
+    setCustomerType(type);
+    // Clear previous inputs when changing type
+    setClientName("");
+    setSchoolId("");
+  };
 
   const handleQuantityChange = (id, change) => {
     setCart((prev) => ({
@@ -215,7 +224,28 @@ const handleNameChange = (e) => {
 };
 
 const handleSchoolIdChange = (e) => {
-  setSchoolId(e.target.value);
+  const formattedValue = formatSchoolId(e.target.value);
+  setSchoolId(formattedValue);
+};
+
+// Utility function outside the component
+// strictly for formatting the school ID
+const formatSchoolId = (value) => {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '');
+  
+  // Apply the format: XX-XXXX-XXX
+  let formatted = '';
+  if (digits.length > 0) {
+    formatted = digits.substring(0, 2);
+    if (digits.length > 2) {
+      formatted += '-' + digits.substring(2, 6);
+      if (digits.length > 6) {
+        formatted += '-' + digits.substring(6, 9);
+      }
+    }
+  }
+  return formatted;
 };
 
 // Validate order number format
@@ -287,35 +317,96 @@ const handleOrderNumberChange = (e) => {
     );
   };
 
-  //render cart
-  const renderCartView = () => {
-    return (
-      <div className="cart-container">
-        {/* Display Client's Name at the Top Left */}
-        {clientName && <h3 className="client-name">👤 {clientName}</h3>}
-        <h2 className="view-title">🛒 Your Cart</h2>
 
-        <div className="client-info-input">
-          <label htmlFor="client-name">Full Name:</label>
-          <input
-            type="text"
-            id="client-name"
-            placeholder="Enter your Full Name"
-            value={clientName}
-            onChange={handleNameChange}
-          />  
-        </div>
+ //render cart
+const renderCartView = () => {
+  return (
+    <div className="cart-container">
+      <h2 className="view-title">🛒 Your Cart</h2>
 
-        <div className="school-id-input">
-          <label htmlFor="school-id">School ID Number:</label>
-          <input
-            type="text"
-            id="school-id"
-            placeholder="Enter your School ID"
-            value={schoolId}
-            onChange={handleSchoolIdChange}
-          />
+      {/* Customer Type Selection */}
+      {!customerType ? (
+        <div className="customer-type-selection">
+          <h3>Are you a:</h3>
+          <div className="customer-type-options">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleCustomerTypeChange("student")}
+            >
+              Student/Faculty
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleCustomerTypeChange("staff")}
+            >
+              Staff
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleCustomerTypeChange("walkIn")}
+            >
+              Walk-in (Visitor/Parent/etc.)
+            </motion.button>
+          </div>
         </div>
+      ) : (
+        <>
+          {/* Display selected customer type */}
+          <div className="customer-type-display">
+            <p>
+              Customer Type:{" "}
+              <strong>
+                {customerType === "student"
+                  ? "Student/Faculty"
+                  : customerType === "staff"
+                  ? "Staff"
+                  : "Walk-in"}
+              </strong>
+              <button 
+                className="change-type-button"
+                onClick={() => handleCustomerTypeChange("")}
+              >
+                Change
+              </button>
+            </p>
+          </div>
+
+          {/* Client Information Form */}
+          <div className="client-info-form">
+            <div className="client-info-input">
+              <label htmlFor="client-name">Full Name:</label>
+              <input
+                type="text"
+                id="client-name"
+                placeholder="Enter your Full Name"
+                value={clientName}
+                onChange={handleNameChange}
+                required
+              />
+            </div>
+
+            {/* School ID field only for students/faculty and staff */}
+            {(customerType === "student" || customerType === "staff") && (
+              <div className="school-id-input">
+                <label htmlFor="school-id">
+                  {customerType === "student" ? "Student/Faculty ID:" : "Staff ID:"}
+                </label>
+                <input
+                  type="text"
+                  id="school-id"
+                  placeholder="12-3456-789, Note: Just input the numbers"
+                  value={schoolId}
+                  onChange={handleSchoolIdChange}
+                  required
+                  pattern="\d{2}-\d{4}-\d{3}"
+                  title="Please enter ID in format: 12-3456-789"
+                />       
+              </div>
+            )}
+          </div>
 
           {showConfirmation && (
             <div className="confirmation-modal">
@@ -325,115 +416,142 @@ const handleOrderNumberChange = (e) => {
             </div>
           )}
 
-        
-        {Object.keys(cart).length === 0 ? (
-          <div className="empty-state-cart">
-            <p>Your cart is empty</p>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => changeView("menu")}
-              className="return-to-menu"
-            >
-              🍽 Return to Menu
-            </motion.button>
-          </div>
-        ) : (
-          <div className="cart-items">
-            {Object.keys(cart).map((itemId) => {
-              const item = menuItems.find(item => item._id === itemId);
-              if (!item) return null;
-              
-              return (
-                <motion.div 
-                  key={itemId}
-                  className="cart-item"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <div className="cart-item-details">
-                    <h3>{item.name}</h3>
-                    <p>Php {item.price} × {cart[itemId]} = Php {(item.price * cart[itemId]).toFixed(2)}</p>
-                  </div>
-                  <div className="cart-item-actions">
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, -1)}>-</motion.button>
-                    <span>{cart[itemId]}</span>
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, 1)}>+</motion.button>
-                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleRemoveItem(itemId)} className="trash-button">🗑</motion.button>
-                  </div>
-                </motion.div>
-            );
-          })}
-          
-          <div className="cart-summary">
-            <div className="cart-total">
-              <strong>Total:</strong>
-              <span>
-                Php {Object.keys(cart).reduce((total, itemId) => {
-                  const item = menuItems.find(item => item._id === itemId);
-                  return total + (item ? item.price * cart[itemId] : 0);
-                }, 0).toFixed(2)}
-              </span>
+          {Object.keys(cart).length === 0 ? (
+            <div className="empty-state-cart">
+              <p>Your cart is empty</p>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => changeView("menu")}
+                className="return-to-menu"
+              >
+                🍽 Return to Menu
+              </motion.button>
             </div>
-  
-                
-            {/* Payment Method Section */}
-            <div className="payment-method">
-              <h4>Select Payment Method:</h4>
-              <div className="payment-options">
-                  <label>
-                      <input type="radio" name="payment" value="cash" onChange={handlePaymentChange} /> Cash 💵
-                  </label>
-                  <label>
-                      <input type="radio" name="payment" value="gcash" onChange={handlePaymentChange} /> GCash 📱
-                  </label>
-            </div>
+          ) : (
+            <div className="cart-items">
+              {Object.keys(cart).map((itemId) => {
+                const item = menuItems.find((item) => item._id === itemId);
+                if (!item) return null;
 
-            {/* Show GCash fields if selected */}
-            {paymentMethod === "gcash" && (
-                <div className="gcash-fields">
-                    <label>Amount Paid:</label>
-                    <input
+                return (
+                  <motion.div
+                    key={itemId}
+                    className="cart-item"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="cart-item-details">
+                      <h3>{item.name}</h3>
+                      <p>
+                        Php {item.price} × {cart[itemId]} = Php{" "}
+                        {(item.price * cart[itemId]).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="cart-item-actions">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleQuantityChange(itemId, -1)}
+                      >
+                        -
+                      </motion.button>
+                      <span>{cart[itemId]}</span>
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleQuantityChange(itemId, 1)}
+                      >
+                        +
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleRemoveItem(itemId)}
+                        className="trash-button"
+                      >
+                        🗑
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+
+              <div className="cart-summary">
+                <div className="cart-total">
+                  <strong>Total:</strong>
+                  <span>
+                    Php{" "}
+                    {Object.keys(cart)
+                      .reduce((total, itemId) => {
+                        const item = menuItems.find((item) => item._id === itemId);
+                        return total + (item ? item.price * cart[itemId] : 0);
+                      }, 0)
+                      .toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Payment Method Section */}
+                <div className="payment-method">
+                  <h4>Select Payment Method:</h4>
+                  <div className="payment-options">
+                    <label>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="cash"
+                        onChange={handlePaymentChange}
+                      />{" "}
+                      Cash 💵
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="gcash"
+                        onChange={handlePaymentChange}
+                      />{" "}
+                      GCash 📱
+                    </label>
+                  </div>
+
+                  {/* Show GCash fields if selected */}
+                  {paymentMethod === "gcash" && (
+                    <div className="gcash-fields">
+                      <label>Amount Paid:</label>
+                      <input
                         type="number"
                         placeholder="Enter amount paid"
                         value={amountPaid}
                         onChange={(e) => setAmountPaid(e.target.value)}
-                    />
-                    <br />
-
-                    <label>GCash Reference Number:</label>
+                      />
+                      <br />
+                      <label>GCash Reference Number:</label>
                       <input
-                          type="text"
-                          placeholder="Enter reference number"
-                          value={gcashRefNumber}
-                          onChange={(e) => setGcashRefNumber(e.target.value)}
-                    />
+                        type="text"
+                        placeholder="Enter reference number"
+                        value={gcashRefNumber}
+                        onChange={(e) => setGcashRefNumber(e.target.value)}
+                      />
+                    </div>
+                  )}
                 </div>
-                )}
-            </div>      
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="checkout-button"
-              onClick={handleCheckout}
-            >
-              ✅ Proceed to Checkout
-            </motion.button>
-
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleRemoveItem(itemId)}
-              className="trash-button"
-            >
-            </motion.button>
-          </div>
-        </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="checkout-button"
+                  onClick={handleCheckout}
+                  disabled={!clientName || ((customerType === "student" || customerType === "staff") && !schoolId)}
+                >
+                  ✅ Proceed to Checkout
+                </motion.button>
+              </div>
+            </div>
+          )}
+        </>
       )}
-      </div>
-    );
-  };
+    </div>
+  );
+};
 
   
 
