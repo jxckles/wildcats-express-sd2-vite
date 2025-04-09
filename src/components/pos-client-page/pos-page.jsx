@@ -28,6 +28,7 @@ const PosPage = () => {
   const [hasSearched, setHasSearched] = useState(false); // State to track if the user has searched for an order
   const [orderNumber, setOrderNumber] = useState(""); // State for order number input
   const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
+  const [disabledItems, setDisabledItems] = useState({});
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -100,17 +101,61 @@ const PosPage = () => {
   };
 
   const handleQuantityChange = (id, change) => {
-    setCart((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + change),
-    }));
+    setCart((prev) => {
+      const newQuantity = Math.max(0, (prev[id] || 0) + change);
+      
+      // If quantity is 0, remove the item from cart
+      if (newQuantity === 0) {
+        const newCart = { ...prev };
+        delete newCart[id];
+        // Re-enable the item's buttons in the menu
+        setDisabledItems((prevDisabled) => {
+          const newDisabled = { ...prevDisabled };
+          delete newDisabled[id];
+          return newDisabled;
+        });
+        return newCart;
+      }
+      
+      // Otherwise, update the quantity
+      return {
+        ...prev,
+        [id]: newQuantity
+      };
+    });
   };
 
   const handleAddToCart = (item) => {
+    // Get the current quantity before adding to cart
+    const currentQuantity = cart[item._id] || 0;
+    
     setCart((prev) => ({
       ...prev,
-      [item._id]: (prev[item._id] || 1),
+      [item._id]: currentQuantity || 1, // Use current quantity or default to 1
     }));
+    
+    // Don't reset the quantity anymore
+    // Remove this line: handleQuantityChange(item._id, -cart[item._id] || 0);
+    
+    // Disable the item's buttons after adding to cart
+    setDisabledItems((prev) => ({
+      ...prev,
+      [item._id]: true
+    }));
+  };
+
+  const handleRemoveItem = (itemId) => {
+    setCart((prevCart) => {
+      const newCart = { ...prevCart };
+      delete newCart[itemId]; 
+      return newCart;
+    });
+    // Re-enable the item's buttons when removed
+    setDisabledItems((prev) => {
+      const newDisabled = { ...prev };
+      delete newDisabled[itemId];
+      return newDisabled;
+    });
   };
 
   // Filter menu items by category and search query
@@ -200,14 +245,6 @@ const PosPage = () => {
 
 const closeConfirmation = () => {
   setShowConfirmation(false);
-};
-
-const handleRemoveItem = (itemId) => {
-  setCart((prevCart) => {
-    const newCart = { ...prevCart };
-    delete newCart[itemId]; 
-    return newCart;
-  });
 };
 
 const handlePaymentChange = (e) => {
@@ -301,12 +338,32 @@ const handleOrderNumberChange = (e) => {
                     <h3 className="item-name">{item.name}</h3>
                     <p className="item-price">Php {item.price}</p>
                     <div className="quantity-selector">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>-</motion.button>
-                      <span>{cart[item._id] || 0}</span>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, 1)}>+</motion.button>
+                      <motion.button 
+                        whileTap={{ scale: 0.9 }} 
+                        onClick={() => handleQuantityChange(item._id, -1)}
+                        disabled={disabledItems[item._id]}
+                        className={disabledItems[item._id] ? 'disabled' : ''}
+                      >
+                        -
+                      </motion.button>
+                      <span>{!disabledItems[item._id] ? (cart[item._id] || 0) : 0}</span>
+                      <motion.button 
+                        whileTap={{ scale: 0.9 }} 
+                        onClick={() => handleQuantityChange(item._id, 1)}
+                        disabled={disabledItems[item._id]}
+                        className={disabledItems[item._id] ? 'disabled' : ''}
+                      >
+                        +
+                      </motion.button>
                     </div>
-                    <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleAddToCart(item)}>
-                      Add to Cart
+                    <motion.button 
+                      className={`add-to-cart ${disabledItems[item._id] ? 'disabled' : ''}`}
+                      whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
+                      whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
+                      onClick={() => handleAddToCart(item)}
+                      disabled={disabledItems[item._id]}
+                    >
+                      {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
                     </motion.button>
                   </motion.div>
                 ))}
