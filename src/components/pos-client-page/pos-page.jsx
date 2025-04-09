@@ -28,6 +28,7 @@ const PosPage = () => {
   const [hasSearched, setHasSearched] = useState(false); // State to track if the user has searched for an order
   const [orderNumber, setOrderNumber] = useState(""); // State for order number input
   const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
+  const [clickedItems, setClickedItems] = useState({}); // Track clicked items
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -100,18 +101,45 @@ const PosPage = () => {
   };
 
   const handleQuantityChange = (id, change) => {
-    setCart((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + change),
-    }));
+    setCart((prev) => {
+      const updatedCart = { ...prev };
+      if (updatedCart[id]) {
+        updatedCart[id] += change;
+        if (updatedCart[id] <= 0) {
+          delete updatedCart[id]; // Remove the item from the cart if quantity is zero or less
+        }
+      } else if (change > 0) {
+        updatedCart[id] = 1; // Add the item to the cart if it doesn't exist and the change is positive
+      }
+      return updatedCart;
+    });
   };
 
   const handleAddToCart = (item) => {
-    setCart((prev) => ({
+    setCart((prev) => {
+      // Check if the item is already in the cart
+      if (prev[item._id]) {
+        return prev; // If the item is already in the cart, do nothing
+      }
+      return {
+        ...prev,
+        [item._id]: 1, // Add the item to the cart with a quantity of 1
+      };
+    });
+  
+    setClickedItems((prev) => ({
       ...prev,
-      [item._id]: (prev[item._id] || 1),
+      [item._id]: true, // Mark the item as clicked
     }));
+  
+    // Reset the quantity of the item in the menu to zero
+    setMenuItems((prevMenuItems) =>
+      prevMenuItems.map((menuItem) =>
+        menuItem._id === item._id ? { ...menuItem, quantity: 0 } : menuItem
+      )
+    );
   };
+  
 
   // Filter menu items by category and search query
   const filteredItems = menuItems.filter(
@@ -205,8 +233,14 @@ const closeConfirmation = () => {
 const handleRemoveItem = (itemId) => {
   setCart((prevCart) => {
     const newCart = { ...prevCart };
-    delete newCart[itemId]; 
+    delete newCart[itemId]; // Remove the item from the cart
     return newCart;
+  });
+
+  setClickedItems((prevClickedItems) => {
+    const updatedClickedItems = { ...prevClickedItems };
+    delete updatedClickedItems[itemId]; // Reset the clicked state for the item
+    return updatedClickedItems;
   });
 };
 
@@ -301,12 +335,30 @@ const handleOrderNumberChange = (e) => {
                     <h3 className="item-name">{item.name}</h3>
                     <p className="item-price">Php {item.price}</p>
                     <div className="quantity-selector">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, -1)}>-</motion.button>
-                      <span>{cart[item._id] || 0}</span>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(item._id, 1)}>+</motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleQuantityChange(item._id, -1)} // Decrease quantity
+                        disabled={!cart[item._id]} // Disable if the item is not in the cart
+                      >
+                        -
+                      </motion.button>
+                      <span>{cart[item._id] ? 0 : cart[item._id] || 0}</span> {/* Show 0 if item is in the cart */}
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleQuantityChange(item._id, 1)} // Increase quantity
+                        disabled={cart[item._id]} // Disable if the item is in the cart
+                      >
+                        +
+                      </motion.button>
                     </div>
-                    <motion.button className="add-to-cart" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleAddToCart(item)}>
-                      Add to Cart
+                    <motion.button
+                      className="add-to-cart"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleAddToCart(item)}
+                      disabled={clickedItems[item._id]} // Disable if the button was clicked
+                    >
+                      {clickedItems[item._id] ? "In Cart" : "Add to Cart"}
                     </motion.button>
                   </motion.div>
                 ))}
