@@ -6,6 +6,17 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import "./pos-page.css";
+import {
+  UtensilsCrossed, // used for "Menu" and "All"
+  ShoppingCart,    // used for "Cart"
+  MapPinned,       // used for "Track Order"
+  Soup,            // used for "Rice"
+  Salad,           // used for "Dishes"
+  Coffee,          // used for "Coffee"
+  CupSoda,         // used for "Drinks"
+  Cookie           // used for "Snacks"
+} from 'lucide-react';
+
 
 const PosPage = () => {
   const navigate = useNavigate();
@@ -275,6 +286,14 @@ const handleOrderNumberChange = (e) => {
   setHasSearched(false);
 };
 
+const categoryIcons = {
+  All: <UtensilsCrossed size={18} />,
+  Rice: <Soup size={18} />,
+  Dishes: <Salad size={18} />,
+  Coffee: <Coffee size={18} />,
+  Drinks: <CupSoda size={18} />,
+  Snacks: <Cookie size={18} />,
+};
 
   //render menu
   const renderMenuView = () => {
@@ -286,8 +305,14 @@ const handleOrderNumberChange = (e) => {
         </motion.div>
           <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
             {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-                {cat}
+              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)} 
+                style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px", 
+              }}
+              >               
+                {categoryIcons[cat]} {cat}
               </motion.button>
             ))}
           </motion.div>
@@ -768,24 +793,30 @@ const renderCartView = () => {
             whileTap={{ scale: 0.9 }}
             className={currentView === "menu" ? "active-view-button" : ""}
             onClick={() => changeView("menu")}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}
           >
-            Menu
+            <UtensilsCrossed size={20} />
+            Menu         
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className={currentView === "cart" ? "active-view-button" : ""}
             onClick={() => changeView("cart")}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}
           >
-            Cart
+            <ShoppingCart size={20} />
+            Cart           
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className={currentView === "trackOrder" ? "active-view-button" : ""}
             onClick={() => changeView("trackOrder")}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}
           >
-            Track Order
+            <MapPinned size={20} />
+            Track Order           
           </motion.button>
         </motion.aside>
     
