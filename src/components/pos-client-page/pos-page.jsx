@@ -153,20 +153,6 @@ const PosPage = () => {
       ...prev,
       [item._id]: true
     }));
-
-    // Re-enable after 3 seconds (3000 milliseconds)
-    setTimeout(() => {
-      setDisabledItems((prev) => ({
-        ...prev,
-        [item._id]: false,
-      }));
-
-      setCart((prev) => ({
-        ...prev,
-        [item._id]: 0,
-      }));
-
-    }, 1000);
   };
 
   const handleRemoveItem = (itemId) => {
@@ -769,8 +755,6 @@ const categoryIcons = {
       </div>
     );
   };
-  
-  
 
   return (
     <motion.div 
