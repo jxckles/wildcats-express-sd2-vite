@@ -41,7 +41,7 @@ const PosPage = () => {
   const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
   const [disabledItems, setDisabledItems] = useState({});
   const [selectedQuantities, setSelectedQuantities] = useState({});
-
+  const [addingStatus, setAddingStatus] = useState({});
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -65,6 +65,17 @@ const PosPage = () => {
     return () => unsubscribe();
   }, []);
   
+  useEffect(() => {
+    if (menuItems.length > 0) {
+      const updatedDisabled = {};
+      menuItems.forEach((item) => {
+        const quantity = selectedQuantities[item._id] || 0;
+        updatedDisabled[item._id] = quantity === 0;
+      });
+      setDisabledItems(updatedDisabled);
+    }
+  }, [menuItems, selectedQuantities]);
+
   // Fetch recent orders in real-time
   useEffect(() => {
     const ordersRef = collection(db, "orders");
@@ -113,15 +124,22 @@ const PosPage = () => {
     setSchoolId("");
   };
 
-  const handleSelectedQuantityChange = (id, change) => {
-    setSelectedQuantities((prev) => {
-      const newQuantity = Math.max(0, (prev[id] || 0) + change);
+  const handleSelectedQuantityChange = (itemId, change) => {
+    setSelectedQuantities((prevQuantities) => {
+      const newQuantity = Math.max((prevQuantities[itemId] || 0) + change, 0);
+  
+      setDisabledItems((prevDisabled) => ({
+        ...prevDisabled,
+        [itemId]: newQuantity === 0
+      }));
+  
       return {
-        ...prev,
-        [id]: newQuantity
+        ...prevQuantities,
+        [itemId]: newQuantity
       };
     });
-  };  
+  };
+  
 
   const handleCartQuantityChange = (id, change) => {
     setCart((prev) => {
@@ -131,12 +149,6 @@ const PosPage = () => {
       if (newQuantity === 0) {
         const newCart = { ...prev };
         delete newCart[id];
-        // Re-enable the item's buttons in the menu
-        setDisabledItems((prevDisabled) => {
-          const newDisabled = { ...prevDisabled };
-          delete newDisabled[id];
-          return newDisabled;
-        });
         return newCart;
       }
       
@@ -154,6 +166,11 @@ const PosPage = () => {
     const newQty = currentQty + selectedQty;
   
     if (newQty > 0) {
+      setAddingStatus((prev) => ({
+        ...prev,
+        [item._id]: true
+      }));
+
       setCart((prev) => ({
         ...prev,
         [item._id]: newQty
@@ -164,20 +181,21 @@ const PosPage = () => {
         ...prev,
         [item._id]: true
       }));
-  
-      // Re-enable after 2 seconds and reset quantity
+
+      // Reset quantity
+      setSelectedQuantities((prev) => ({
+        ...prev,
+        [item._id]: 0
+      }));
+      
+      // Change to add to cart button text to "Adding to cart..." for 1 second and revert back to "Add to cart"
       setTimeout(() => {
-        setDisabledItems((prev) => {
-          const newDisabled = { ...prev };
-          delete newDisabled[item._id];
-          return newDisabled;
+        setAddingStatus((prev) => {
+          const updated = { ...prev };
+          delete updated[item._id];
+          return updated;
         });
-  
-        setSelectedQuantities((prev) => ({
-          ...prev,
-          [item._id]: 0
-        }));
-      }, 1000);
+      }, 2000);
     }
   };
 
@@ -186,12 +204,6 @@ const PosPage = () => {
       const newCart = { ...prevCart };
       delete newCart[itemId]; 
       return newCart;
-    });
-    // Re-enable the item's buttons when removed
-    setDisabledItems((prev) => {
-      const newDisabled = { ...prev };
-      delete newDisabled[itemId];
-      return newDisabled;
     });
   };
 
@@ -362,57 +374,80 @@ const categoryIcons = {
   const renderMenuView = () => {
     return (
       <>
-      <motion.div className="menu-container-pos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-        </motion.div>
+        <motion.div className="menu-container-pos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+          <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <input
+              type="text"
+              placeholder="Search for food..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </motion.div>
+  
           <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-
             {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-                {cat}
-                      
+              <motion.button
+                key={cat}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={selectedCategory === cat ? "active-category" : ""}
+                onClick={() => setSelectedCategory(cat)}
+              >
                 {categoryIcons[cat]} {cat}
-
               </motion.button>
             ))}
           </motion.div>
+  
           <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
             <AnimatePresence mode="wait">
               {menuItems
-                .filter((item) => (selectedCategory === "All" || item.category === selectedCategory) && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .filter(
+                  (item) =>
+                    (selectedCategory === "All" || item.category === selectedCategory) &&
+                    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
                 .map((item) => (
-                  <motion.div key={item._id} className="menu-item-pos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+                  <motion.div
+                    key={item._id}
+                    className="menu-item-pos"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     <img src={item.imageURL} alt={item.name} className="item-img" />
                     <h3 className="item-name">{item.name}</h3>
                     <p className="item-price">Php {item.price}</p>
+  
                     <div className="quantity-selector">
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => handleSelectedQuantityChange(item._id, -1)}
-                        disabled={disabledItems[item._id]}
+                        disabled={(disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0)}
                         className={disabledItems[item._id] ? 'disabled' : ''}
                       >
                         -
                       </motion.button>
                       <span>{!disabledItems[item._id] ? (selectedQuantities[item._id] || 0) : 0}</span>
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => handleSelectedQuantityChange(item._id, 1)}
-                        disabled={disabledItems[item._id]}
-                        className={disabledItems[item._id] ? 'disabled' : ''}
                       >
                         +
                       </motion.button>
                     </div>
+  
                     <motion.button 
-                      className={`add-to-cart ${disabledItems[item._id] ? 'disabled' : ''}`}
+                      className={`add-to-cart ${(disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0) ? 'disabled' : ''}`}
                       whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
                       whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
                       onClick={() => handleAddToCart(item)}
                       disabled={disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0}
                     >
-                      {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
+                      {addingStatus[item._id] 
+                      ? 'Adding to cart...' 
+                      : 'Add to Cart'}
                     </motion.button>
                   </motion.div>
                 ))}
@@ -422,7 +457,6 @@ const categoryIcons = {
       </>
     );
   };
-
 
  //render cart
  const renderCartView = () => {
