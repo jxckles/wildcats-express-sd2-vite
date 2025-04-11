@@ -443,8 +443,6 @@ const renderMenuView = () => {
  const renderCartView = () => {
   return (
     <div className="cart-container">
-      {/* Display Client's Name at the Top Left */}
-      {clientName && <h3 className="client-name">👤 {clientName}</h3>}
       <h2 className="view-title">🛒 Your Cart</h2>
 
       {/* Customer Type Selection */}
