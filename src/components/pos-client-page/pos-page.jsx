@@ -113,7 +113,7 @@ const PosPage = () => {
     setSchoolId("");
   };
 
-  const handleQuantityChange = (id, change) => {
+  const handleSelectedQuantityChange = (id, change) => {
     setSelectedQuantities((prev) => {
       const newQuantity = Math.max(0, (prev[id] || 0) + change);
       return {
@@ -123,13 +123,40 @@ const PosPage = () => {
     });
   };  
 
+  const handleCartQuantityChange = (id, change) => {
+    setCart((prev) => {
+      const newQuantity = Math.max(0, (prev[id] || 0) + change);
+      
+      // If quantity is 0, remove the item from cart
+      if (newQuantity === 0) {
+        const newCart = { ...prev };
+        delete newCart[id];
+        // Re-enable the item's buttons in the menu
+        setDisabledItems((prevDisabled) => {
+          const newDisabled = { ...prevDisabled };
+          delete newDisabled[id];
+          return newDisabled;
+        });
+        return newCart;
+      }
+      
+      // Otherwise, update the quantity
+      return {
+        ...prev,
+        [id]: newQuantity
+      };
+    });
+  };  
+
   const handleAddToCart = (item) => {
     const selectedQty = selectedQuantities[item._id] || 0;
+    const currentQty = cart[item._id] || 0;
+    const newQty = currentQty + selectedQty;
   
-    if (selectedQty > 0) {
+    if (newQty > 0) {
       setCart((prev) => ({
         ...prev,
-        [item._id]: selectedQty
+        [item._id]: newQty
       }));
   
       // Disable the item's buttons immediately
@@ -150,7 +177,7 @@ const PosPage = () => {
           ...prev,
           [item._id]: 0
         }));
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -362,7 +389,7 @@ const categoryIcons = {
                     <div className="quantity-selector">
                       <motion.button 
                         whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleQuantityChange(item._id, -1)}
+                        onClick={() => handleSelectedQuantityChange(item._id, -1)}
                         disabled={disabledItems[item._id]}
                         className={disabledItems[item._id] ? 'disabled' : ''}
                       >
@@ -371,7 +398,7 @@ const categoryIcons = {
                       <span>{!disabledItems[item._id] ? (selectedQuantities[item._id] || 0) : 0}</span>
                       <motion.button 
                         whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleQuantityChange(item._id, 1)}
+                        onClick={() => handleSelectedQuantityChange(item._id, 1)}
                         disabled={disabledItems[item._id]}
                         className={disabledItems[item._id] ? 'disabled' : ''}
                       >
@@ -520,9 +547,9 @@ const categoryIcons = {
                       <p>Php {item.price} × {cart[itemId]} = Php {(item.price * cart[itemId]).toFixed(2)}</p>
                     </div>
                     <div className="cart-item-actions">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, -1)}>-</motion.button>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleCartQuantityChange(itemId, -1)}>-</motion.button>
                       <span>{cart[itemId]}</span>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, 1)}>+</motion.button>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleCartQuantityChange(itemId, 1)}>+</motion.button>
                       <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleRemoveItem(itemId)} className="trash-button">🗑</motion.button>
                     </div>
                   </motion.div>
