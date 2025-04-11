@@ -353,8 +353,8 @@ const categoryIcons = {
   All: <UtensilsCrossed size={18} />,
   Rice: <Soup size={18} />,
   Dishes: <Salad size={18} />,
-  Coffee: <Coffee size={18} />,
-  Drinks: <CupSoda size={18} />,
+  'Hot Drinks': <Coffee size={18} />,
+  'Cold Drinks': <CupSoda size={18} />,
   Snacks: <Cookie size={18} />,
 };
 
@@ -369,9 +369,7 @@ const categoryIcons = {
           <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
 
             {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-                {cat}
-                      
+              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>   
                 {categoryIcons[cat]} {cat}
 
               </motion.button>
