@@ -40,6 +40,8 @@ const PosPage = () => {
   const [orderNumber, setOrderNumber] = useState(""); // State for order number input
   const [isValidOrderNumber, setIsValidOrderNumber] = useState(false); // State to track if the order number is valid
   const [disabledItems, setDisabledItems] = useState({});
+  const [selectedQuantities, setSelectedQuantities] = useState({});
+
 
   // Fetch menu items in real-time
   useEffect(() => {
@@ -112,47 +114,44 @@ const PosPage = () => {
   };
 
   const handleQuantityChange = (id, change) => {
-    setCart((prev) => {
+    setSelectedQuantities((prev) => {
       const newQuantity = Math.max(0, (prev[id] || 0) + change);
-      
-      // If quantity is 0, remove the item from cart
-      if (newQuantity === 0) {
-        const newCart = { ...prev };
-        delete newCart[id];
-        // Re-enable the item's buttons in the menu
-        setDisabledItems((prevDisabled) => {
-          const newDisabled = { ...prevDisabled };
-          delete newDisabled[id];
-          return newDisabled;
-        });
-        return newCart;
-      }
-      
-      // Otherwise, update the quantity
       return {
         ...prev,
         [id]: newQuantity
       };
     });
-  };
+  };  
 
   const handleAddToCart = (item) => {
-    // Get the current quantity before adding to cart
-    const currentQuantity = cart[item._id] || 0;
-    
-    setCart((prev) => ({
-      ...prev,
-      [item._id]: currentQuantity, // Use current quantity or default to 1
-    }));
-    
-    // Don't reset the quantity anymore
-    // Remove this line: handleQuantityChange(item._id, -cart[item._id] || 0);
-    
-    // Disable the item's buttons after adding to cart
-    setDisabledItems((prev) => ({
-      ...prev,
-      [item._id]: true
-    }));
+    const selectedQty = selectedQuantities[item._id] || 0;
+  
+    if (selectedQty > 0) {
+      setCart((prev) => ({
+        ...prev,
+        [item._id]: selectedQty
+      }));
+  
+      // Disable the item's buttons immediately
+      setDisabledItems((prev) => ({
+        ...prev,
+        [item._id]: true
+      }));
+  
+      // Re-enable after 2 seconds and reset quantity
+      setTimeout(() => {
+        setDisabledItems((prev) => {
+          const newDisabled = { ...prev };
+          delete newDisabled[item._id];
+          return newDisabled;
+        });
+  
+        setSelectedQuantities((prev) => ({
+          ...prev,
+          [item._id]: 0
+        }));
+      }, 2000);
+    }
   };
 
   const handleRemoveItem = (itemId) => {
@@ -369,7 +368,7 @@ const categoryIcons = {
                       >
                         -
                       </motion.button>
-                      <span>{!disabledItems[item._id] ? (cart[item._id] || 0) : 0}</span>
+                      <span>{!disabledItems[item._id] ? (selectedQuantities[item._id] || 0) : 0}</span>
                       <motion.button 
                         whileTap={{ scale: 0.9 }} 
                         onClick={() => handleQuantityChange(item._id, 1)}
@@ -384,7 +383,7 @@ const categoryIcons = {
                       whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
                       whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
                       onClick={() => handleAddToCart(item)}
-                      disabled={(cart[item._id] || 0) === 0}
+                      disabled={disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0}
                     >
                       {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
                     </motion.button>
