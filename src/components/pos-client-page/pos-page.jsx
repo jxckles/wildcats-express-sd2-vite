@@ -142,7 +142,7 @@ const PosPage = () => {
     
     setCart((prev) => ({
       ...prev,
-      [item._id]: currentQuantity || 1, // Use current quantity or default to 1
+      [item._id]: currentQuantity, // Use current quantity or default to 1
     }));
     
     // Don't reset the quantity anymore
@@ -153,6 +153,20 @@ const PosPage = () => {
       ...prev,
       [item._id]: true
     }));
+
+    // Re-enable after 3 seconds (3000 milliseconds)
+    setTimeout(() => {
+      setDisabledItems((prev) => ({
+        ...prev,
+        [item._id]: false,
+      }));
+
+      setCart((prev) => ({
+        ...prev,
+        [item._id]: 0,
+      }));
+
+    }, 1000);
   };
 
   const handleRemoveItem = (itemId) => {
@@ -384,7 +398,7 @@ const categoryIcons = {
                       whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
                       whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
                       onClick={() => handleAddToCart(item)}
-                      disabled={disabledItems[item._id]}
+                      disabled={(cart[item._id] || 0) === 0}
                     >
                       {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
                     </motion.button>
