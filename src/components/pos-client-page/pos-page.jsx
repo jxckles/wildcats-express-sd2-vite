@@ -341,15 +341,13 @@ const categoryIcons = {
             <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </motion.div>
           <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            {["All", "Rice", "Dishes", "Coffee", "Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)} 
-                style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px", 
-              }}
-              >               
+
+            {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
+              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
+                {cat}
+                      
                 {categoryIcons[cat]} {cat}
+
               </motion.button>
             ))}
           </motion.div>
