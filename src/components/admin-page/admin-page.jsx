@@ -216,6 +216,30 @@ const AdminPage = () => {
     );
   };
 
+  // Sort food by popularity
+  const getSortedMenuByPopularity = () => {
+    const popularityMap = {};
+
+    // Count how many times each food has been ordered
+    orders.forEach((order) => {
+      order.items?.forEach((item) => {
+        if (popularityMap[item.name]) {
+          popularityMap[item.name] += item.quantity;
+        } else {
+          popularityMap[item.name] = item.quantity;
+        }
+      });
+    });
+
+    
+    const sortedMenu = [...menuItems].map((menuItem) => ({
+      ...menuItem,
+      popularity: popularityMap[menuItem.name] || 0, 
+    }));
+
+    return sortedMenu.sort((a, b) => b.popularity - a.popularity); // Sort food popularity
+  };
+
   // Handle Save Password
   const handleSavePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -760,70 +784,108 @@ const AdminPage = () => {
   );
 
   //Render menu items
-  const renderMenuItems = () => (
-    <>
+  const renderMenuItems = () => {
+    const sortedMenu = getSortedMenuByPopularity(); 
+
+    return (
       <div className="menu-items">
-      {menuItems.map((item) => (
-        <div key={item._id} className="menu-item">
-          <div className="menu-image-container">
-          {item.imageURL ? (
-            <img
-              src={item.imageURL}  // Preview the uploaded image
-              alt={item.name}
-              className="menu-image"
-            />
-          ) : (
-            <div className="menu-image-placeholder"><CiImageOff className="no-image-icon"/></div>
-          )}
-          </div>
-          <div className="menu-details">
-            <div className="menu-name">{item.name}</div>
-            <div className="menu-price">
-              Php {Number(item.price).toFixed(2)}
+        {sortedMenu.map((item) => (
+          <div key={item._id} className="menu-item">
+            <div className="menu-image-container">
+              {item.imageURL ? (
+                <img
+                  src={item.imageURL}
+                  alt={item.name}
+                  className="menu-image"
+                />
+              ) : (
+                <div className="menu-image-placeholder">
+                  <CiImageOff className="no-image-icon" />
+                </div>
+              )}
             </div>
-            <div className="menu-quantity">Quantity: {item.quantity}</div>
+            <div className="menu-details">
+              <div className="menu-name">{item.name}</div>
+              <div className="menu-price">Php {Number(item.price).toFixed(2)}</div>
+              <div className="menu-quantity">Quantity: {item.quantity}</div>
+              <div className="menu-popularity">Popularity: {item.popularity}</div>
+            </div>
+            <div className="menu-actions">
+              <button
+                className="action-link-edit"
+                onClick={() => openEditModal(item)}
+              >
+                Edit
+              </button>
+              <button
+                className="action-link-delete"
+                onClick={() => confirmDelete(item._id)}
+              >
+                Delete
+              </button>
+            </div>
           </div>
-          <div className="menu-actions">
-            <button
-              className="action-link-edit"
-              onClick={() => openEditModal(item)} // Open the modal with the selected item's data
-              >
-              Edit
-            </button>
-            <button
-              className="action-link-delete"
-              onClick={() => confirmDelete(item._id)}
-              >
-              Delete
-            </button>
-            {isDeleteModalOpen && (
-              <div className="modal-overlay-delete">
-                <div className="modal-delete">
-                  <p>Are you sure you want to delete this menu item?</p>
-                  <div className="modal-actions-delete">
-                    <button
-                      onClick={() => confirmDeleteItem()} // Call the confirm delete function
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsDeleteModalOpen(false);
-                        setItemToDelete(null); // Reset the selected item
+        ))}
+      </div>
+    );
+  };
+
+  const renderOrderLine = () => {
+    // Sort orders through date/time
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+  
+    
+    const limitedOrders = sortedOrders.slice(0, 4);
+  
+    return (
+      <div className="order-line-container">
+        <h3>Order Line</h3>
+        <br />
+        <div className="order-cards">
+          {limitedOrders.map((order, index) => (
+            <div key={order.orderNumber} className="order-card">
+              <div className="order-card-header">
+                <div className="school-id">{order.schoolId || "N/A"}</div>
+                <div className="order-id">Order #{index + 1}</div>
+              </div>
+              <div className="order-details">
+                <p>{order.name || "Unknown Customer"}</p>
+                <div className="order-status">
+                  <span>
+                    <p>{order.status || "Pending"}</p>
+                  </span>
+                  <div className="progress-bar">
+                    <div
+                      className="progress"
+                      style={{
+                        width: order.status === "Completed"
+                          ? "100%"
+                          : order.status === "Ready to Pickup"
+                          ? "75%"
+                          : order.status === "Preparing"
+                          ? "50%"
+                          : "25%", // Default for "Pending"
                       }}
-                    >
-                      No
-                    </button>
+                    ></div>
                   </div>
+                  <span className="progress-percentage">
+                    {order.status === "Completed"
+                      ? "100%"
+                      : order.status === "Ready to Pickup"
+                      ? "75%"
+                      : order.status === "Preparing"
+                      ? "50%"
+                      : "25%"}
+                  </span>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-    </>
-  );
+      </div>
+    );
+  };
+  
 
   //render dashboard
   //static layout only
@@ -833,87 +895,7 @@ const AdminPage = () => {
       <div className="dashboard-container-admin">
         
         <div className="orders-wrapper">
-          {/* Order Line Section */}
-          <div className="order-line-container">
-            <h3>Order Line</h3>
-            <br/>
-            <div className="order-cards">
-
-              
-              {/* Static Order 1 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                <div className="school-id">19-4566-878</div>
-                <div className="order-id">Order #1</div>
-                </div>
-                <div className="order-details">
-                  <p>James Bond</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "90%" }}></div>
-                    </div>
-                    <span className="progress-percentage">90%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Static Order 2 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">20-3454-654</div>
-                  <div className="order-id">Order #2</div>                  
-                </div>
-                <div className="order-details">
-                  <p>Steve Harvey</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "50%" }}></div>
-                    </div>
-                    <span className="progress-percentage">50%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Static Order 3 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">19-4566-878</div>
-                  <div className="order-id">Order #3</div>
-                </div>
-                <div className="order-details">
-                  <p>Clark Johnson</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "68%" }}></div>
-                    </div>
-                    <span className="progress-percentage">68%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Static Order 4 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">22-4535-765</div>
-                  <div className="order-id">Order #4</div>                    
-                </div>
-                <div className="order-details">
-                  <p>Steve Rogers</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "30%" }}></div>
-                    </div>
-                    <span className="progress-percentage">30%</span>
-                  </div>
-                </div>
-              </div>
-    
-            </div>
-          </div>
+          {renderOrderLine()}
     
           {/* Current Order Section */}
           <div className="current-order-container">
@@ -935,36 +917,31 @@ const AdminPage = () => {
         {/* Popular Picks Section */}
         <div className="popular-picks-container">
           <h2>Popular Picks</h2>
-          <br/>
+          <br />
           <div className="popular-picks">
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Fried Chicken</span>
-              <span className="pick-price">50.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Bulalo</span>
-              <span className="pick-price">100.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Longganisa</span>
-              <span className="pick-price">80.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Rice</span>
-              <span className="pick-price">10.00</span>
-            </div>
-          </div>
-
+            {getSortedMenuByPopularity()
+              .slice(0, 4) // Get the top 4 popular items
+              .map((item) => (
+                <div key={item._id} className="pick">
+                  <div className="pick-image-container">
+                    {item.imageURL ? (
+                      <img
+                        src={item.imageURL}
+                        alt={item.name}
+                        className="pick-image"
+                      />
+                    ) : (
+                      <div className="pick-image-placeholder">
+                        <CiImageOff className="no-image-icon" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="pick-name-price">
+                    <span className="pick-name">{item.name}</span>
+                    <span className="pick-price">₱{item.price.toFixed(2)}</span>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
