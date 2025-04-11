@@ -327,81 +327,124 @@ const categoryIcons = {
   All: <UtensilsCrossed size={18} />,
   Rice: <Soup size={18} />,
   Dishes: <Salad size={18} />,
-  Coffee: <Coffee size={18} />,
-  Drinks: <CupSoda size={18} />,
+  'Hot Drinks': <Coffee size={18} />,  // Note: You had "Hot Drinks" in your categories
+  'Cold Drinks': <CupSoda size={18} />, // and "Cold Drinks" in your categories
   Snacks: <Cookie size={18} />,
 };
 
   //render menu
-  const renderMenuView = () => {
-    return (
-      <>
-      <motion.div className="menu-container-pos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+ //render menu
+const renderMenuView = () => {
+  return (
+    <>
+      <motion.div 
+        className="menu-container-pos" 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div 
+          className="search-bar" 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.3 }}
+        >
+          <input 
+            type="text" 
+            placeholder="Search for food..." 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} 
+          />
         </motion.div>
-          <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
 
-            {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>
-                {cat}
-                      
-                {categoryIcons[cat]} {cat}
+        <motion.div 
+          className="category-filter" 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.3 }}
+        >
+          {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
+            <motion.button 
+              key={cat}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={selectedCategory === cat ? "active-category" : ""}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {categoryIcons[cat]} {cat}
+            </motion.button>
+          ))}
+        </motion.div>
 
-              </motion.button>
-            ))}
-          </motion.div>
-          <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-            <AnimatePresence mode="wait">
-              {menuItems
-                .filter((item) => (selectedCategory === "All" || item.category === selectedCategory) && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((item) => (
-                  <motion.div key={item._id} className="menu-item-pos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-                    <img src={item.imageURL} alt={item.name} className="item-img" />
-                    <h3 className="item-name">{item.name}</h3>
-                    <p className="item-price">Php {item.price}</p>
-                    <div className="quantity-selector">
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleQuantityChange(item._id, -1)}
-                        disabled={disabledItems[item._id]}
-                        className={disabledItems[item._id] ? 'disabled' : ''}
-                      >
-                        -
-                      </motion.button>
-                      <span>{!disabledItems[item._id] ? (cart[item._id] || 0) : 0}</span>
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleQuantityChange(item._id, 1)}
-                        disabled={disabledItems[item._id]}
-                        className={disabledItems[item._id] ? 'disabled' : ''}
-                      >
-                        +
-                      </motion.button>
-                    </div>
+        <motion.div 
+          className="menu-grid" 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ duration: 0.3 }}
+        >
+          <AnimatePresence mode="wait">
+            {menuItems
+              .filter((item) => 
+                (selectedCategory === "All" || item.category === selectedCategory) && 
+                item.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((item) => (
+                <motion.div 
+                  key={item._id} 
+                  className="menu-item-pos" 
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }} 
+                  whileHover={{ scale: 1.05 }} 
+                  transition={{ duration: 0.2 }}
+                >
+                  <img src={item.imageURL} alt={item.name} className="item-img" />
+                  <h3 className="item-name">{item.name}</h3>
+                  <p className="item-price">Php {item.price}</p>
+                  <div className="quantity-selector">
                     <motion.button 
-                      className={`add-to-cart ${disabledItems[item._id] ? 'disabled' : ''}`}
-                      whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
-                      whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
-                      onClick={() => handleAddToCart(item)}
+                      whileTap={{ scale: 0.9 }} 
+                      onClick={() => handleQuantityChange(item._id, -1)}
                       disabled={disabledItems[item._id]}
+                      className={disabledItems[item._id] ? 'disabled' : ''}
                     >
-                      {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
+                      -
                     </motion.button>
-                  </motion.div>
-                ))}
-            </AnimatePresence>
-          </motion.div>
+                    <span>{!disabledItems[item._id] ? (cart[item._id] || 0) : 0}</span>
+                    <motion.button 
+                      whileTap={{ scale: 0.9 }} 
+                      onClick={() => handleQuantityChange(item._id, 1)}
+                      disabled={disabledItems[item._id]}
+                      className={disabledItems[item._id] ? 'disabled' : ''}
+                    >
+                      +
+                    </motion.button>
+                  </div>
+                  <motion.button 
+                    className={`add-to-cart ${disabledItems[item._id] ? 'disabled' : ''}`}
+                    whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
+                    whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
+                    onClick={() => handleAddToCart(item)}
+                    disabled={disabledItems[item._id]}
+                  >
+                    {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
+                  </motion.button>
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </motion.div>
-      </>
-    );
-  };
+      </motion.div>
+    </>
+  );
+};
 
 
  //render cart
  const renderCartView = () => {
   return (
     <div className="cart-container">
+      {/* Display Client's Name at the Top Left */}
+      {clientName && <h3 className="client-name">👤 {clientName}</h3>}
       <h2 className="view-title">🛒 Your Cart</h2>
 
       {/* Customer Type Selection */}
@@ -490,7 +533,104 @@ const categoryIcons = {
             </div>
           </div>
 
-          {/* Rest of the cart view remains the same */}
+          {Object.keys(cart).length === 0 ? (
+            <div className="empty-state-cart">
+              <p>Your cart is empty</p>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => changeView("menu")}
+                className="return-to-menu"
+              >
+                🍽 Return to Menu
+              </motion.button>
+            </div>
+          ) : (
+            <div className="cart-items">
+              {Object.keys(cart).map((itemId) => {
+                const item = menuItems.find(item => item._id === itemId);
+                if (!item) return null;
+                
+                return (
+                  <motion.div 
+                    key={itemId}
+                    className="cart-item"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="cart-item-details">
+                      <h3>{item.name}</h3>
+                      <p>Php {item.price} × {cart[itemId]} = Php {(item.price * cart[itemId]).toFixed(2)}</p>
+                    </div>
+                    <div className="cart-item-actions">
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, -1)}>-</motion.button>
+                      <span>{cart[itemId]}</span>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleQuantityChange(itemId, 1)}>+</motion.button>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleRemoveItem(itemId)} className="trash-button">🗑</motion.button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+              
+              <div className="cart-summary">
+                <div className="cart-total">
+                  <strong>Total:</strong>
+                  <span>
+                    Php {Object.keys(cart).reduce((total, itemId) => {
+                      const item = menuItems.find(item => item._id === itemId);
+                      return total + (item ? item.price * cart[itemId] : 0);
+                    }, 0).toFixed(2)}
+                  </span>
+                </div>
+        
+                {/* Payment Method Section */}
+                <div className="payment-method">
+                  <h4>Select Payment Method:</h4>
+                  <div className="payment-options">
+                      <label>
+                          <input type="radio" name="payment" value="cash" onChange={handlePaymentChange} /> Cash 💵
+                      </label>
+                      <label>
+                          <input type="radio" name="payment" value="gcash" onChange={handlePaymentChange} /> GCash 📱
+                      </label>
+                  </div>
+
+                  {/* Show GCash fields if selected */}
+                  {paymentMethod === "gcash" && (
+                      <div className="gcash-fields">
+                          <label>Amount Paid:</label>
+                          <input
+                              type="number"
+                              placeholder="Enter amount paid"
+                              value={amountPaid}
+                              onChange={(e) => setAmountPaid(e.target.value)}
+                          />
+                          <br />
+
+                          <label>GCash Reference Number:</label>
+                            <input
+                                type="text"
+                                placeholder="Enter reference number"
+                                value={gcashRefNumber}
+                                onChange={(e) => setGcashRefNumber(e.target.value)}
+                          />
+                      </div>
+                  )}
+                </div>      
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="checkout-button"
+                  onClick={handleCheckout}
+                >
+                  ✅ Proceed to Checkout
+                </motion.button>
+              </div>
+            </div>
+          )}
+
           {showConfirmation && (
             <div className="confirmation-modal">
               <h3>Order Confirmed</h3>
@@ -498,8 +638,6 @@ const categoryIcons = {
               <button onClick={closeConfirmation}>Close</button>
             </div>
           )}
-
-          {/* ... rest of the cart view code ... */}
         </>
       )}
     </div>
