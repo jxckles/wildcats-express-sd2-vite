@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, auth, db } from "../../config/firebase-config";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaUserPlus , FaClipboardList, FaCog } from "react-icons/fa";
 import { FaArrowRightToBracket } from "react-icons/fa6";
@@ -45,6 +45,54 @@ const AdminPage = () => {
   const [customerToDelete, setCustomerToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  
+  const [orders, setOrders] = useState([]);
+  const [latestOrders, setLatestOrders] = useState([]);
+
+  // Fetch Top 5 uncompleted/active/latest orders
+  useEffect(() => {
+    const ordersRef = collection(db, "orders");
+    const q = query(
+      ordersRef,
+      where("status", "in", ["Pending", "Preparing", "Ready to Pickup"]),
+      orderBy("dateTime", "desc"),
+      limit(5)
+    );
+  
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const orders = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setLatestOrders(orders);
+      console.log("🔥 Latest 5 active orders:", orders);
+    });
+  
+    return () => unsubscribe();
+  }, []);  
+
+  const currentOrder = latestOrders[0];
+  const orderLine = latestOrders.slice(1);
+
+  const getProgressFromStatus = (status) => {
+    switch (status) {
+      case "Pending":
+        return 10;
+      case "Preparing":
+        // Simulate a dynamic progress from 50–80%
+        return Math.floor(Math.random() * 31) + 50; // 50 to 80
+      case "Ready to Pickup":
+        return 100;
+      default:
+        return 0;
+    }
+  };
+  
+  const enhancedOrders = orderLine.map((order, index) => ({
+    ...order,
+    progress: getProgressFromStatus(order.status),
+  }));  
+  
   // Sample mock data for customers
   const [mockCustomers, setMockCustomers] = useState([
     {
@@ -136,10 +184,6 @@ const AdminPage = () => {
         totalPrice: '₱100.00',
       },
     ];
-
-  // Sample mock data for Orders
-  const [orders, setOrders] = useState([]);
-
 
   // For Tracking Password Changes
   const [oldPassword, setOldPassword] = useState("");
@@ -831,104 +875,54 @@ const AdminPage = () => {
   const renderDashboard = () => {
     return (
       <div className="dashboard-container-admin">
-        
         <div className="orders-wrapper">
           {/* Order Line Section */}
           <div className="order-line-container">
             <h3>Order Line</h3>
-            <br/>
+            <br />
             <div className="order-cards">
-
-              
-              {/* Static Order 1 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                <div className="school-id">19-4566-878</div>
-                <div className="order-id">Order #1</div>
-                </div>
-                <div className="order-details">
-                  <p>James Bond</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "90%" }}></div>
+              {enhancedOrders.map((order, index) => (
+                <div className="order-card" key={order.id}>
+                  <div className="order-card-header">
+                    <div className="school-id">{order.schoolId}</div>
+                    <div className="order-id">Order #{index + 2}</div>
+                  </div>
+                  <div className="order-details">
+                    <p>{order.name}</p>
+                    <div className="order-status">
+                      <span><p>{order.status}</p></span>
+                      <div className="progress-bar">
+                        <div
+                          className="progress"
+                          style={{ width: `${order.progress}%` }}
+                        ></div>
+                      </div>
+                      <span className="progress-percentage">{order.progress}%</span>
                     </div>
-                    <span className="progress-percentage">90%</span>
                   </div>
                 </div>
-              </div>
-
-              {/* Static Order 2 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">20-3454-654</div>
-                  <div className="order-id">Order #2</div>                  
-                </div>
-                <div className="order-details">
-                  <p>Steve Harvey</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "50%" }}></div>
-                    </div>
-                    <span className="progress-percentage">50%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Static Order 3 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">19-4566-878</div>
-                  <div className="order-id">Order #3</div>
-                </div>
-                <div className="order-details">
-                  <p>Clark Johnson</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "68%" }}></div>
-                    </div>
-                    <span className="progress-percentage">68%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Static Order 4 */}
-              <div className="order-card">
-                <div className="order-card-header">
-                  <div className="school-id">22-4535-765</div>
-                  <div className="order-id">Order #4</div>                    
-                </div>
-                <div className="order-details">
-                  <p>Steve Rogers</p>
-                  <div className="order-status">
-                    <span><p>In Progress</p></span>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: "30%" }}></div>
-                    </div>
-                    <span className="progress-percentage">30%</span>
-                  </div>
-                </div>
-              </div>
-    
+              ))}
             </div>
           </div>
-    
+
           {/* Current Order Section */}
           <div className="current-order-container">
             <h3>Current Order</h3>
-            <br/>
-            <div className="current-order-card">
-              <h4>Recipient: Dave Miller</h4>
-              <p>School ID:</p>
-              <p>#123456789</p>
-              <br/>
-              <div className="current-order-card-bottom">
-                <span>Order#: 4</span>
-                <span>Items: 8</span>
+            <br />
+            {currentOrder ? (
+              <div className="current-order-card">
+                <h4>Recipient: {currentOrder.name}</h4>
+                <p>School ID:</p>
+                <p>#{currentOrder.schoolId}</p>
+                <br />
+                <div className="current-order-card-bottom">
+                  <span>Order#: 1</span>
+                  <span>Items: {currentOrder.quantity}</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <p>No current orders.</p>
+            )}
           </div>
         </div>
   
@@ -970,7 +964,6 @@ const AdminPage = () => {
       </div>
     );
   };
-  
 
   // Render Orders
   const renderOrder = () => {
@@ -1029,7 +1022,6 @@ const AdminPage = () => {
       </div>
     );
   };
-  
 
   // Render Admin Reports
   const renderAdminReports = () => {
@@ -1173,7 +1165,6 @@ const AdminPage = () => {
     );
   };
   
-
   //Render Settings
   const renderSettings = () => {
     return (
@@ -1220,7 +1211,6 @@ const AdminPage = () => {
       </>
     );
   };
-  
 
  //Render Customer List
 const renderCustomerList = () => {
