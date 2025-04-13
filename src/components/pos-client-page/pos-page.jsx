@@ -219,8 +219,9 @@ const PosPage = () => {
     }
   
     if (paymentMethod === "gcash") {
-      if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
-        alert("Please enter a valid amount paid.");
+      // Check for exact payment amount
+      if (!amountPaid || parseFloat(amountPaid) !== totalAmount) {
+        alert(`Please Input Exact Payment: ₱${totalAmount.toFixed(2)}`);
         return;
       }
       if (!gcashRefNumber) {
@@ -579,24 +580,24 @@ const categoryIcons = {
 
                   {/* Show GCash fields if selected */}
                   {paymentMethod === "gcash" && (
-                      <div className="gcash-fields">
-                          <label>Amount Paid:</label>
-                          <input
-                              type="number"
-                              placeholder="Enter amount paid"
-                              value={amountPaid}
-                              onChange={(e) => setAmountPaid(e.target.value)}
-                          />
-                          <br />
-
-                          <label>GCash Reference Number:</label>
-                            <input
-                                type="text"
-                                placeholder="Enter reference number"
-                                value={gcashRefNumber}
-                                onChange={(e) => setGcashRefNumber(e.target.value)}
-                          />
-                      </div>
+                    <div className="gcash-fields">
+                      <label>Amount to Pay: ₱{totalAmount.toFixed(2)}</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder={`Enter exact amount: ₱${totalAmount.toFixed(2)}`}
+                        value={amountPaid}
+                        onChange={(e) => setAmountPaid(e.target.value)}
+                      />
+                      <br />
+                      <label>GCash Reference Number:</label>
+                      <input
+                        type="text"
+                        placeholder="Enter reference number"
+                        value={gcashRefNumber}
+                        onChange={(e) => setGcashRefNumber(e.target.value)}
+                      />
+                    </div>
                   )}
                 </div>      
 
