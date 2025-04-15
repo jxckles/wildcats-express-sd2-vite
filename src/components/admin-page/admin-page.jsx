@@ -354,6 +354,25 @@ const AdminPage = () => {
 
     return () => unsubscribe(); // Cleanup listener on unmount
   }, []);
+
+  // Fetch customer list 
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const customersRef = collection(db, "customers");
+  
+      const unsubscribe = onSnapshot(customersRef, (snapshot) => {
+        const fetchedCustomers = snapshot.docs.map((doc) => ({
+          id: doc.id, // Use the document ID as the customer ID
+          ...doc.data(), // Spread the customer data (name, type)
+        }));
+        setMockCustomers(fetchedCustomers); // Update the state with fetched customers
+      });
+  
+      return () => unsubscribe(); // Cleanup listener on unmount
+    };
+  
+    fetchCustomers();
+  }, []);
    
 
   if (loading) {
@@ -660,11 +679,27 @@ const AdminPage = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDeleteCustomer = () => {
-    setMockCustomers(mockCustomers.filter(c => c.id !== customerToDelete.id));
-    setShowDeleteModal(false);
-    setCustomerToDelete(null);
-    toast.success("Customer removed successfully!");
+  const confirmDeleteCustomer = async () => {
+    if (!customerToDelete) {
+      toast.error("No customer selected for deletion.");
+      return;
+    }
+  
+    try {
+      const customerDocRef = doc(db, "customers", customerToDelete.id); // Reference to the Firestore document
+      await deleteDoc(customerDocRef); // Delete the document from Firestore
+  
+      setMockCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer.id !== customerToDelete.id)
+      ); // Update the local state
+  
+      setShowDeleteModal(false);
+      setCustomerToDelete(null);
+      toast.success("Customer removed successfully!");
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      toast.error("Failed to delete customer. Please try again.");
+    }
   };
 
   const cancelDeleteCustomer = () => {
@@ -1223,58 +1258,68 @@ const AdminPage = () => {
   
 
  //Render Customer List
-const renderCustomerList = () => {
-  return (
-    <div className="registerCustomer-container">
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="delete-modal-overlay">
-          <div className="delete-modal">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to remove {customerToDelete?.name}?</p>
-            <div className="modal-buttons">
-              <button onClick={cancelDeleteCustomer} className="cancel-button">Cancel</button>
-              <button onClick={confirmDeleteCustomer} className="confirm-button">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="customer-list-section">
-        <h2>Registered Customers</h2>       
-        <div className="customer-cards">
-          {mockCustomers.length > 0 ? (
-            mockCustomers.map(customer => (
-              <div
-                key={customer.id}
-                className={`customer-card ${customer.type}`}
-              >
-                <div className="customer-info">
-                  <h3>{customer.name}</h3>
-                  <p><strong>School ID:</strong> {customer.schoolId}</p>
-                  <p><strong>Type:</strong> {customer.type.charAt(0).toUpperCase() + customer.type.slice(1)}</p>
-                </div>
-                <button 
-                  className="delete-customer-button"
-                  onClick={() => handleDeleteCustomerClick(customer)}
-                >
-                  🗑️ Remove
+  const renderCustomerList = () => {
+    return (
+      <div className="registerCustomer-container">
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="delete-modal-overlay">
+            <div className="delete-modal">
+              <h3>Confirm Deletion</h3>
+              <p>Are you sure you want to remove {customerToDelete?.name}?</p>
+              <div className="modal-buttons">
+                <button onClick={cancelDeleteCustomer} className="cancel-button">
+                  Cancel
+                </button>
+                <button onClick={confirmDeleteCustomer} className="confirm-button">
+                  Delete
                 </button>
               </div>
-            ))
-          ) : (
-            <div className="empty-customer-state">
-              <p>No customers registered yet.</p>
-              <p className="subtext">Customers will appear here once they order.</p>
             </div>
-          )}
+          </div>
+        )}
+
+        <div className="customer-list-section">
+          <h2>Registered Customers</h2>
+          <div className="customer-cards">
+            {mockCustomers.length > 0 ? (
+              mockCustomers.map((customer) => (
+                <div
+                  key={customer.id}
+                  className={`customer-card ${customer.type}`}
+                >
+                  <div className="customer-info">
+                    <h3>{customer.name}</h3>
+                    <p>
+                      <strong>School ID:</strong> {customer.id}
+                    </p>
+                    <p>
+                      <strong>Type:</strong>{" "}
+                      {customer.type.charAt(0).toUpperCase() +
+                        customer.type.slice(1)}
+                    </p>
+                  </div>
+                  <button
+                    className="delete-customer-button"
+                    onClick={() => handleDeleteCustomerClick(customer)}
+                  >
+                    🗑️ Remove
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="empty-customer-state">
+                <p>No customers registered yet.</p>
+                <p className="subtext">
+                  Customers will appear here once they order.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-
+    );
+  };
   
   // Render admin Page
   return (
