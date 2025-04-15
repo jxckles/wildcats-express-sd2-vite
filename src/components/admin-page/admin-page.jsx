@@ -56,7 +56,6 @@ const AdminPage = () => {
       ordersRef,
       where("status", "in", ["Pending", "Preparing", "Ready to Pickup"]),
       orderBy("dateTime", "desc"),
-      limit(5)
     );
   
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -65,14 +64,15 @@ const AdminPage = () => {
         ...doc.data(),
       }));
       setLatestOrders(orders);
-      console.log("🔥 Latest 5 active orders:", orders);
+      console.log("🔥 Updated active orders:", orders);
     });
   
     return () => unsubscribe();
   }, []);  
 
-  const currentOrder = latestOrders[0];
-  const orderLine = latestOrders.slice(1);
+  const sortedOrders = [...latestOrders].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime)); // Sort by oldest date first
+  const currentOrder = sortedOrders[0]; // Oldest order
+  const orderLine = sortedOrders.slice(1); // Remaining orders
 
   const getProgressFromStatus = (status) => {
     switch (status) {
@@ -870,8 +870,6 @@ const AdminPage = () => {
   );
 
   //render dashboard
-  //static layout only
-  //Backend please change logic for integration
   const renderDashboard = () => {
     return (
       <div className="dashboard-container-admin">
@@ -911,10 +909,9 @@ const AdminPage = () => {
             <br />
             {currentOrder ? (
               <div className="current-order-card">
-                <h4>Recipient: {currentOrder.name}</h4>
-                <p>School ID:</p>
-                <p>#{currentOrder.schoolId}</p>
-                <br />
+                <h4>{currentOrder.name}</h4>
+                <p>{currentOrder.schoolId}</p>
+                <p>{currentOrder.status}</p>
                 <div className="current-order-card-bottom">
                   <span>Order#: 1</span>
                   <span>Items: {currentOrder.quantity}</span>
