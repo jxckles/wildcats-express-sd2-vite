@@ -1,7 +1,7 @@
 import {Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
-import { collection, onSnapshot, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, getDoc, doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -227,6 +227,28 @@ const PosPage = () => {
         alert("Please enter the GCash reference number.");
         return;
       }
+    }
+  
+    // Save customer data if it doesn't already exist
+    try {
+      const customersRef = collection(db, "customers");
+      const customerDocRef = doc(customersRef, schoolId); // Use schoolId as the document ID
+      const customerSnapshot = await getDoc(customerDocRef);
+  
+      if (!customerSnapshot.exists()) {
+        // Save the customer data
+        await setDoc(customerDocRef, {
+          name: clientName,
+          type: customerType,
+        });
+        console.log("Customer data saved successfully.");
+      } else {
+        console.log("Customer already exists. Skipping save.");
+      }
+    } catch (error) {
+      console.error("Error saving customer data:", error);
+      toast.error("Failed to save customer data. Please try again.");
+      return;
     }
   
     // Prepare the order data
