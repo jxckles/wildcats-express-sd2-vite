@@ -838,68 +838,65 @@ const AdminPage = () => {
   const renderMenuItems = () => (
     <>
       <div className="menu-items">
-      {menuItems.map((item) => (
-        <div key={item._id} className="menu-item">
-          <div className="menu-image-container">
-          {item.imageURL ? (
-            <img
-              src={item.imageURL}  // Preview the uploaded image
-              alt={item.name}
-              className="menu-image"
-            />
-          ) : (
-            <div className="menu-image-placeholder"><CiImageOff className="no-image-icon"/></div>
-          )}
-          </div>
-          <div className="menu-details">
-            <div className="menu-name">{item.name}</div>
-            <div className="menu-price">
-              Php {Number(item.price).toFixed(2)}
-            </div>
-            <div className="menu-quantity">Quantity: {item.quantity}</div>
-          </div>
-          <div className="menu-actions">
-            <button
-              className="action-link-edit"
-              onClick={() => openEditModal(item)} // Open the modal with the selected item's data
-              >
-              Edit
-            </button>
-            <button
-              className="action-link-delete"
-              onClick={() => confirmDelete(item._id)}
-              >
-              Delete
-            </button>
-            {isDeleteModalOpen && (
-              <div className="modal-overlay-delete">
-                <div className="modal-delete">
-                  <p>Are you sure you want to delete this menu item?</p>
-                  <div className="modal-actions-delete">
-                    <button
-                      onClick={() => confirmDeleteItem()} // Call the confirm delete function
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsDeleteModalOpen(false);
-                        setItemToDelete(null); // Reset the selected item
-                      }}
-                    >
-                      No
-                    </button>
-                  </div>
+        {menuItems.map((item) => (
+          <div key={item._id} className="menu-item">
+            <div className="menu-image-container">
+              {item.imageURL ? (
+                <img
+                  src={item.imageURL} // Preview the uploaded image
+                  alt={item.name}
+                  className="menu-image"
+                />
+              ) : (
+                <div className="menu-image-placeholder">
+                  <CiImageOff className="no-image-icon" />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+            <div className="menu-details">
+              <div className="menu-name">{item.name}</div>
+              <div className="menu-price">Php {Number(item.price).toFixed(2)}</div>
+              <div className="menu-quantity">Quantity: {item.quantity}</div>
+            </div>
+            <div className="menu-actions">
+              <button
+                className="action-link-edit"
+                onClick={() => openEditModal(item)} // Open the modal with the selected item's data
+              >
+                Edit
+              </button>
+              <button
+                className="action-link-delete"
+                onClick={() => confirmDelete(item._id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+  
+      {/* Render the delete modal only if isDeleteModalOpen is true */}
+      {isDeleteModalOpen && itemToDelete && (
+        <div className="modal-overlay-delete">
+          <div className="modal-delete">
+            <p>Are you sure you want to delete this menu item?</p>
+            <div className="modal-actions-delete">
+              <button onClick={confirmDeleteItem}>Yes</button>
+              <button
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setItemToDelete(null); // Reset the selected item
+                }}
+              >
+                No
+              </button>
+            </div>
           </div>
         </div>
-      ))}
-    </div>
+      )}
     </>
   );
-
   //render dashboard
   const renderDashboard = () => {
     return (
