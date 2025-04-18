@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, auth, db } from "../../config/firebase-config";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-import { collection, query, where, orderBy, limit, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, setDoc, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaUserPlus , FaClipboardList, FaCog } from "react-icons/fa";
 import { FaArrowRightToBracket } from "react-icons/fa6";
@@ -305,41 +305,37 @@ const AdminPage = () => {
     const updatedOrders = [...orders];
     const orderToUpdate = updatedOrders[index];
     orderToUpdate.status = value;
-
+  
     try {
       const orderDocRef = doc(db, "orders", orderToUpdate.orderNumber);
-
+  
       if (value === "Cancelled" || value === "Completed") {
-        // Update the status in Firestore
-        await updateDoc(orderDocRef, { status: value });
-
-        // Schedule deletion after 24 hours (1 day)
-        setTimeout(async () => {
-          try {
-            // Check if the order still exists and has the same status
-            const orderSnapshot = await getDoc(orderDocRef);
-            if (
-              orderSnapshot.exists() &&
-              (orderSnapshot.data().status === "Cancelled" || orderSnapshot.data().status === "Completed")
-            ) {
-              await deleteDoc(orderDocRef); // Remove the order from Firestore
-              setOrders((prevOrders) =>
-                prevOrders.filter((order) => order.orderNumber !== orderToUpdate.orderNumber)
-              ); // Update local state
-              toast.success(`Order with status '${value}' removed after 24 hours.`);
-            }
-          } catch (error) {
-            console.error(`Error removing ${value} order after 24 hours:`, error);
-          }
-        }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-
-        toast.success(`Order status updated to '${value}'. It will be removed after 24 hours.`);
+        // Determine the target collection and additional field
+        const targetCollection = value === "Cancelled" ? "cancelled_orders" : "completed_orders";
+        const additionalField = value === "Cancelled" ? { timeCancelled: new Date().toLocaleString() } : { timeCompleted: new Date().toLocaleString() };
+  
+        // Add the order to the target collection
+        const targetDocRef = doc(db, targetCollection, orderToUpdate.orderNumber);
+        await setDoc(targetDocRef, {
+          ...orderToUpdate, // Copy all fields from the original order
+          ...additionalField, // Add the additional field
+        });
+  
+        // Delete the order from the orders collection
+        await deleteDoc(orderDocRef);
+  
+        // Update the local state
+        setOrders((prevOrders) =>
+          prevOrders.filter((order) => order.orderNumber !== orderToUpdate.orderNumber)
+        );
+  
+        toast.success(`Order moved to ${targetCollection.replace("_", " ")} successfully.`);
       } else {
-        // Update the status in Firestore
+        // Update the status in Firestore for other statuses
         await updateDoc(orderDocRef, { status: value });
         toast.success("Order status updated successfully.");
       }
-
+  
       setOrders(updatedOrders); // Update the local state
     } catch (error) {
       console.error("Error updating order status:", error);
