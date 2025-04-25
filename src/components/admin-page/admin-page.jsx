@@ -659,6 +659,29 @@ const AdminPage = () => {
     setItemToDelete(id);
     setIsDeleteModalOpen(true);
   };
+
+  // Sort food by popularity
+const getSortedMenuByPopularity = () => {
+  const popularityMap = {};
+
+  // Count how many times each food has been ordered
+  orders.forEach((order) => {
+    order.items?.forEach((item) => {
+      if (popularityMap[item.name]) {
+        popularityMap[item.name] += item.quantity;
+      } else {
+        popularityMap[item.name] = item.quantity;
+      }
+    });
+  });
+
+  const sortedMenu = [...menuItems].map((menuItem) => ({
+    ...menuItem,
+    popularity: popularityMap[menuItem.name] || 0,
+  }));
+
+  return sortedMenu.sort((a, b) => b.popularity - a.popularity); // Sort food by popularity
+};
   
   
   const handleImageChange = (e) => {
@@ -674,6 +697,7 @@ const AdminPage = () => {
       }));
     }
   };
+  
   
   
   
@@ -714,6 +738,7 @@ const AdminPage = () => {
       setIsDeleteModalOpen(false); // Close the modal after attempting deletion
     }
   };
+  
   
 
   // Handle customer deletion
@@ -838,15 +863,17 @@ const AdminPage = () => {
   );
 
   //Render menu items
-  const renderMenuItems = () => (
-    <>
+  const renderMenuItems = () => {
+    const sortedMenu = getSortedMenuByPopularity();
+
+    return (
       <div className="menu-items">
-        {menuItems.map((item) => (
+        {sortedMenu.map((item) => (
           <div key={item._id} className="menu-item">
             <div className="menu-image-container">
               {item.imageURL ? (
                 <img
-                  src={item.imageURL} // Preview the uploaded image
+                  src={item.imageURL}
                   alt={item.name}
                   className="menu-image"
                 />
@@ -860,11 +887,12 @@ const AdminPage = () => {
               <div className="menu-name">{item.name}</div>
               <div className="menu-price">Php {Number(item.price).toFixed(2)}</div>
               <div className="menu-quantity">Quantity: {item.quantity}</div>
+              <div className="menu-popularity">Popularity: {item.popularity}</div>
             </div>
             <div className="menu-actions">
               <button
                 className="action-link-edit"
-                onClick={() => openEditModal(item)} // Open the modal with the selected item's data
+                onClick={() => openEditModal(item)}
               >
                 Edit
               </button>
@@ -878,28 +906,8 @@ const AdminPage = () => {
           </div>
         ))}
       </div>
-  
-      {/* Render the delete modal only if isDeleteModalOpen is true */}
-      {isDeleteModalOpen && itemToDelete && (
-        <div className="modal-overlay-delete">
-          <div className="modal-delete">
-            <p>Are you sure you want to delete this menu item?</p>
-            <div className="modal-actions-delete">
-              <button onClick={confirmDeleteItem}>Yes</button>
-              <button
-                onClick={() => {
-                  setIsDeleteModalOpen(false);
-                  setItemToDelete(null); // Reset the selected item
-                }}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
+    );
+  };
   //render dashboard
   const renderDashboard = () => {
     return (
@@ -953,40 +961,37 @@ const AdminPage = () => {
             )}
           </div>
         </div>
+        
+        
   
         {/* Popular Picks Section */}
         <div className="popular-picks-container">
           <h2>Popular Picks</h2>
-          <br/>
+          <br />
           <div className="popular-picks">
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Fried Chicken</span>
-              <span className="pick-price">50.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Bulalo</span>
-              <span className="pick-price">100.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Longganisa</span>
-              <span className="pick-price">80.00</span>
-            </div>
-          </div>
-
-          <div className="pick">
-            <div className="pick-name-price">
-              <span className="pick-name">Rice</span>
-              <span className="pick-price">10.00</span>
-            </div>
-          </div>
-
+            {getSortedMenuByPopularity()
+              .slice(0, 4) // Get the top 4 popular items
+              .map((item) => (
+                <div key={item._id} className="pick">
+                  <div className="pick-image-container">
+                    {item.imageURL ? (
+                      <img
+                        src={item.imageURL}
+                        alt={item.name}
+                        className="pick-image"
+                      />
+                    ) : (
+                      <div className="pick-image-placeholder">
+                        <CiImageOff className="no-image-icon" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="pick-name-price">
+                    <span className="pick-name">{item.name}</span>
+                    <span className="pick-price">₱{item.price.toFixed(2)}</span>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
