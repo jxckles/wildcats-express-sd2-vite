@@ -1083,19 +1083,23 @@ const AdminPage = () => {
   
     const handleDownloadReport = () => {
       try {
-        
+        if (filteredReports.length === 0) {
+          toast.error("No data available to generate the report.");
+          return;
+        }
+    
         const doc = new jsPDF();
-
-        
+    
         doc.setFontSize(18);
         doc.text("Admin Reports", 14, 20);
-
-        
-        const currentDate = new Date().toLocaleString();
+    
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().split("T")[0]; // YYYY-MM-DD
+        const displayDate = currentDate.toLocaleString();
+    
         doc.setFontSize(12);
-        doc.text(`Generated on: ${currentDate}`, 14, 30);
-
-        
+        doc.text(`Generated on: ${displayDate}`, 14, 30);
+    
         const tableHeaders = ["Order Number", "Date Ordered", "Status", "Items", "Quantity", "Total Price"];
         const tableBody = filteredReports.map((report) => [
           report.orderNumber || "N/A",
@@ -1107,27 +1111,28 @@ const AdminPage = () => {
           report.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
           `₱${report.totalAmount?.toFixed(2) || "0.00"}`,
         ]);
-
-        // Add the table to the PDF
+    
         doc.autoTable({
           head: [tableHeaders],
           body: tableBody,
-          startY: 40, // Start the table below the title
+          startY: 40,
           styles: { fontSize: 10 },
           headStyles: {
             fillColor: [128, 0, 0],
-          }, 
+          },
         });
-
-        // Save the PDF
-        doc.save("adminreports.pdf");
+    
+        // Save with date in the filename
+        doc.save(`Wildcats-Express-Admin-Report-${formattedDate}.pdf`);
+    
         toast.success("Report downloaded successfully!");
       } catch (error) {
         console.error("Error generating PDF:", error);
         toast.error("Failed to download the report. Please try again!");
       }
     };
-  
+    
+    
     return (
       <>
         <div className="search-container">
