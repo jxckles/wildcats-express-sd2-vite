@@ -781,7 +781,7 @@ const getSortedMenuByPopularity = () => {
       <button onClick={openModal} className="add-menu-button">
         Add New Menu
       </button>
-
+  
       {/* Modal for adding/editing item */}
       {isModalOpen && (
         <div className="modal-overlay-menu">
@@ -816,14 +816,23 @@ const getSortedMenuByPopularity = () => {
                 step="1"
                 required
               />
-              <input
-                type="text"
+              
+              {/* Replaced text input with select dropdown */}
+              <select
                 name="category"
                 value={newMenuItem.category}
                 onChange={handleInputChange}
-                placeholder="Category"
                 required
-              />
+                className="category-select"
+              >
+                <option value="">Select a category</option>
+                <option value="Rice">Rice</option>
+                <option value="Dishes">Dishes</option>
+                <option value="Hot Drinks">Hot Drinks</option>
+                <option value="Cold Drinks">Cold Drinks</option>
+                <option value="Snacks">Snacks</option>
+              </select>
+  
               {!newMenuItem._id && (
                 <div className="file-input-container">
                   <label htmlFor="image">Choose Image:</label>
@@ -840,14 +849,14 @@ const getSortedMenuByPopularity = () => {
               {newMenuItem.image && (
                 <div className="image-preview">
                   <img
-                    src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
+                    src={URL.createObjectURL(newMenuItem.image)}
                     alt="Preview"
                     className="image-preview-img"
                   />
                   <p>{newMenuItem.image.name}</p>
                 </div>
               )}
-
+  
               <div className="modal-actions-menu">
                 <button type="submit">Save</button>
                 <button type="button" onClick={closeModal}>
@@ -855,7 +864,6 @@ const getSortedMenuByPopularity = () => {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
