@@ -13,8 +13,11 @@ import catProfile from "/cat_profile.svg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./admin-page.css";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { jsPDF } from "jspdf";
+import { applyPlugin } from 'jspdf-autotable'
+applyPlugin(jsPDF)
+
+
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -1080,28 +1083,48 @@ const AdminPage = () => {
   
     const handleDownloadReport = () => {
       try {
+        
         const doc = new jsPDF();
-        doc.text("Admin Reports", 14, 10);
-  
+
+        
+        doc.setFontSize(18);
+        doc.text("Admin Reports", 14, 20);
+
+        
+        const currentDate = new Date().toLocaleString();
+        doc.setFontSize(12);
+        doc.text(`Generated on: ${currentDate}`, 14, 30);
+
+        
+        const tableHeaders = ["Order Number", "Date Ordered", "Status", "Items", "Quantity", "Total Price"];
+        const tableBody = filteredReports.map((report) => [
+          report.orderNumber || "N/A",
+          report.dateTime || "N/A",
+          report.status || "N/A",
+          report.items
+            ?.map((item) => `${item.name} (x${item.quantity})`)
+            .join(", ") || "N/A",
+          report.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
+          `₱${report.totalAmount?.toFixed(2) || "0.00"}`,
+        ]);
+
+        // Add the table to the PDF
         doc.autoTable({
-          head: [["Order Number", "Date Ordered", "Status", "Items", "Quantity", "Total Price"]],
-          body: filteredReports.map((report) => [
-            report.orderNumber,
-            report.dateTime,
-            report.status,
-            report.items
-              ?.map((item) => `${item.name} (x${item.quantity})`)
-              .join(", "),
-            report.items?.reduce((sum, item) => sum + item.quantity, 0),
-            report.totalAmount,
-          ]),
+          head: [tableHeaders],
+          body: tableBody,
+          startY: 40, // Start the table below the title
+          styles: { fontSize: 10 },
+          headStyles: {
+            fillColor: [128, 0, 0],
+          }, 
         });
-  
-        doc.save("admin-reports.pdf");
+
+        // Save the PDF
+        doc.save("adminreports.pdf");
         toast.success("Report downloaded successfully!");
       } catch (error) {
         console.error("Error generating PDF:", error);
-        toast.error("Failed to download the report. Please try again.");
+        toast.error("Failed to download the report. Please try again!");
       }
     };
   
