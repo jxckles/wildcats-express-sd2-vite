@@ -781,7 +781,7 @@ const getSortedMenuByPopularity = () => {
       <button onClick={openModal} className="add-menu-button">
         Add New Menu
       </button>
-  
+
       {/* Modal for adding/editing item */}
       {isModalOpen && (
         <div className="modal-overlay-menu">
@@ -816,23 +816,14 @@ const getSortedMenuByPopularity = () => {
                 step="1"
                 required
               />
-              
-              {/* Replaced text input with select dropdown */}
-              <select
+              <input
+                type="text"
                 name="category"
                 value={newMenuItem.category}
                 onChange={handleInputChange}
+                placeholder="Category"
                 required
-                className="category-select"
-              >
-                <option value="">Select a category</option>
-                <option value="Rice">Rice</option>
-                <option value="Dishes">Dishes</option>
-                <option value="Hot Drinks">Hot Drinks</option>
-                <option value="Cold Drinks">Cold Drinks</option>
-                <option value="Snacks">Snacks</option>
-              </select>
-  
+              />
               {!newMenuItem._id && (
                 <div className="file-input-container">
                   <label htmlFor="image">Choose Image:</label>
@@ -849,14 +840,14 @@ const getSortedMenuByPopularity = () => {
               {newMenuItem.image && (
                 <div className="image-preview">
                   <img
-                    src={URL.createObjectURL(newMenuItem.image)}
+                    src={URL.createObjectURL(newMenuItem.image)} // Create a preview URL for the image
                     alt="Preview"
                     className="image-preview-img"
                   />
                   <p>{newMenuItem.image.name}</p>
                 </div>
               )}
-  
+
               <div className="modal-actions-menu">
                 <button type="submit">Save</button>
                 <button type="button" onClick={closeModal}>
@@ -864,9 +855,24 @@ const getSortedMenuByPopularity = () => {
                 </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
+
+       {/* Add the delete confirmation modal RIGHT HERE */}
+    {isDeleteModalOpen && (
+      <div className="modal-overlay-menu">
+        <div className="modal-menu">
+          <h2>Confirm Deletion</h2>
+          <p>Are you sure you want to delete this menu item?</p>
+          <div className="modal-actions-menu">
+            <button onClick={confirmDeleteItem}>Delete</button>
+            <button onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 
@@ -979,9 +985,8 @@ const getSortedMenuByPopularity = () => {
           <div className="popular-picks">
             {getSortedMenuByPopularity()
               .slice(0, 4) // Get the top 4 popular items
-              .map((item, index) => (
+              .map((item) => (
                 <div key={item._id} className="pick">
-                  <div className="pick-rank">{index + 1}</div>
                   <div className="pick-image-container">
                     {item.imageURL ? (
                       <img
