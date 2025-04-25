@@ -329,6 +329,22 @@
     font-size: 0.9em;
     color: #555;
   }
+
+  .category-select {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: white;
+    color: #740b0b;
+  }
+  
+  .category-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+  }
+  
     
     .modal-actions-menu button {
       padding: 5px 10px;
