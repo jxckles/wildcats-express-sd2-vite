@@ -1015,8 +1015,9 @@ const getSortedMenuByPopularity = () => {
           <div className="popular-picks">
             {getSortedMenuByPopularity()
               .slice(0, 4) // Get the top 4 popular items
-              .map((item) => (
+              .map((item, index) => (
                 <div key={item._id} className="pick">
+                  <div className="pick-rank">{index + 1}</div>
                   <div className="pick-image-container">
                     {item.imageURL ? (
                       <img
