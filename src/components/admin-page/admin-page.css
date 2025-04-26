@@ -1292,7 +1292,7 @@
   text-align: left;
   background-color: transparent;
   border-radius: 8px;
-  color: #8b0000;
+  color: whitesmoke;
 }
 
 .empty-customer-state p {
@@ -1314,6 +1314,11 @@
   display: flex;
   gap: 10px;
   margin-bottom: 8px;
+  color: whitesmoke;
+}
+
+.search-inputs-customerlist input::placeholder {
+  color: whitesmoke;
 }
 
 .search-input-customerlist {
@@ -1322,6 +1327,7 @@
   border: 2px solid #ea2727;
   border-radius: 4px;
   font-size: 14px;
+  color:whitesmoke;
   background-color: rgb(238, 186, 55);
 }
 
@@ -1335,6 +1341,6 @@
 
 .search-results-count-customerlist {
   font-size: 14px;
-  color: #d43f3a;
+  color: black;
   margin-bottom: 10px;
 }
