@@ -47,7 +47,7 @@ const AdminPage = () => {
   // For Customer Management
   const [customerToDelete, setCustomerToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const [searchCategory, setSearchCategory] = useState('all');
   
   const [orders, setOrders] = useState([]);
   const [latestOrders, setLatestOrders] = useState([]);
@@ -775,6 +775,29 @@ const getSortedMenuByPopularity = () => {
     setCustomerToDelete(null);
   };
 
+  // Filter customers based on search criteria
+  const filteredCustomers = mockCustomers.filter(customer => {
+    const searchLower = searchTerm.toLowerCase();
+    
+    if (searchTerm === '') return true;
+    
+    switch (searchCategory) {
+      case 'name':
+        return customer.name.toLowerCase().includes(searchLower);
+      case 'id':
+        return customer.id.toString().includes(searchLower);
+      case 'position':
+        return customer.type.toLowerCase().includes(searchLower);
+      case 'all':
+      default:
+        return (
+          customer.name.toLowerCase().includes(searchLower) ||
+          customer.id.toString().includes(searchLower) ||
+          customer.type.toLowerCase().includes(searchLower)
+        );
+    }
+  });
+
   // Add menu component
   const renderAddmenu = () => (
     <div className="add-menu-container">
@@ -1315,9 +1338,36 @@ const getSortedMenuByPopularity = () => {
 
         <div className="customer-list-section">
           <h2>Registered Customers</h2>
+          {/* Search Functionality*/}
+        <div className="search-container-customerlist">
+          <div className="search-inputs-customerlist">
+            <input
+              type="text"
+              placeholder="Search customers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input-customerlist"
+            />
+            <select 
+              value={searchCategory}
+              onChange={(e) => setSearchCategory(e.target.value)}
+              className="search-category-customerlist"
+            >
+              <option value="all">All Fields</option>
+              <option value="name">Name</option>
+              <option value="id">School ID</option>
+              <option value="position">Position</option>
+            </select>
+          </div>
+          {searchTerm && (
+            <div className="search-results-count-customerlist">
+              Found {filteredCustomers.length} customer(s)
+            </div>
+          )}
+        </div>
           <div className="customer-cards">
-            {mockCustomers.length > 0 ? (
-              mockCustomers.map((customer) => (
+          {filteredCustomers.length > 0 ? (
+              filteredCustomers.map((customer) => (
                 <div
                   key={customer.id}
                   className={`customer-card ${customer.type}`}

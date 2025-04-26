@@ -1304,3 +1304,37 @@
   font-size: 1.2rem;
   margin-top: 2.5px;
 }
+
+/* search functionality for Customer List*/
+.search-container-customerlist {
+  margin-bottom: 20px;
+}
+
+.search-inputs-customerlist {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.search-input-customerlist {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid #ea2727;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: rgb(238, 186, 55);
+}
+
+.search-category-customerlist {
+  padding: 8px 12px;
+  border: 2px solid #ea2727;
+  border-radius: 4px;
+  background-color: rgb(232, 213, 10);
+  font-size: 14px;
+}
+
+.search-results-count-customerlist {
+  font-size: 14px;
+  color: #d43f3a;
+  margin-bottom: 10px;
+}
