@@ -1048,6 +1048,14 @@ const getSortedMenuByPopularity = () => {
       (order) => order.status !== "Cancelled" && order.status !== "Completed"
     );
   
+    // Sort orders by dateTime (newest first)
+    const sortedOrders = [...filteredOrders].sort((a, b) => {
+      // Convert date strings to Date objects for comparison
+      const dateA = new Date(a.dateTime);
+      const dateB = new Date(b.dateTime);
+      return dateA - dateB; // For descending order (newest first)
+    });
+  
     return (
       <div className="orders-modal">
         <table className="orders-table">
@@ -1063,7 +1071,7 @@ const getSortedMenuByPopularity = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map((order) => (
+            {sortedOrders.map((order) => (
               <tr key={order.orderNumber}>
                 <td>{order.orderNumber}</td>
                 <td>{order.name || "N/A"}</td>
@@ -1094,6 +1102,7 @@ const getSortedMenuByPopularity = () => {
       </div>
     );
   };
+
 
   // Render Admin Reports
   const renderAdminReports = () => {
