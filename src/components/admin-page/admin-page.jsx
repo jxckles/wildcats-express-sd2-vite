@@ -207,61 +207,62 @@ const AdminPage = () => {
 
   // Render the modal
   const renderTransactionModal = () => {
-    if (!orders || orders.length === 0) {
-      return <p>No past transactions available.</p>; // Handle empty state
-    }
-  
-    const completedOrCancelledOrders = orders.filter(
-      (order) => order.status === "Completed" || order.status === "Cancelled"
-    );
-  
-    return (
-      isTransactionModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Past Transactions</h2>
-            <table className="transactions-table">
-              <thead>
-                <tr>
-                  <th>Order Number</th>
-                  <th>Name</th>
-                  <th>Date Ordered</th>
-                  <th>Total Amount</th>
-                  <th>Items</th>
-                  <th>Status</th>
-                  <th>Payment Method</th>
+  if (!orders || orders.length === 0) {
+    return <p>No past transactions available.</p>; // Handle empty state
+  }
+
+  // Filter orders with status "Completed" or "Cancelled"
+  const completedOrCancelledOrders = orders.filter(
+    (order) => order.status === "Completed" || order.status === "Cancelled"
+  );
+
+  return (
+    isTransactionModalOpen && (
+      <div className="modal-overlay">
+        <div className="modal">
+          <h2>Past Transactions</h2>
+          <table className="transactions-table">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Name</th>
+                <th>Date Ordered</th>
+                <th>Total Amount</th>
+                <th>Items</th>
+                <th>Status</th>
+                <th>Payment Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedOrCancelledOrders.map((order) => (
+                <tr key={order.orderNumber}>
+                  <td>{order.orderNumber}</td>
+                  <td>{order.name || "N/A"}</td>
+                  <td>{order.dateTime || "N/A"}</td>
+                  <td>{order.totalAmount ? `₱${order.totalAmount.toFixed(2)}` : "N/A"}</td>
+                  <td>
+                    {order.items?.map((item, idx) => (
+                      <div key={idx}>{item.name} (x{item.quantity})</div>
+                    )) || "N/A"}
+                  </td>
+                  <td>
+                    <span className={`status-badge ${order.status.toLowerCase()}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>{order.paymentMethod || "N/A"}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {completedOrCancelledOrders.map((order) => (
-                  <tr key={order.orderNumber}>
-                    <td>{order.orderNumber}</td>
-                    <td>{order.name || "N/A"}</td>
-                    <td>{order.dateTime || "N/A"}</td>
-                    <td>{order.totalAmount ? `₱${order.totalAmount.toFixed(2)}` : "N/A"}</td>
-                    <td>
-                      {order.items?.map((item, idx) => (
-                        <div key={idx}>{item.name} (x{item.quantity})</div>
-                      )) || "N/A"}
-                    </td>
-                    <td>
-                      <span className={`status-badge ${order.status.toLowerCase()}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td>{order.paymentMethod || "N/A"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button className="close-modal-button" onClick={toggleTransactionModal}>
-              Close
-            </button>
-          </div>
+              ))}
+            </tbody>
+          </table>
+          <button className="close-modal-button" onClick={toggleTransactionModal}>
+            Close
+          </button>
         </div>
-      )
-    );
-  };
+      </div>
+    )
+  );
+};
 
   // Handle Save Password
   const handleSavePassword = async () => {
@@ -304,42 +305,37 @@ const AdminPage = () => {
   };
 
   // Handle change in status
-  const handleStatusChange = async (index, value) => {
-    const updatedOrders = [...orders];
-    const orderToUpdate = updatedOrders[index];
-    orderToUpdate.status = value;
-  
+  const handleStatusChange = async (orderNumber, newStatus) => {
     try {
+      // Find the order to update using its unique orderNumber
+      const orderToUpdate = orders.find((order) => order.orderNumber === orderNumber);
+      if (!orderToUpdate) {
+        toast.error("Order not found.");
+        return;
+      }
+
+      const previousStatus = orderToUpdate.status; // Store the previous status
+      orderToUpdate.status = newStatus; // Update the status locally
+
       const orderDocRef = doc(db, "orders", orderToUpdate.orderNumber);
-  
-      if (value === "Cancelled" || value === "Completed") {
-        // Determine the target collection and additional field
-        const targetCollection = value === "Cancelled" ? "cancelled_orders" : "completed_orders";
-        const additionalField = value === "Cancelled" ? { timeCancelled: new Date().toLocaleString() } : { timeCompleted: new Date().toLocaleString() };
-  
-        // Add the order to the target collection
-        const targetDocRef = doc(db, targetCollection, orderToUpdate.orderNumber);
-        await setDoc(targetDocRef, {
-          ...orderToUpdate, // Copy all fields from the original order
-          ...additionalField, // Add the additional field
-        });
-  
-        // Delete the order from the orders collection
-        await deleteDoc(orderDocRef);
-  
+
+      if (newStatus === "Cancelled" || newStatus === "Completed") {
+        // Update the status in Firestore
+        await updateDoc(orderDocRef, { status: newStatus });
+
         // Update the local state
         setOrders((prevOrders) =>
-          prevOrders.filter((order) => order.orderNumber !== orderToUpdate.orderNumber)
+          prevOrders.map((order) =>
+            order.orderNumber === orderNumber ? { ...order, status: newStatus } : order
+          )
         );
-  
-        toast.success(`Order moved to ${targetCollection.replace("_", " ")} successfully.`);
+
+        toast.success(`Order marked as ${newStatus}.`);
       } else {
         // Update the status in Firestore for other statuses
-        await updateDoc(orderDocRef, { status: value });
+        await updateDoc(orderDocRef, { status: newStatus });
         toast.success("Order status updated successfully.");
       }
-  
-      setOrders(updatedOrders); // Update the local state
     } catch (error) {
       console.error("Error updating order status:", error);
       toast.error("Failed to update order status.");
@@ -380,12 +376,10 @@ const AdminPage = () => {
     const unsubscribe = onSnapshot(
       ordersRef,
       (querySnapshot) => {
-        const fetchedOrders = querySnapshot.docs
-          .map((doc) => ({
-            ...doc.data(),
-            orderNumber: doc.id, // Use Firestore document ID as the order number
-          }))
-          .filter((order) => order.orderNumber !== "order"); // Exclude the document named "order"
+        const fetchedOrders = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          orderNumber: doc.id, // Use Firestore document ID as the order number
+        }));
 
         setOrders(fetchedOrders); // Update the orders state
       },
@@ -1069,7 +1063,7 @@ const getSortedMenuByPopularity = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map((order, index) => (
+            {filteredOrders.map((order) => (
               <tr key={order.orderNumber}>
                 <td>{order.orderNumber}</td>
                 <td>{order.name || "N/A"}</td>
@@ -1083,7 +1077,7 @@ const getSortedMenuByPopularity = () => {
                 <td>
                   <select
                     value={order.status}
-                    onChange={(e) => handleStatusChange(index, e.target.value)}
+                    onChange={(e) => handleStatusChange(order.orderNumber, e.target.value)}
                   >
                     <option value="Pending">Pending</option>
                     <option value="Preparing">Preparing</option>
