@@ -1244,7 +1244,7 @@ const getSortedMenuByPopularity = () => {
                         onClick={() => handleDeleteOrder(report.orderNumber)}
                         title="Delete this order"
                       >
-                        Deleted
+                        Delete
                       </button>
                     </td>
                   </tr>
