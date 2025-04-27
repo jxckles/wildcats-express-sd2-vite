@@ -290,30 +290,39 @@ const PosPage = () => {
 
       let existingCustomer = null;
 
-      // Check if the name matches an existing customer
+      // Check if the name or ID matches an existing customer
       customerSnapshot.forEach((doc) => {
         const customerData = doc.data();
-        if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
-          existingCustomer = { id: doc.id, ...customerData };
+        if (customerData.id === schoolId) {
+          if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
+            existingCustomer = { id: doc.id, ...customerData };
+          } else {
+            alert("The entered ID matches an existing customer, but the name does not match.");
+            throw new Error("ID and name mismatch.");
+          }
+        } else if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
+          if (customerData.id !== schoolId) {
+            alert("The entered name matches an existing customer, but the ID does not match.");
+            throw new Error("Name and ID mismatch.");
+          }
         }
       });
 
-      if (existingCustomer) {
-        // If the name matches but the ID does not, throw an error
-        if (existingCustomer.id !== schoolId) {
-          alert("The entered ID does not match the existing customer with the same name.");
-          return;
-        }
-      } else {
+      if (!existingCustomer) {
         // If the customer does not exist, create a new one
         const customerDocRef = doc(customersRef, schoolId);
         await setDoc(customerDocRef, {
           name: clientName,
           type: customerType,
+          id: schoolId,
         });
         console.log("Customer data saved successfully.");
       }
     } catch (error) {
+      if (error.message === "Name and ID mismatch." || error.message === "ID and name mismatch.") {
+        // Stop the process if there is a mismatch
+        return;
+      }
       console.error("Error validating customer data:", error);
       toast.error("Failed to validate customer data. Please try again.");
       return;
