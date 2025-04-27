@@ -941,8 +941,8 @@
   }
 
   .status-badge.completed {
-    background-color: #e6ffe6;
-    color: #591111;
+    background-color: rgb(206, 252, 202);
+    color: rgb(10, 131, 10);
   }
 
   .status-badge.pending {
@@ -955,6 +955,37 @@
     color: #cc0000;
   }  
   
+  /* Delete order button styles */
+.delete-order-button {
+  background: #fd3c3c;
+  color: white;
+  border: none;
+  border-radius: 80px;
+  width: 80px;
+  height: 35px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #ff1a1a;
+  }
+
+  &:active {
+    background: #ff7474;
+  }
+}
+
+/* Table action column */
+table th:last-child,
+table td:last-child {
+  width: 60px;
+  text-align: center;
+}
+
 /* Table Style */
 .orders-table {
   width: 100%;
