@@ -950,11 +950,29 @@ const getSortedMenuByPopularity = () => {
   const renderDashboard = () => {
     return (
       <div className="dashboard-container-admin">
+        <h3>Order Line</h3>
         <div className="orders-wrapper">
+          {/* Current Order Section */}
+          <div className="current-order-container">
+            <h3>Current Order</h3>
+            <br />
+            {currentOrder ? (
+              <div className="current-order-card">
+                <h4>{currentOrder.name}</h4>
+                <p>{currentOrder.schoolId}</p>
+                <p>{currentOrder.status}</p>
+                <div className="current-order-card-bottom">
+                  <span>Order#: 1</span>
+                  <span>Items: {currentOrder.quantity}</span>
+                </div>
+              </div>
+            ) : (
+              <p>No current orders.</p>
+            )}
+          </div>
+
           {/* Order Line Section */}
           <div className="order-line-container">
-            <h3>Order Line</h3>
-            <br />
             <div className="order-cards">
               {enhancedOrders.map((order, index) => (
                 <div className="order-card" key={order.id}>
@@ -980,24 +998,7 @@ const getSortedMenuByPopularity = () => {
             </div>
           </div>
 
-          {/* Current Order Section */}
-          <div className="current-order-container">
-            <h3>Current Order</h3>
-            <br />
-            {currentOrder ? (
-              <div className="current-order-card">
-                <h4>{currentOrder.name}</h4>
-                <p>{currentOrder.schoolId}</p>
-                <p>{currentOrder.status}</p>
-                <div className="current-order-card-bottom">
-                  <span>Order#: 1</span>
-                  <span>Items: {currentOrder.quantity}</span>
-                </div>
-              </div>
-            ) : (
-              <p>No current orders.</p>
-            )}
-          </div>
+          
         </div>
         
         
