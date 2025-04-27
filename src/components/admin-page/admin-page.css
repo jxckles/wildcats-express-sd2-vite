@@ -577,20 +577,20 @@
 
     /* Dashboard Layout Styling */
     .dashboard-container-admin {
-      padding: 20px;
+      padding: 10px;
       color: white;
     }
 
     .orders-wrapper {
       display: flex;
-      gap: 20px;
+      gap: 100px;
       align-items: flex-start;
     }
 
     .order-line-container {
       flex: 1; /* This will allow it to expand and contract as needed */
     }
-    .order-line-container h3{
+    .dashboard-container-admin h3{
       font-size: 2rem;
       font-weight: lighter;
     }
