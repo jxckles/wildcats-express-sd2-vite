@@ -1,7 +1,7 @@
 import {Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
-import { collection, onSnapshot, addDoc, getDoc, doc, setDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, getDoc, doc, setDoc, getDocs } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -212,12 +212,12 @@ const PosPage = () => {
       alert("Please enter your School ID before proceeding to checkout.");
       return;
     }
-  
+
     if (!paymentMethod) {
       alert("Please select a payment method before proceeding to checkout.");
       return;
     }
-  
+
     if (paymentMethod === "gcash") {
       if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
         alert("Please enter a valid amount paid.");
@@ -228,29 +228,42 @@ const PosPage = () => {
         return;
       }
     }
-  
-    // Save customer data if it doesn't already exist
+
     try {
       const customersRef = collection(db, "customers");
-      const customerDocRef = doc(customersRef, schoolId); // Use schoolId as the document ID
-      const customerSnapshot = await getDoc(customerDocRef);
-  
-      if (!customerSnapshot.exists()) {
-        // Save the customer data
+      const customerSnapshot = await getDocs(customersRef);
+
+      let existingCustomer = null;
+
+      // Check if the name matches an existing customer
+      customerSnapshot.forEach((doc) => {
+        const customerData = doc.data();
+        if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
+          existingCustomer = { id: doc.id, ...customerData };
+        }
+      });
+
+      if (existingCustomer) {
+        // If the name matches but the ID does not, throw an error
+        if (existingCustomer.id !== schoolId) {
+          alert("The entered ID does not match the existing customer with the same name.");
+          return;
+        }
+      } else {
+        // If the customer does not exist, create a new one
+        const customerDocRef = doc(customersRef, schoolId);
         await setDoc(customerDocRef, {
           name: clientName,
           type: customerType,
         });
         console.log("Customer data saved successfully.");
-      } else {
-        console.log("Customer already exists. Skipping save.");
       }
     } catch (error) {
-      console.error("Error saving customer data:", error);
-      toast.error("Failed to save customer data. Please try again.");
+      console.error("Error validating customer data:", error);
+      toast.error("Failed to validate customer data. Please try again.");
       return;
     }
-  
+
     // Prepare the order data
     const newOrder = {
       id: schoolId, // Use the school ID as the order ID
@@ -272,19 +285,19 @@ const PosPage = () => {
         };
       }), // List of items ordered
     };
-  
+
     try {
       // Save the order to Firestore with the school ID as the document ID
       const ordersRef = collection(db, "orders");
       const orderDoc = doc(ordersRef, schoolId); // Use schoolId as the document ID
       await setDoc(orderDoc, newOrder);
-  
+
       // Set the order number for confirmation
       setOrderNumber(schoolId);
-  
+
       // Show success message
       alert(`Order Successful! Your order number is: ${schoolId}`);
-  
+
       // Clear the cart and reset fields
       setCart({});
       setClientName("");
