@@ -923,6 +923,11 @@ const getSortedMenuByPopularity = () => {
             </div>
             <div className="menu-details">
               <div className="menu-name">{item.name}</div>
+              {item.quantity === 0 && (
+                <div className="sold-out-text" style={{ color: "red", fontWeight: "bold" }}>
+                  Sold Out
+                </div>
+              )}
               <div className="menu-price">Php {Number(item.price).toFixed(2)}</div>
               <div className="menu-quantity">Quantity: {item.quantity}</div>
               <div className="menu-popularity">Popularity: {item.popularity}</div>

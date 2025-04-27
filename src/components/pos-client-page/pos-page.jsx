@@ -1,7 +1,7 @@
 import {Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { redirectToLoginIfLoggedOut, handleLogout, db } from "../../config/firebase-config";
-import { collection, onSnapshot, addDoc, getDoc, doc, setDoc, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, getDoc, doc, setDoc, getDocs, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -116,55 +116,91 @@ const PosPage = () => {
   const handleSelectedQuantityChange = (id, change) => {
     setSelectedQuantities((prev) => {
       const newQuantity = Math.max(0, (prev[id] || 0) + change);
-      return {
-        ...prev,
-        [id]: newQuantity
-      };
-    });
-  };  
+      const item = menuItems.find((item) => item._id === id);
 
-  const handleCartQuantityChange = (id, change) => {
-    setCart((prev) => {
-      const newQuantity = Math.max(0, (prev[id] || 0) + change);
-      
-      // If quantity is 0, remove the item from cart
-      if (newQuantity === 0) {
-        const newCart = { ...prev };
-        delete newCart[id];
-        // Re-enable the item's buttons in the menu
-        setDisabledItems((prevDisabled) => {
-          const newDisabled = { ...prevDisabled };
-          delete newDisabled[id];
-          return newDisabled;
-        });
-        return newCart;
+      if (item && newQuantity > item.quantity) {
+        alert(`"${item.name}" is sold out or exceeds the available quantity.`);
+        return prev; // Do not update the quantity
       }
-      
-      // Otherwise, update the quantity
+
       return {
         ...prev,
-        [id]: newQuantity
+        [id]: newQuantity,
       };
     });
   };  
 
-  const handleAddToCart = (item) => {
+  const handleCartQuantityChange = async (id, change) => {
+    const item = menuItems.find((item) => item._id === id);
+    if (!item) return;
+
+    const currentCartQuantity = cart[id] || 0; // Current quantity in the cart
+    const newCartQuantity = currentCartQuantity + change;
+
+    // Check if the new quantity exceeds the available quantity
+    if (newCartQuantity > item.quantity + currentCartQuantity) {
+      alert(`You cannot add more than ${item.quantity + currentCartQuantity} ${item.name}(s).`);
+      return;
+    }
+
+    // Allow adding up to the available quantity
+    if (newCartQuantity >= 0) {
+      // Update the cart state
+      setCart((prev) => {
+        const updatedCart = { ...prev };
+
+        if (newCartQuantity === 0) {
+          delete updatedCart[id]; // Remove the item from the cart if quantity is 0
+        } else {
+          updatedCart[id] = newCartQuantity; // Update the quantity in the cart
+        }
+
+        return updatedCart;
+      });
+
+      // Update the quantity in Firestore
+      const itemDocRef = doc(db, "menu", id);
+      try {
+        await updateDoc(itemDocRef, {
+          quantity: item.quantity - change,
+        });
+        console.log("Quantity updated successfully in Firestore.");
+      } catch (error) {
+        console.error("Error updating quantity in Firestore:", error);
+        toast.error("Failed to update item quantity. Please try again.");
+      }
+    }
+  };  
+
+  const handleAddToCart = async (item) => {
     const selectedQty = selectedQuantities[item._id] || 0;
     const currentQty = cart[item._id] || 0;
     const newQty = currentQty + selectedQty;
-  
+
     if (newQty > 0) {
       setCart((prev) => ({
         ...prev,
-        [item._id]: newQty
+        [item._id]: newQty,
       }));
-  
+
+      // Update the quantity in Firestore
+      const itemDocRef = doc(db, "menu", item._id);
+      try {
+        await updateDoc(itemDocRef, {
+          quantity: item.quantity - selectedQty,
+        });
+        console.log("Quantity updated successfully.");
+      } catch (error) {
+        console.error("Error updating quantity:", error);
+        toast.error("Failed to update item quantity. Please try again.");
+      }
+
       // Disable the item's buttons immediately
       setDisabledItems((prev) => ({
         ...prev,
-        [item._id]: true
+        [item._id]: true,
       }));
-  
+
       // Re-enable after 2 seconds and reset quantity
       setTimeout(() => {
         setDisabledItems((prev) => {
@@ -172,21 +208,40 @@ const PosPage = () => {
           delete newDisabled[item._id];
           return newDisabled;
         });
-  
+
         setSelectedQuantities((prev) => ({
           ...prev,
-          [item._id]: 0
+          [item._id]: 0,
         }));
       }, 1000);
     }
   };
 
-  const handleRemoveItem = (itemId) => {
+  const handleRemoveItem = async (itemId) => {
+    const item = menuItems.find((item) => item._id === itemId);
+    if (!item) return;
+
+    const cartQuantity = cart[itemId] || 0; // Get the quantity of the item in the cart
+
+    // Remove the item from the cart
     setCart((prevCart) => {
       const newCart = { ...prevCart };
-      delete newCart[itemId]; 
+      delete newCart[itemId];
       return newCart;
     });
+
+    // Add the removed quantity back to the Menu in Firestore
+    const itemDocRef = doc(db, "menu", itemId);
+    try {
+      await updateDoc(itemDocRef, {
+        quantity: item.quantity + cartQuantity,
+      });
+      console.log(`Added ${cartQuantity} back to "${item.name}" in Firestore.`);
+    } catch (error) {
+      console.error("Error restoring quantity in Firestore:", error);
+      toast.error("Failed to restore item quantity. Please try again.");
+    }
+
     // Re-enable the item's buttons when removed
     setDisabledItems((prev) => {
       const newDisabled = { ...prev };
@@ -235,30 +290,39 @@ const PosPage = () => {
 
       let existingCustomer = null;
 
-      // Check if the name matches an existing customer
+      // Check if the name or ID matches an existing customer
       customerSnapshot.forEach((doc) => {
         const customerData = doc.data();
-        if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
-          existingCustomer = { id: doc.id, ...customerData };
+        if (customerData.id === schoolId) {
+          if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
+            existingCustomer = { id: doc.id, ...customerData };
+          } else {
+            alert("The entered ID matches an existing customer, but the name does not match.");
+            throw new Error("ID and name mismatch.");
+          }
+        } else if (customerData.name.toLowerCase() === clientName.toLowerCase()) {
+          if (customerData.id !== schoolId) {
+            alert("The entered name matches an existing customer, but the ID does not match.");
+            throw new Error("Name and ID mismatch.");
+          }
         }
       });
 
-      if (existingCustomer) {
-        // If the name matches but the ID does not, throw an error
-        if (existingCustomer.id !== schoolId) {
-          alert("The entered ID does not match the existing customer with the same name.");
-          return;
-        }
-      } else {
+      if (!existingCustomer) {
         // If the customer does not exist, create a new one
         const customerDocRef = doc(customersRef, schoolId);
         await setDoc(customerDocRef, {
           name: clientName,
           type: customerType,
+          id: schoolId,
         });
         console.log("Customer data saved successfully.");
       }
     } catch (error) {
+      if (error.message === "Name and ID mismatch." || error.message === "ID and name mismatch.") {
+        // Stop the process if there is a mismatch
+        return;
+      }
       console.error("Error validating customer data:", error);
       toast.error("Failed to validate customer data. Please try again.");
       return;
@@ -395,66 +459,118 @@ const categoryIcons = {
 
   //render menu
   const renderMenuView = () => {
-    return (
-      <>
-      <motion.div className="menu-container-pos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <motion.div className="search-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            <input type="text" placeholder="Search for food..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+  return (
+    <>
+      <motion.div
+        className="menu-container-pos"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          className="search-bar"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <input
+            type="text"
+            placeholder="Search for food..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </motion.div>
-          <motion.div className="category-filter" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-
-            {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
-              <motion.button key={cat} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={selectedCategory === cat ? "active-category" : ""} onClick={() => setSelectedCategory(cat)}>   
-                {categoryIcons[cat]} {cat}
-
-              </motion.button>
-            ))}
-          </motion.div>
-          <motion.div className="menu-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-            <AnimatePresence mode="wait">
-              {menuItems
-                .filter((item) => (selectedCategory === "All" || item.category === selectedCategory) && item.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((item) => (
-                  <motion.div key={item._id} className="menu-item-pos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-                    <img src={item.imageURL} alt={item.name} className="item-img" />
-                    <h3 className="item-name">{item.name}</h3>
-                    <p className="item-price">Php {item.price}</p>
-                    <div className="quantity-selector">
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleSelectedQuantityChange(item._id, -1)}
-                        disabled={disabledItems[item._id]}
-                        className={disabledItems[item._id] ? 'disabled' : ''}
-                      >
-                        -
-                      </motion.button>
-                      <span>{!disabledItems[item._id] ? (selectedQuantities[item._id] || 0) : 0}</span>
-                      <motion.button 
-                        whileTap={{ scale: 0.9 }} 
-                        onClick={() => handleSelectedQuantityChange(item._id, 1)}
-                        disabled={disabledItems[item._id]}
-                        className={disabledItems[item._id] ? 'disabled' : ''}
-                      >
-                        +
-                      </motion.button>
-                    </div>
-                    <motion.button 
-                      className={`add-to-cart ${disabledItems[item._id] ? 'disabled' : ''}`}
-                      whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
-                      whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
-                      onClick={() => handleAddToCart(item)}
-                      disabled={disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0}
-                    >
-                      {disabledItems[item._id] ? 'Added to Cart' : 'Add to Cart'}
-                    </motion.button>
-                  </motion.div>
-                ))}
-            </AnimatePresence>
-          </motion.div>
+        <motion.div
+          className="category-filter"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {["All", "Rice", "Dishes", "Hot Drinks", "Cold Drinks", "Snacks"].map((cat) => (
+            <motion.button
+              key={cat}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={selectedCategory === cat ? "active-category" : ""}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {categoryIcons[cat]} {cat}
+            </motion.button>
+          ))}
         </motion.div>
-      </>
-    );
-  };
+        <motion.div
+          className="menu-grid"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <AnimatePresence mode="wait">
+            {menuItems
+              .filter(
+                (item) =>
+                  (selectedCategory === "All" || item.category === selectedCategory) &&
+                  item.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((item) => (
+                <motion.div
+                  key={item._id}
+                  className="menu-item-pos"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <img src={item.imageURL} alt={item.name} className="item-img" />
+                  <h3 className="item-name">{item.name}</h3>
+                  {item.quantity > 0 ? (
+                    <>
+                      <p className="item-quantity" style={{ color: "#800000" }}>
+                        Available: {item.quantity}
+                      </p>
+                      <p className="item-price">Php {item.price}</p>
+                      <div className="quantity-selector">
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleSelectedQuantityChange(item._id, -1)}
+                          disabled={disabledItems[item._id]}
+                          className={disabledItems[item._id] ? "disabled" : ""}
+                        >
+                          -
+                        </motion.button>
+                        <span>{!disabledItems[item._id] ? selectedQuantities[item._id] || 0 : 0}</span>
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleSelectedQuantityChange(item._id, 1)}
+                          disabled={disabledItems[item._id]}
+                          className={disabledItems[item._id] ? "disabled" : ""}
+                        >
+                          +
+                        </motion.button>
+                      </div>
+                      <motion.button
+                        className={`add-to-cart ${disabledItems[item._id] ? "disabled" : ""}`}
+                        whileHover={{ scale: disabledItems[item._id] ? 1 : 1.1 }}
+                        whileTap={{ scale: disabledItems[item._id] ? 1 : 0.9 }}
+                        onClick={() => handleAddToCart(item)}
+                        disabled={disabledItems[item._id] || (selectedQuantities[item._id] || 0) === 0}
+                      >
+                        {disabledItems[item._id] ? "Added to Cart" : "Add to Cart"}
+                      </motion.button>
+                    </>
+                  ) : (
+                    <p className="sold-out-text" style={{ color: "red", fontWeight: "bold" }}>
+                      SOLD OUT
+                    </p>
+                  )}
+                </motion.div>
+              ))}
+          </AnimatePresence>
+        </motion.div>
+      </motion.div>
+    </>
+  );
+};
 
 
  //render cart
