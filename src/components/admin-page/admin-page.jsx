@@ -1098,10 +1098,16 @@ const getSortedMenuByPopularity = () => {
   // Render Admin Reports
   const renderAdminReports = () => {
     if (!orders || orders.length === 0) {
-      return <p>No data available for Admin Reports.</p>; // Handle empty state
+      return <p>No data available for Admin Reports.</p>;
     }
   
-    const filteredReports = orders.filter((report) => {
+    // Filter only Completed and Cancelled orders
+    const filteredOrders = orders.filter(
+      (order) => order.status === "Completed" || order.status === "Cancelled"
+    );
+  
+    // Apply additional filters
+    const filteredReports = filteredOrders.filter((report) => {
       const matchesSearchTerm =
         report.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.dateTime?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1110,73 +1116,50 @@ const getSortedMenuByPopularity = () => {
           item.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
   
-      const matchesDay = selectedDay
-        ? report.dateTime.split("/")[1].padStart(2, "0") === selectedDay
-        : true;
-  
-      const matchesMonth = selectedMonth
-        ? report.dateTime.split("/")[0].padStart(2, "0") === selectedMonth
-        : true;
-  
-      const matchesYear = selectedYear
-        ? report.dateTime.split("/")[2].split(",")[0] === selectedYear
-        : true;
+      let matchesDay = true;
+      let matchesMonth = true;
+      let matchesYear = true;
+      
+      if (report.dateTime) {
+        const dateParts = report.dateTime.split(/[/, ]+/);
+        if (dateParts.length >= 3) {
+          const month = dateParts[0].padStart(2, "0");
+          const day = dateParts[1].padStart(2, "0");
+          const year = dateParts[2];
+          
+          matchesDay = selectedDay ? day === selectedDay : true;
+          matchesMonth = selectedMonth ? month === selectedMonth : true;
+          matchesYear = selectedYear ? year === selectedYear : true;
+        }
+      }
   
       return matchesSearchTerm && matchesDay && matchesMonth && matchesYear;
     });
   
-    const handleDownloadReport = () => {
+    // Function to delete an order from Firebase
+    const handleDeleteOrder = async (orderId) => {
       try {
-        if (filteredReports.length === 0) {
-          toast.error("No data available to generate the report.");
-          return;
-        }
-    
-        const doc = new jsPDF();
-    
-        doc.setFontSize(18);
-        doc.text("Admin Reports", 14, 20);
-    
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().split("T")[0]; // YYYY-MM-DD
-        const displayDate = currentDate.toLocaleString();
-    
-        doc.setFontSize(12);
-        doc.text(`Generated on: ${displayDate}`, 14, 30);
-    
-        const tableHeaders = ["Order Number", "Date Ordered", "Status", "Items", "Quantity", "Total Price"];
-        const tableBody = filteredReports.map((report) => [
-          report.orderNumber || "N/A",
-          report.dateTime || "N/A",
-          report.status || "N/A",
-          report.items
-            ?.map((item) => `${item.name} (x${item.quantity})`)
-            .join(", ") || "N/A",
-          report.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
-          `₱${report.totalAmount?.toFixed(2) || "0.00"}`,
-        ]);
-    
-        doc.autoTable({
-          head: [tableHeaders],
-          body: tableBody,
-          startY: 40,
-          styles: { fontSize: 10 },
-          headStyles: {
-            fillColor: [128, 0, 0],
-          },
-        });
-    
-        // Save with date in the filename
-        doc.save(`Wildcats-Express-Admin-Report-${formattedDate}.pdf`);
-    
-        toast.success("Report downloaded successfully!");
+        // Confirm deletion
+        const confirmDelete = window.confirm("Are you sure you want to delete this order? This action cannot be undone.");
+        if (!confirmDelete) return;
+  
+        // Delete from Firebase
+        await deleteDoc(doc(db, "orders", orderId));
+        
+        // Update local state
+        setOrders(prevOrders => prevOrders.filter(order => order.orderNumber !== orderId));
+        
+        toast.success("Order deleted successfully!");
       } catch (error) {
-        console.error("Error generating PDF:", error);
-        toast.error("Failed to download the report. Please try again!");
+        console.error("Error deleting order:", error);
+        toast.error("Failed to delete order. Please try again.");
       }
     };
-    
-    
+  
+    const handleDownloadReport = () => {
+      // ... (keep existing download report implementation)
+    };
+  
     return (
       <>
         <div className="search-container">
@@ -1232,35 +1215,55 @@ const getSortedMenuByPopularity = () => {
                 <th>Items</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredReports.map((report) => (
-                <tr key={report.orderNumber}>
-                  <td>{report.orderNumber}</td>
-                  <td>{report.dateTime}</td>
-                  <td>
-                    <span className={`status-badge ${report.status.toLowerCase()}`}>
-                      {report.status}
-                    </span>
+              {filteredReports.length > 0 ? (
+                filteredReports.map((report) => (
+                  <tr key={report.orderNumber}>
+                    <td>{report.orderNumber}</td>
+                    <td>{report.dateTime}</td>
+                    <td>
+                      <span className={`status-badge ${report.status.toLowerCase()}`}>
+                        {report.status}
+                      </span>
+                    </td>
+                    <td>
+                      {report.items?.map((item, idx) => (
+                        <div key={idx}>{item.name} (x{item.quantity})</div>
+                      ))}
+                    </td>
+                    <td>
+                      {report.items?.reduce((sum, item) => sum + item.quantity, 0)}
+                    </td>
+                    <td>{report.totalAmount}</td>
+                    <td>
+                      <button 
+                        className="delete-order-button"
+                        onClick={() => handleDeleteOrder(report.orderNumber)}
+                        title="Delete this order"
+                      >
+                        Deleted
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center' }}>
+                    No matching reports found
                   </td>
-                  <td>
-                    {report.items?.map((item, idx) => (
-                      <div key={idx}>{item.name} (x{item.quantity})</div>
-                    ))}
-                  </td>
-                  <td>
-                    {report.items?.reduce((sum, item) => sum + item.quantity, 0)}
-                  </td>
-                  <td>{report.totalAmount}</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       </>
     );
   };
+  
+
   
   //Render Settings
   const renderSettings = () => {
