@@ -688,7 +688,6 @@
       padding: 25px;
       border-radius: 15px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-      border: 2px solid #ffeb3b;
       text-align: left; /* Align text and elements centrally */
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -714,7 +713,7 @@
       box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(5px);
       font-weight: bold;
-      color: #7e1215;
+      color: rgb(119, 0, 0);
       text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
       height: 100%; /* Ensure full height to help alignment */
     }
