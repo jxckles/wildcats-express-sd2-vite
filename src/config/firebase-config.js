@@ -47,7 +47,7 @@ const redirectToLoginIfLoggedOut = (navigate) => {
       if (!user) {
         toast.warn("Unauthorized access! Please log in.");
         setTimeout(() => {
-          navigate("/");
+          navigate("/login-page");
         }, 100);
       }  else {
         setLoading(false); // Allow access sa login page
@@ -65,7 +65,7 @@ const handleLogout = async (navigate) => {
   try {
     await signOut(auth);
     localStorage.removeItem("token");
-    navigate("/");
+    navigate("/login-page");
   } catch (error) {
     console.error("Error during logout:", error);
   }
@@ -78,7 +78,7 @@ const redirectToLandingIfLoggedIn = (navigate) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Trying to access login/signup page while logged in.");
-        navigate("/admin-page");
+        navigate("/pos-page");
       }  else {
         setLoading(false); // Allow access sa login page
       }

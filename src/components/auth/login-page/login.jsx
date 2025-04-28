@@ -46,7 +46,7 @@ const Login = () => {
       });
       sessionStorage.setItem("hasLoggedIn", "true");
       setTimeout(() => {
-        navigate("/admin-page");
+        navigate("/pos-page");
       }, 3000);
     } catch (error) {
       console.error("Login failed: ", error.message);
