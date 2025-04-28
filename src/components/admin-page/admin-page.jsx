@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { redirectToLoginIfLoggedOut, handleLogout, auth, db } from "../../config/firebase-config";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-import { collection, query, where, orderBy, setDoc, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, setDoc, onSnapshot, addDoc, doc, deleteDoc, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
 import { motion, AnimatePresence, color } from "framer-motion";
 import { FaSignOutAlt, FaUserPlus , FaClipboardList, FaCog } from "react-icons/fa";
 import { FaArrowRightToBracket } from "react-icons/fa6";
@@ -732,8 +732,6 @@ const getSortedMenuByPopularity = () => {
       setIsDeleteModalOpen(false); // Close the modal after attempting deletion
     }
   };
-  
-  
 
   // Handle customer deletion
   const handleDeleteCustomerClick = (customer) => {
@@ -749,18 +747,30 @@ const getSortedMenuByPopularity = () => {
   
     try {
       const customerDocRef = doc(db, "customers", customerToDelete.id); // Reference to the Firestore document
-      await deleteDoc(customerDocRef); // Delete the document from Firestore
+      await deleteDoc(customerDocRef); // Delete the customer document from Firestore
   
+      // Query and delete all orders with matching schoolId
+      const ordersRef = collection(db, "orders");
+      const q = query(ordersRef, where("schoolId", "==", customerToDelete.id));
+      const querySnapshot = await getDocs(q);
+  
+      const batch = writeBatch(db); // Use writeBatch to create a batch operation
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref); // Add each matching document to the batch
+      });
+      await batch.commit(); // Commit the batch to delete all matching documents
+  
+      // Update the local state
       setMockCustomers((prevCustomers) =>
         prevCustomers.filter((customer) => customer.id !== customerToDelete.id)
-      ); // Update the local state
+      );
   
       setShowDeleteModal(false);
       setCustomerToDelete(null);
-      toast.success("Customer removed successfully!");
+      toast.success("Customer and associated orders removed successfully!");
     } catch (error) {
-      console.error("Error deleting customer:", error);
-      toast.error("Failed to delete customer. Please try again.");
+      console.error("Error deleting customer and associated orders:", error);
+      toast.error("Failed to delete customer and associated orders. Please try again.");
     }
   };
 
