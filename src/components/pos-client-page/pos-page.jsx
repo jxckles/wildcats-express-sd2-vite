@@ -779,12 +779,37 @@ const categoryIcons = {
   const renderTrackOrderView = () => {
     const handleTrackOrder = () => {
       const validStatuses = ["Pending", "Preparing", "Ready to Pickup"];
+    
+      // Check if the input matches an orderNumber
       const foundOrder = recentOrders.find(
         (order) => order.id === orderNumber && validStatuses.includes(order.status)
       );
-      setTrackedOrder(foundOrder || null);
+    
+      if (foundOrder) {
+        // If an orderNumber matches, display the specific order
+        setTrackedOrder(foundOrder);
+        setHasSearched(true);
+        setShowTrackOrderModal(true);
+        return;
+      }
+    
+      // If no orderNumber matches, check for schoolId
+      const ordersBySchoolId = recentOrders.filter(
+        (order) => order.schoolId === orderNumber && validStatuses.includes(order.status)
+      );
+    
+      if (ordersBySchoolId.length > 0) {
+        // If schoolId matches, display all orders under that schoolId
+        setTrackedOrder(ordersBySchoolId); // Store all matching orders
+        setHasSearched(true);
+        setShowTrackOrderModal(true);
+        return;
+      }
+    
+      // If no matches are found, clear the trackedOrder and show the modal
+      setTrackedOrder(null);
       setHasSearched(true);
-      setShowTrackOrderModal(true); // Always show modal after search
+      setShowTrackOrderModal(true);
     };
   
     const closeTrackOrderModal = () => {
@@ -844,48 +869,84 @@ const categoryIcons = {
               
               {/* Show order details if found */}
               {trackedOrder ? (
-                <div className="tracked-order-details">
-                  <h2>Order Details</h2>
-                  <table className="tracked-order-table">
-                    <tbody>
-                      <tr>
-                        <td className="tracked-order-label"><strong>Order ID:</strong></td>
-                        <td className="tracked-order-value">{trackedOrder.id}</td>
-                      </tr>
-                      <tr>
-                        <td className="tracked-order-label"><strong>School ID:</strong></td>
-                        <td className="tracked-order-value">{trackedOrder.schoolId}</td>
-                      </tr>
-                      <tr>
-                        <td className="tracked-order-label"><strong>Date Ordered:</strong></td>
-                        <td className="tracked-order-value">{trackedOrder.dateTime}</td>
-                      </tr>
-                      <tr>
-                        <td className="tracked-order-label"><strong>Total Amount:</strong></td>
-                        <td className="tracked-order-value">₱{trackedOrder.totalAmount.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td className="tracked-order-label"><strong>Status:</strong></td>
-                        <td className="tracked-order-value">{trackedOrder.status}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  
-                  <h3>Items Ordered:</h3>
-                  <ul className="tracked-order-items">
-                    {trackedOrder.items.map((item, idx) => (
-                      <li key={idx} className="tracked-order-item">
-                        {item.name} (x{item.quantity}) - ₱{item.price}
-                      </li>
+                Array.isArray(trackedOrder) ? (
+                  // Render multiple orders if searching by schoolId
+                  <div className="tracked-orders-list">
+                    <h2>Orders for School ID: {orderNumber}</h2>
+                    {trackedOrder.map((order, idx) => (
+                      <div key={idx} className="tracked-order-details">
+                        <h3>Order ID: {order.id}</h3>
+                        <table className="tracked-order-table">
+                          <tbody>
+                            <tr>
+                              <td className="tracked-order-label"><strong>Date Ordered:</strong></td>
+                              <td className="tracked-order-value">{order.dateTime}</td>
+                            </tr>
+                            <tr>
+                              <td className="tracked-order-label"><strong>Total Amount:</strong></td>
+                              <td className="tracked-order-value">₱{order.totalAmount.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                              <td className="tracked-order-label"><strong>Status:</strong></td>
+                              <td className="tracked-order-value">{order.status}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <h4>Items Ordered:</h4>
+                        <ul className="tracked-order-items">
+                          {order.items.map((item, itemIdx) => (
+                            <li key={itemIdx} className="tracked-order-item">
+                              {item.name} (x{item.quantity}) - ₱{item.price}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
-                </div>
+                  </div>
+                ) : (
+                  // Render a single order if searching by orderNumber
+                  <div className="tracked-order-details">
+                    <h2>Order Details</h2>
+                    <table className="tracked-order-table">
+                      <tbody>
+                        <tr>
+                          <td className="tracked-order-label"><strong>Order ID:</strong></td>
+                          <td className="tracked-order-value">{trackedOrder.id}</td>
+                        </tr>
+                        <tr>
+                          <td className="tracked-order-label"><strong>School ID:</strong></td>
+                          <td className="tracked-order-value">{trackedOrder.schoolId}</td>
+                        </tr>
+                        <tr>
+                          <td className="tracked-order-label"><strong>Date Ordered:</strong></td>
+                          <td className="tracked-order-value">{trackedOrder.dateTime}</td>
+                        </tr>
+                        <tr>
+                          <td className="tracked-order-label"><strong>Total Amount:</strong></td>
+                          <td className="tracked-order-value">₱{trackedOrder.totalAmount.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                          <td className="tracked-order-label"><strong>Status:</strong></td>
+                          <td className="tracked-order-value">{trackedOrder.status}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h3>Items Ordered:</h3>
+                    <ul className="tracked-order-items">
+                      {trackedOrder.items.map((item, idx) => (
+                        <li key={idx} className="tracked-order-item">
+                          {item.name} (x{item.quantity}) - ₱{item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
               ) : (
-                /* Show not found message if search was performed but no order found */
+                // Render "not found" message if no orders are found
                 <div className="no-order-found-modal">
                   <h2>Order Not Found</h2>
                   <div className="no-order-message">
-                    <p>No active order found with ID: <strong>{orderNumber}</strong></p>
+                    <p>No active orders found for: <strong>{orderNumber}</strong></p>
                     <p>Please check the number and try again.</p>
                     <p className="note">Note: Only orders with status "Pending", "Preparing", or "Ready to Pickup" can be tracked.</p>
                   </div>
