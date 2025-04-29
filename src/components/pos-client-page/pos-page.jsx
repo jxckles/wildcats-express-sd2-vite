@@ -267,12 +267,12 @@ const PosPage = () => {
       alert("Please enter your School ID before proceeding to checkout.");
       return;
     }
-
+  
     if (!paymentMethod) {
       alert("Please select a payment method before proceeding to checkout.");
       return;
     }
-
+  
     if (paymentMethod === "gcash") {
       if (!amountPaid || parseFloat(amountPaid) < totalAmount) {
         alert("Please enter a valid amount paid.");
@@ -283,13 +283,13 @@ const PosPage = () => {
         return;
       }
     }
-
+  
     try {
       const customersRef = collection(db, "customers");
       const customerSnapshot = await getDocs(customersRef);
-
+  
       let existingCustomer = null;
-
+  
       // Check if the name or ID matches an existing customer
       customerSnapshot.forEach((doc) => {
         const customerData = doc.data();
@@ -307,7 +307,7 @@ const PosPage = () => {
           }
         }
       });
-
+  
       if (!existingCustomer) {
         // If the customer does not exist, create a new one
         const customerDocRef = doc(customersRef, schoolId);
@@ -327,10 +327,9 @@ const PosPage = () => {
       toast.error("Failed to validate customer data. Please try again.");
       return;
     }
-
+  
     // Prepare the order data
     const newOrder = {
-      id: schoolId, // Use the school ID as the order ID
       schoolId, // Customer's school ID
       name: clientName, // Customer's name
       paymentMethod, // Payment method (e.g., cash, GCash)
@@ -349,19 +348,19 @@ const PosPage = () => {
         };
       }), // List of items ordered
     };
-
+  
     try {
-      // Save the order to Firestore with the school ID as the document ID
+      // Save the order to Firestore with an auto-generated ID
       const ordersRef = collection(db, "orders");
-      const orderDoc = doc(ordersRef, schoolId); // Use schoolId as the document ID
-      await setDoc(orderDoc, newOrder);
-
+      const orderDocRef = await addDoc(ordersRef, newOrder); // Use addDoc to generate an auto ID
+      const generatedOrderId = orderDocRef.id; // Get the auto-generated ID
+  
       // Set the order number for confirmation
-      setOrderNumber(schoolId);
-
+      setOrderNumber(generatedOrderId);
+  
       // Show success message
-      alert(`Order Successful! Your order number is: ${schoolId}`);
-
+      alert(`Order Successful! Your order number is: ${generatedOrderId}`);
+  
       // Clear the cart and reset fields
       setCart({});
       setClientName("");
@@ -376,12 +375,12 @@ const PosPage = () => {
   };
 
  const finalizeCheckout = () => {
-  setShowConfirmation(true);
-};
+    setShowConfirmation(true);
+  };
 
-const closeConfirmation = () => {
-  setShowConfirmation(false);
-};
+  const closeConfirmation = () => {
+    setShowConfirmation(false);
+  };
 
 const handlePaymentChange = (e) => {
   setPaymentMethod(e.target.value);
