@@ -835,7 +835,7 @@ const categoryIcons = {
           }}
         >
           <label htmlFor="orderNumber" className="order-label">
-            Enter your order ID:
+            Enter your School ID:
           </label>
           <input
             type="text"
