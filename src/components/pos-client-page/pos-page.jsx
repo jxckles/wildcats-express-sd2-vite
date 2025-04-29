@@ -810,23 +810,22 @@ const categoryIcons = {
           }}
         >
           <label htmlFor="orderNumber" className="order-label">
-            Enter your order number:
+            Enter your order ID:
           </label>
           <input
             type="text"
             id="orderNumber"
-            placeholder="e.g., 12-3456-789"
             className="order-number-input"
             value={orderNumber}
-            onChange={handleOrderNumberChange}
-            maxLength={11} // Limits to XX-XXXX-XXX format
+            onChange={(e) => setOrderNumber(e.target.value)} // Update the state
+            maxLength={30} 
           />
           <motion.button
             whileHover={{ scale: isValidOrderNumber ? 1.05 : 1 }}
             whileTap={{ scale: isValidOrderNumber ? 0.95 : 1 }}
-            className={`track-button ${!isValidOrderNumber ? 'disabled-button' : ''}`}
+            className={'track-button'} //{`track-button ${!isValidOrderNumber ? 'disabled-button' : ''}`}
             type="submit"
-            disabled={!isValidOrderNumber}
+            disabled={false} //{!isValidOrderNumber}
           >
             Track Order
           </motion.button>
@@ -852,6 +851,10 @@ const categoryIcons = {
                       <tr>
                         <td className="tracked-order-label"><strong>Order ID:</strong></td>
                         <td className="tracked-order-value">{trackedOrder.id}</td>
+                      </tr>
+                      <tr>
+                        <td className="tracked-order-label"><strong>School ID:</strong></td>
+                        <td className="tracked-order-value">{trackedOrder.schoolId}</td>
                       </tr>
                       <tr>
                         <td className="tracked-order-label"><strong>Date Ordered:</strong></td>
@@ -900,6 +903,7 @@ const categoryIcons = {
               <thead>
                 <tr>
                   <th>Order ID</th>
+                  <th>School ID</th>
                   <th>Date Ordered</th>
                   <th>Menus Ordered</th>
                   <th>Total Amount</th>
@@ -910,6 +914,7 @@ const categoryIcons = {
                 {filteredOrders.map((order, index) => (
                   <tr key={index}>
                     <td>{order.id}</td>
+                    <td>{order.schoolId}</td>
                     <td>{order.dateTime}</td>
                     <td>
                       {order.items.map((item, idx) => (
