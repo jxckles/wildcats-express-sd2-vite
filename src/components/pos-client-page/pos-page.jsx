@@ -872,6 +872,7 @@ const categoryIcons = {
                 Array.isArray(trackedOrder) ? (
                   // Render multiple orders if searching by schoolId
                   <div className="tracked-orders-list">
+                    <br /><br />
                     <h2>Orders for School ID: {orderNumber}</h2>
                     {trackedOrder.map((order, idx) => (
                       <div key={idx} className="tracked-order-details">
@@ -910,8 +911,8 @@ const categoryIcons = {
                     <table className="tracked-order-table">
                       <tbody>
                         <tr>
-                          <td className="tracked-order-label"><strong>Order ID:</strong></td>
-                          <td className="tracked-order-value">{trackedOrder.id}</td>
+                          <td className="tracked-order-label"><strong>Customer Name:</strong></td>
+                          <td className="tracked-order-value">{trackedOrder.name}</td>
                         </tr>
                         <tr>
                           <td className="tracked-order-label"><strong>School ID:</strong></td>
@@ -963,7 +964,7 @@ const categoryIcons = {
             <table className="orders-table-pos">
               <thead>
                 <tr>
-                  <th>Order ID</th>
+                  <th>Customer Name</th>
                   <th>School ID</th>
                   <th>Date Ordered</th>
                   <th>Menus Ordered</th>
@@ -974,7 +975,7 @@ const categoryIcons = {
               <tbody>
                 {filteredOrders.map((order, index) => (
                   <tr key={index}>
-                    <td>{order.id}</td>
+                    <td>{order.name}</td>
                     <td>{order.schoolId}</td>
                     <td>{order.dateTime}</td>
                     <td>
